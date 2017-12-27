@@ -95,12 +95,12 @@ void test(char *fin) {
   for (int current_event = 0; current_event < num_of_events; current_event++) {
     chain.GetEntry(current_event);
     if (REC_Particle_pid->size() == 0 ) continue;
-    std::cerr << REC_Particle_pid->at(0) << std::endl;
+    std::cerr << "\t\t" << current_event << "\t\t" << 100 * (current_event/num_of_events) << "\r\r" << std::flush;
     //if (TMath::Abs(REC_Particle_pid->at(0)) != 11 ) continue;
     // Setup scattered electron 4 vector
     TVector3 e_mu_prime_3;
     TLorentzVector e_mu_prime;
-    TLorentzVector e_mu(0.0, 0.0, 10.7, 7);
+    TLorentzVector e_mu(0.0, 0.0, 10.7, 10.7);
     e_mu_prime_3.SetXYZ(REC_Particle_px->at(0), REC_Particle_py->at(0), REC_Particle_pz->at(0));
     e_mu_prime.SetVectM(e_mu_prime_3, MASS_E);
     double W = W_calc(e_mu, e_mu_prime);
@@ -109,6 +109,7 @@ void test(char *fin) {
     W_hist->Fill(W);
     Q2_hist->Fill(Q2);
     W_vs_q2->Fill(W,Q2);
+    
 
     for (int i = 0; i< REC_Particle_pid->size(); i++){
       double px = REC_Particle_px->at(i) * REC_Particle_px->at(i);
