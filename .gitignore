@@ -32,3 +32,6 @@
 *.app
 test/test
 *.root
+cpp/test
+*.pyc
+*.pdf
