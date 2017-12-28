@@ -36,23 +36,22 @@
 #include <fstream>
 static const double MASS_E = 0.000511;
 static const double MASS_P = 0.93827203;
-  std::vector<int>     *REC_Particle_pid;
-  std::vector<float>   *REC_Particle_px;
-  std::vector<float>   *REC_Particle_py;
-  std::vector<float>   *REC_Particle_pz;
-  std::vector<float>   *REC_Particle_vx;
-  std::vector<float>   *REC_Particle_vy;
-  std::vector<float>   *REC_Particle_vz;
-  std::vector<int>     *REC_Particle_charge;
-  std::vector<float>   *REC_Particle_beta;
-  std::vector<float>   *REC_Particle_chi2pid;
-  std::vector<int>     *REC_Particle_status;
-  TH1D *momentum = new TH1D("mom","mom",500,0,10);
-  TH1D *W_hist = new TH1D("W","W",250,0,5);
-  TH1D *Q2_hist = new TH1D("Q2","Q2",250,0,10);
-  TH2D *W_vs_q2 = new TH2D("W_vs_q2","W_vs_q2",250,0,5,250,0,10);
-  TH2D *mom_vs_beta = new TH2D("mom_vs_beta","mom_vs_beta",500,0,5,500,-2.5,2.5);
-
+std::vector<int>     *REC_Particle_pid;
+std::vector<float>   *REC_Particle_px;
+std::vector<float>   *REC_Particle_py;
+std::vector<float>   *REC_Particle_pz;
+std::vector<float>   *REC_Particle_vx;
+std::vector<float>   *REC_Particle_vy;
+std::vector<float>   *REC_Particle_vz;
+std::vector<int>     *REC_Particle_charge;
+std::vector<float>   *REC_Particle_beta;
+std::vector<float>   *REC_Particle_chi2pid;
+std::vector<int>     *REC_Particle_status;
+TH1D *momentum = new TH1D("mom","mom",500,0,10);
+TH1D *W_hist = new TH1D("W","W",250,0,5);
+TH1D *Q2_hist = new TH1D("Q2","Q2",250,0,10);
+TH2D *W_vs_q2 = new TH2D("W_vs_q2","W_vs_q2",250,0,5,250,0,10);
+TH2D *mom_vs_beta = new TH2D("mom_vs_beta","mom_vs_beta",500,0,5,500,-2.5,2.5);
 
 // Calcuating Q^2
 // q^mu^2 = (e^mu - e^mu')^2 = -Q^2
@@ -71,8 +70,8 @@ double W_calc(TLorentzVector e_mu, TLorentzVector e_mu_prime) {
   return (p_mu + q_mu).Mag();
 }
 
-void test(char *fin) {
-  TFile *out = new TFile("out.root", "RECREATE");
+void test(char *fin, char *fout) {
+  TFile *out = new TFile(fout, "RECREATE");
   double P;
   bool electron_cuts;
   // Load chain from branch h10
@@ -91,16 +90,18 @@ void test(char *fin) {
   chain.SetBranchAddress("REC_Particle_chi2pid", &REC_Particle_chi2pid);
   chain.SetBranchAddress("REC_Particle_status", &REC_Particle_status);
   int num_of_events = (int)chain.GetEntries();
-
+  int total = 0;
   for (int current_event = 0; current_event < num_of_events; current_event++) {
     chain.GetEntry(current_event);
     if (REC_Particle_pid->size() == 0 ) continue;
-    std::cerr << "\t\t" << current_event << "\t\t" << 100 * (current_event/num_of_events) << "\r\r" << std::flush;
-    //if (TMath::Abs(REC_Particle_pid->at(0)) != 11 ) continue;
+    double per = ((double)current_event/(double)num_of_events) ;
+
+    std::cerr << "\t\t" << current_event << "\t\t" << std::floor((100 * (double)current_event/(double)num_of_events)) << "%\r\r" << std::flush;
+    if (REC_Particle_pid->at(0) != 11 ) continue;
     // Setup scattered electron 4 vector
     TVector3 e_mu_prime_3;
     TLorentzVector e_mu_prime;
-    TLorentzVector e_mu(0.0, 0.0, 10.7, 10.7);
+    TLorentzVector e_mu(0.0, 0.0, 10.73092, 10.73092);
     e_mu_prime_3.SetXYZ(REC_Particle_px->at(0), REC_Particle_py->at(0), REC_Particle_pz->at(0));
     e_mu_prime.SetVectM(e_mu_prime_3, MASS_E);
     double W = W_calc(e_mu, e_mu_prime);
@@ -111,14 +112,15 @@ void test(char *fin) {
     W_vs_q2->Fill(W,Q2);
     
 
-    for (int i = 0; i< REC_Particle_pid->size(); i++){
+    for (int i = 1; i < REC_Particle_pid->size(); i++){
       double px = REC_Particle_px->at(i) * REC_Particle_px->at(i);
       double py = REC_Particle_py->at(i) * REC_Particle_py->at(i);
       double pz = REC_Particle_pz->at(i) * REC_Particle_pz->at(i);
 
       P = TMath::Sqrt(px + py + pz);
       momentum->Fill(P);
-      mom_vs_beta->Fill(P,REC_Particle_beta->at(i));
+      if(REC_Particle_beta->at(i) != 0) mom_vs_beta->Fill(P,REC_Particle_beta->at(i));
+      total++;
 
     }
   }
@@ -130,5 +132,6 @@ void test(char *fin) {
   mom_vs_beta->Write();
   out->Close();
   chain.Reset();
+  std::cerr << "\n" << total << std::endl;
 }
 #endif
