@@ -93,7 +93,7 @@ output_file = "WvsQ2.pdf"
 # Make the figure for plotting
 fig = plt.figure(num=None, figsize=(16, 9), dpi=200, facecolor='w', edgecolor='k')
 # Fill the histogram
-plt.hist2d(W,Q2,range=[[0, 5],[0, 10]])
+plt.hist2d(W,Q2,bins=500, normed=True, range=[[0, 5],[0, 10]])
 # Add labels
 plt.title("W vs $Q^2$")
 plt.xlabel("W (GeV)")
