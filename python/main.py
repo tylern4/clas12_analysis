@@ -39,7 +39,7 @@ for evnt in chain:
         # If the events ID is 11==Electron
         if evnt.REC_Particle_pid[0] == 11:
             # Add the Momentum to the p array
-            p2 = evnt.REC_Particle_px[0]**2 + evnt.REC_Particle_py[0]**2 + evnt.REC_Particle_pz[0]**2
+            p2 = evnt.REC_Particle_px[0]*evnt.REC_Particle_px[0] + evnt.REC_Particle_py[0]*evnt.REC_Particle_py[0] + evnt.REC_Particle_pz[0]*evnt.REC_Particle_pz[0]
             p.append(sqrt(p2))
             e_mu_p = fvec(evnt.REC_Particle_px[0], evnt.REC_Particle_py[0], evnt.REC_Particle_pz[0], get_mass('ELECTRON'))
             Q2.append(Q2_calc(e_mu, e_mu_p))

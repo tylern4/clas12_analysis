@@ -97,6 +97,16 @@ void test(char *fin, char *fout) {
     double per = ((double)current_event/(double)num_of_events) ;
 
     std::cerr << "\t\t" << current_event << "\t\t" << std::floor((100 * (double)current_event/(double)num_of_events)) << "%\r\r" << std::flush;
+
+    for (int i = 1; i < REC_Particle_pid->size(); i++){
+      double px = REC_Particle_px->at(i) * REC_Particle_px->at(i);
+      double py = REC_Particle_py->at(i) * REC_Particle_py->at(i);
+      double pz = REC_Particle_pz->at(i) * REC_Particle_pz->at(i);
+
+      P = TMath::Sqrt(px + py + pz);
+      momentum->Fill(P);
+      mom_vs_beta->Fill(P,REC_Particle_beta->at(i));
+      total++;
     if (REC_Particle_pid->at(0) != 11 ) continue;
     // Setup scattered electron 4 vector
     TVector3 e_mu_prime_3;
@@ -110,18 +120,6 @@ void test(char *fin, char *fout) {
     W_hist->Fill(W);
     Q2_hist->Fill(Q2);
     W_vs_q2->Fill(W,Q2);
-    
-
-    for (int i = 1; i < REC_Particle_pid->size(); i++){
-      double px = REC_Particle_px->at(i) * REC_Particle_px->at(i);
-      double py = REC_Particle_py->at(i) * REC_Particle_py->at(i);
-      double pz = REC_Particle_pz->at(i) * REC_Particle_pz->at(i);
-
-      P = TMath::Sqrt(px + py + pz);
-      momentum->Fill(P);
-      if(REC_Particle_beta->at(i) != 0) mom_vs_beta->Fill(P,REC_Particle_beta->at(i));
-      total++;
-
     }
   }
   out->cd();
