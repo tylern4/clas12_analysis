@@ -10,8 +10,6 @@ using namespace std;
 
 int main(int argc, char **argv) {
 
-  gStyle->SetOptFit(1111);
-
   if (argc == 2) {
     char *infilename = argv[1];
     test(infilename, "out.root");
