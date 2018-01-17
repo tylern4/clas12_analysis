@@ -51,7 +51,7 @@ output_file = "Momentum.pdf"
 # Make the figure for plotting
 fig = plt.figure(num=None, figsize=(16, 9), dpi=200, facecolor='w', edgecolor='k')
 # Fill the histogram
-plt.hist(p, 100, normed=1, histtype='stepfilled', alpha=0.75, range=[0, 5])
+plt.hist(p, 500, normed=1, histtype='stepfilled', alpha=0.75, range=[0, 10])
 # Add labels
 plt.title("Electron Momentum")
 plt.xlabel("P (GeV)")
@@ -65,7 +65,7 @@ output_file = "W.pdf"
 # Make the figure for plotting
 fig = plt.figure(num=None, figsize=(16, 9), dpi=200, facecolor='w', edgecolor='k')
 # Fill the histogram
-plt.hist(W, 100, normed=1, histtype='stepfilled', alpha=0.75, range=[0, 6])
+plt.hist(W, 500, normed=1, histtype='stepfilled', alpha=0.75, range=[0, 5])
 # Add labels
 plt.title("W")
 plt.xlabel("W (GeV)")
@@ -79,7 +79,7 @@ output_file = "Q2.pdf"
 # Make the figure for plotting
 fig = plt.figure(num=None, figsize=(16, 9), dpi=200, facecolor='w', edgecolor='k')
 # Fill the histogram
-plt.hist(Q2, 100, normed=1, histtype='stepfilled', alpha=0.75, range=[0, 10])
+plt.hist(Q2, 500, normed=1, histtype='stepfilled', alpha=0.75, range=[0, 10])
 # Add labels
 plt.title("$Q^2$")
 plt.xlabel("$Q^2$ ($GeV^2$)")

@@ -48,10 +48,10 @@ std::vector<float>   *REC_Particle_beta;
 std::vector<float>   *REC_Particle_chi2pid;
 std::vector<int>     *REC_Particle_status;
 TH1D *momentum = new TH1D("mom","mom",500,0,10);
-TH1D *W_hist = new TH1D("W","W",250,0,5);
-TH1D *Q2_hist = new TH1D("Q2","Q2",250,0,10);
-TH2D *W_vs_q2 = new TH2D("W_vs_q2","W_vs_q2",250,0,5,250,0,10);
-TH2D *mom_vs_beta = new TH2D("mom_vs_beta","mom_vs_beta",500,0,5,500,-2.5,2.5);
+TH1D *W_hist = new TH1D("W","W",500,0,5);
+TH1D *Q2_hist = new TH1D("Q2","Q2",500,0,10);
+TH2D *W_vs_q2 = new TH2D("W_vs_q2","W_vs_q2",500,0,5,500,0,10);
+TH2D *mom_vs_beta = new TH2D("mom_vs_beta","mom_vs_beta",500,0,5,500,0.0,1.2);
 
 // Calcuating Q^2
 // q^mu^2 = (e^mu - e^mu')^2 = -Q^2
