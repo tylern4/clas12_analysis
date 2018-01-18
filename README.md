@@ -36,6 +36,6 @@ To run:
 
 ### Java
 
-Java is dumb, don't use it. If you must use java, want to there's no easy way, so copy and paste the example.java file into an eclipse environment with the working [coatjava](https://github.com/JeffersonLab/clas12-offline-software.git) libraries. I think I'm using version 5.0 (Sorry I mean 5a.0.x because there's an a? Version numbers usually have letters right?) but the naming scheme and version numbers are so messed up I don't know what any of it means.
+Java is dumb, don't use it. If you must use java, there's no easy way, so copy and paste the example.java file into an eclipse environment with the working [coatjava](https://github.com/JeffersonLab/clas12-offline-software.git) libraries. I think I'm using version 5.0 (Sorry I mean 5a.0.x because there's an a? Version numbers usually have letters right?) but the naming scheme and version numbers are so messed up I don't know what any of it means.
 
 If it doesn't work don't complain to me..... :information_desk_person:
