@@ -6,10 +6,11 @@ from constants import *
 Square = lambda x: np.square(x)
 append = lambda _arr, _val: np.append(_arr, _val)
 
-# Beam 4 vector for electron with energy from E1D
+# Beam 4 vector for electron with energy from CLAS12
 e_mu = TLorentzVector(0.0, 0.0,
-                      np.sqrt(Square(E1D_E0) - Square(get_mass('ELECTRON'))),
-                      E1D_E0)
+                      np.sqrt(Square(CLAS12_E0) -
+                              Square(get_mass('ELECTRON'))),
+                      CLAS12_E0)
 
 # Target four vector for Proton at rest
 _p_target = TLorentzVector(0, 0, 0, get_mass('PROTON'))
@@ -49,7 +50,7 @@ def W_calc(_e_mu, _e_mu_prime):
 
 def xb_calc(_Q2, _E_prime):
     """Returns bjorken x value from energy and Q^2."""
-    _g = E1D_E0 - _E_prime
+    _g = CLAS12_E0 - _E_prime
     _xb = (_Q2 / (2 * get_mass('PROTON') * _g))
     return _xb
 
