@@ -17,22 +17,35 @@
 static const double MASS_E = 0.000511;
 static const double MASS_P = 0.93827203;
 static const double CLAS12_E = 2.2;
-std::vector<int>     *REC_Particle_pid;
-std::vector<float>   *REC_Particle_px;
-std::vector<float>   *REC_Particle_py;
-std::vector<float>   *REC_Particle_pz;
-std::vector<float>   *REC_Particle_vx;
-std::vector<float>   *REC_Particle_vy;
-std::vector<float>   *REC_Particle_vz;
-std::vector<int>     *REC_Particle_charge;
-std::vector<float>   *REC_Particle_beta;
-std::vector<float>   *REC_Particle_chi2pid;
-std::vector<int>     *REC_Particle_status;
-TH1D *momentum = new TH1D("mom","mom",500,0,10);
-TH1D *W_hist = new TH1D("W","W",500,0,5);
-TH1D *Q2_hist = new TH1D("Q2","Q2",500,0,10);
-TH2D *W_vs_q2 = new TH2D("W_vs_q2","W_vs_q2",500,0,2.5,500,0,1);
-TH2D *mom_vs_beta = new TH2D("mom_vs_beta","mom_vs_beta",500,0,5,500,0.0,1.2);
+std::vector<int> *REC_Particle_pid;
+std::vector<float> *REC_Particle_px;
+std::vector<float> *REC_Particle_py;
+std::vector<float> *REC_Particle_pz;
+std::vector<float> *REC_Particle_vx;
+std::vector<float> *REC_Particle_vy;
+std::vector<float> *REC_Particle_vz;
+std::vector<int> *REC_Particle_charge;
+std::vector<float> *REC_Particle_beta;
+std::vector<float> *REC_Particle_chi2pid;
+std::vector<int> *REC_Particle_status;
+TH1D *momentum = new TH1D("mom", "mom", 500, 0, 10);
+TH1D *W_hist = new TH1D("W", "W", 500, 0, 5);
+TH1D *Q2_hist = new TH1D("Q2", "Q2", 500, 0, 10);
+TH2D *W_vs_q2 = new TH2D("W_vs_q2", "W_vs_q2", 500, 0, 2.5, 500, 0, 1);
+TH2D *mom_vs_beta =
+    new TH2D("mom_vs_beta", "mom_vs_beta", 500, 0, 5, 500, 0.0, 1.2);
+TH2D *mom_vs_beta_0 =
+    new TH2D("mom_vs_beta_0", "mom_vs_beta_0", 500, 0, 5, 500, 0.0, 1.2);
+TH2D *mom_vs_beta_pos =
+    new TH2D("mom_vs_beta_pos", "mom_vs_beta_pos", 500, 0, 5, 500, 0.0, 1.2);
+TH2D *mom_vs_beta_neg =
+    new TH2D("mom_vs_beta_neg", "mom_vs_beta_neg", 500, 0, 5, 500, 0.0, 1.2);
+TH2D *mom_vs_beta_proton = new TH2D("mom_vs_beta_proton", "mom_vs_beta_proton",
+                                    500, 0, 5, 500, 0.0, 1.2);
+TH2D *mom_vs_beta_pion =
+    new TH2D("mom_vs_beta_pion", "mom_vs_beta_pion", 500, 0, 5, 500, 0.0, 1.2);
+TH2D *mom_vs_beta_electron = new TH2D(
+    "mom_vs_beta_electron", "mom_vs_beta_electron", 500, 0, 5, 500, 0.0, 1.2);
 
 // Calcuating Q^2
 // q^mu^2 = (e^mu - e^mu')^2 = -Q^2
@@ -74,34 +87,58 @@ void test(char *fin, char *fout) {
   int total = 0;
   for (int current_event = 0; current_event < num_of_events; current_event++) {
     chain.GetEntry(current_event);
-    if (REC_Particle_pid->size() == 0 ) continue;
-    double per = ((double)current_event/(double)num_of_events) ;
+    if (REC_Particle_pid->size() == 0)
+      continue;
+    double per = ((double)current_event / (double)num_of_events);
 
-    std::cerr << "\t\t" << current_event << "\t\t" << std::floor((100 * (double)current_event/(double)num_of_events)) << "%\r\r" << std::flush;
+    std::cerr << "\t\t" << std::floor((100 * (double)current_event /
+                                       (double)num_of_events)) << "%\r\r"
+              << std::flush;
 
-    for (int i = 1; i < REC_Particle_pid->size(); i++){
+    for (int i = 1; i < REC_Particle_pid->size(); i++) {
+      // if (REC_Particle_beta->at(i) == 0)
+      //  continue;
+
       double px = REC_Particle_px->at(i) * REC_Particle_px->at(i);
       double py = REC_Particle_py->at(i) * REC_Particle_py->at(i);
       double pz = REC_Particle_pz->at(i) * REC_Particle_pz->at(i);
 
       P = TMath::Sqrt(px + py + pz);
+      if (REC_Particle_beta->at(i) != 0) {
+        momentum->Fill(P);
+        mom_vs_beta->Fill(P, REC_Particle_beta->at(i));
+        if (REC_Particle_charge->at(i) > 0) {
+          mom_vs_beta_pos->Fill(P, REC_Particle_beta->at(i));
+        } else if (REC_Particle_charge->at(i) < 0) {
+          mom_vs_beta_neg->Fill(P, REC_Particle_beta->at(i));
+        }
 
-      momentum->Fill(P);
-      mom_vs_beta->Fill(P,REC_Particle_beta->at(i));
+        if (REC_Particle_pid->at(i) == 2212)
+          mom_vs_beta_proton->Fill(P, REC_Particle_beta->at(i));
+        if (abs(REC_Particle_pid->at(i)) == 211)
+          mom_vs_beta_pion->Fill(P, REC_Particle_beta->at(i));
+        if (abs(REC_Particle_pid->at(i)) == 11)
+          mom_vs_beta_electron->Fill(P, REC_Particle_beta->at(i));
+        if (REC_Particle_pid->at(i) == 0)
+          mom_vs_beta_0->Fill(P, REC_Particle_beta->at(i));
+      }
+
       total++;
-    if (REC_Particle_pid->at(0) != 11 ) continue;
-    // Setup scattered electron 4 vector
-    TVector3 e_mu_prime_3;
-    TLorentzVector e_mu_prime;
-    TLorentzVector e_mu(0.0, 0.0, CLAS12_E, CLAS12_E);
-    e_mu_prime_3.SetXYZ(REC_Particle_px->at(0), REC_Particle_py->at(0), REC_Particle_pz->at(0));
-    e_mu_prime.SetVectM(e_mu_prime_3, MASS_E);
-    double W = W_calc(e_mu, e_mu_prime);
-    double Q2 = Q2_calc(e_mu, e_mu_prime);
+      if (REC_Particle_pid->at(0) != 11)
+        continue;
+      // Setup scattered electron 4 vector
+      TVector3 e_mu_prime_3;
+      TLorentzVector e_mu_prime;
+      TLorentzVector e_mu(0.0, 0.0, CLAS12_E, CLAS12_E);
+      e_mu_prime_3.SetXYZ(REC_Particle_px->at(0), REC_Particle_py->at(0),
+                          REC_Particle_pz->at(0));
+      e_mu_prime.SetVectM(e_mu_prime_3, MASS_E);
+      double W = W_calc(e_mu, e_mu_prime);
+      double Q2 = Q2_calc(e_mu, e_mu_prime);
 
-    W_hist->Fill(W);
-    Q2_hist->Fill(Q2);
-    W_vs_q2->Fill(W,Q2);
+      W_hist->Fill(W);
+      Q2_hist->Fill(Q2);
+      W_vs_q2->Fill(W, Q2);
     }
   }
   out->cd();
@@ -110,6 +147,12 @@ void test(char *fin, char *fout) {
   Q2_hist->Write();
   W_vs_q2->Write();
   mom_vs_beta->Write();
+  mom_vs_beta_pos->Write();
+  mom_vs_beta_neg->Write();
+  mom_vs_beta_proton->Write();
+  mom_vs_beta_pion->Write();
+  mom_vs_beta_electron->Write();
+  mom_vs_beta_0->Write();
   out->Close();
   chain.Reset();
   std::cerr << "\n" << total << std::endl;
