@@ -31,7 +31,7 @@ std::vector<int> *REC_Particle_status;
 TH1D *momentum = new TH1D("mom", "mom", 500, 0, 10);
 TH1D *W_hist = new TH1D("W", "W", 500, 0, 5);
 TH1D *Q2_hist = new TH1D("Q2", "Q2", 500, 0, 10);
-TH2D *W_vs_q2 = new TH2D("W_vs_q2", "W_vs_q2", 500, 0, 2.5, 500, 0, 1);
+TH2D *W_vs_q2 = new TH2D("W_vs_q2", "W_vs_q2", 500, 0, 5, 500, 0, 8);
 TH2D *mom_vs_beta =
     new TH2D("mom_vs_beta", "mom_vs_beta", 500, 0, 5, 500, 0.0, 1.2);
 TH2D *mom_vs_beta_0 =
@@ -106,6 +106,8 @@ void test(char *fin, char *fout) {
       double pz = REC_Particle_pz->at(i) * REC_Particle_pz->at(i);
 
       P = TMath::Sqrt(px + py + pz);
+      if (REC_Particle_pid->at(i) == 0)
+        mom_vs_beta_0->Fill(P, REC_Particle_beta->at(i));
       if (REC_Particle_beta->at(i) != 0) {
         momentum->Fill(P);
         mom_vs_beta->Fill(P, REC_Particle_beta->at(i));
@@ -121,8 +123,6 @@ void test(char *fin, char *fout) {
           mom_vs_beta_pion->Fill(P, REC_Particle_beta->at(i));
         if (abs(REC_Particle_pid->at(i)) == 11)
           mom_vs_beta_electron->Fill(P, REC_Particle_beta->at(i));
-        if (REC_Particle_pid->at(i) == 0)
-          mom_vs_beta_0->Fill(P, REC_Particle_beta->at(i));
       }
 
       total++;
@@ -131,7 +131,7 @@ void test(char *fin, char *fout) {
       // Setup scattered electron 4 vector
       TVector3 e_mu_prime_3;
       TLorentzVector e_mu_prime;
-      TLorentzVector e_mu(0.0, 0.0, CLAS12_E, CLAS12_E);
+      TLorentzVector e_mu(0.0, 0.0, energy, energy);
       e_mu_prime_3.SetXYZ(REC_Particle_px->at(0), REC_Particle_py->at(0),
                           REC_Particle_pz->at(0));
       e_mu_prime.SetVectM(e_mu_prime_3, MASS_E);
