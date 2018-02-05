@@ -16,7 +16,7 @@
 
 static const double MASS_E = 0.000511;
 static const double MASS_P = 0.93827203;
-static const double CLAS12_E = 2.2;
+static const double CLAS12_E = 10.7;
 std::vector<int> *REC_Particle_pid;
 std::vector<float> *REC_Particle_px;
 std::vector<float> *REC_Particle_py;
@@ -65,6 +65,10 @@ double W_calc(TLorentzVector e_mu, TLorentzVector e_mu_prime) {
 }
 
 void test(char *fin, char *fout) {
+  double energy = CLAS12_E;
+  if (getenv("CLAS12_E") != NULL)
+    energy = atof(getenv("CLAS12_E"));
+
   TFile *out = new TFile(fout, "RECREATE");
   double P;
   bool electron_cuts;
@@ -96,8 +100,6 @@ void test(char *fin, char *fout) {
               << std::flush;
 
     for (int i = 1; i < REC_Particle_pid->size(); i++) {
-      // if (REC_Particle_beta->at(i) == 0)
-      //  continue;
 
       double px = REC_Particle_px->at(i) * REC_Particle_px->at(i);
       double py = REC_Particle_py->at(i) * REC_Particle_py->at(i);
