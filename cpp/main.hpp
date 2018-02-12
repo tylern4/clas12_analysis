@@ -117,8 +117,6 @@ void test(char *fin, char *fout) {
   int total = 0;
   for (int current_event = 0; current_event < num_of_events; current_event++) {
     chain.GetEntry(current_event);
-    std::cout << "REC\t" << REC_Particle_pid->size() << std::endl;
-    std::cout << "FTOF\t" << FTOF_hits_time->size() << std::endl;
     if (REC_Particle_pid->size() == 0 || FTOF_hits_time->size() == 0 ||
         FTOF_hits_time->size() < REC_Particle_pid->size())
       continue;
