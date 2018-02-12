@@ -123,8 +123,8 @@ void test(char *fin, char *fout) {
 
     double electron_vertex = vertex_time(FTOF_hits_time->at(0), FTOF_hits_pathLength->at(0), 1.0);
     double per = ((double)current_event / (double)num_of_events);
-    //    std::cerr << "\t\t" << std::floor((100 * (double)current_event / (double)num_of_events))
-    //    << "%\r\r" << std::flush;
+    std::cerr << "\t\t" << std::floor((100 * (double)current_event / (double)num_of_events))
+              << "%\r\r" << std::flush;
     for (int i = 1; i < REC_Particle_pid->size(); i++) {
       double px = REC_Particle_px->at(i) * REC_Particle_px->at(i);
       double py = REC_Particle_py->at(i) * REC_Particle_py->at(i);
