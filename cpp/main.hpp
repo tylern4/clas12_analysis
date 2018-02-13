@@ -74,17 +74,14 @@ TH2D *deltat_electron =
     new TH2D("deltat_electron", "#Deltat assuming mass of electron", 500, -1.0,
              10.0, 500, -10.0, 10.0);
 TH2D *deltat_proton_withID =
-    new TH2D("deltat_proton_withID", "#Deltat assuming mass of proton", 500,
-             -1.0, 10.0, 500, -10.0, 10.0);
+    new TH2D("deltat_proton_withID", "#Deltat assuming mass of proton with ID",
+             500, -1.0, 10.0, 500, -10.0, 10.0);
 TH2D *deltat_pion_withID =
-    new TH2D("deltat_pion_withID", "#Deltat assuming mass of pion", 500, -1.0,
-             10.0, 500, -10.0, 10.0);
-TH2D *deltat_electron_withID =
-    new TH2D("deltat_electron_withID", "#Deltat assuming mass of electron", 500,
+    new TH2D("deltat_pion_withID", "#Deltat assuming mass of pion with ID", 500,
              -1.0, 10.0, 500, -10.0, 10.0);
-
-TH2D *deltat_dt =
-    new TH2D("deltat_dt", "#Deltat", 500, -1.0, 10.0, 500, -10.0, 10.0);
+TH2D *deltat_electron_withID = new TH2D(
+    "deltat_electron_withID", "#Deltat assuming mass of electron with ID", 500,
+    -1.0, 10.0, 500, -10.0, 10.0);
 
 // Calcuating Q^2
 // q^mu^2 = (e^mu - e^mu')^2 = -Q^2
@@ -209,6 +206,7 @@ void test(char *fin, char *fout) {
     for (int j = 1; j < REC_Scintillator_time->size(); j++) {
       if (REC_Scintillator_time->size() == 0) continue;
       int index = REC_Scintillator_pindex->at(j);
+
       double electron_vertex = vertex_time(REC_Scintillator_time->at(0),
                                            REC_Scintillator_path->at(0), 1.0);
 
@@ -217,13 +215,6 @@ void test(char *fin, char *fout) {
       double pz = REC_Particle_pz->at(index) * REC_Particle_pz->at(index);
       P = TMath::Sqrt(px + py + pz);
 
-      /*        double dt_pion =
-                  deltat(electron_vertex, MASS_PIP, P, FTOF_hits_time->at(i),
-                          FTOF_hits_pathLength->at(i));
-              double dt_proton =
-                  deltat(electron_vertex, MASS_P, P, FTOF_hits_time->at(i),
-                          FTOF_hits_pathLength->at(i));
-      */
       double dt_electron =
           deltat(electron_vertex, MASS_E, P, REC_Scintillator_time->at(j),
                  REC_Scintillator_path->at(j));
@@ -234,20 +225,15 @@ void test(char *fin, char *fout) {
           deltat(electron_vertex, MASS_P, P, REC_Scintillator_time->at(j),
                  REC_Scintillator_path->at(j));
 
-      double dt =
-          deltat(electron_vertex, REC_Particle_beta->at(index),
-                 REC_Scintillator_time->at(j), REC_Scintillator_path->at(j));
-
       deltat_pion->Fill(P, dt_pion);
       deltat_proton->Fill(P, dt_proton);
       deltat_electron->Fill(P, dt_electron);
-      deltat_dt->Fill(P, dt);
 
       if (REC_Particle_pid->at(index) == 2212) {
         deltat_proton_withID->Fill(P, dt_proton);
-      } else if (abs(REC_Particle_pid->at(index)) == 211) {
+      } else if (REC_Particle_pid->at(index) == 211) {
         deltat_pion_withID->Fill(P, dt_pion);
-      } else if (index == 0) {  // else if (REC_Particle_pid->at(index) == 11) {
+      } else if (REC_Particle_pid->at(index) == 11) {
         deltat_electron_withID->Fill(P, dt_electron);
       }
     }
@@ -270,7 +256,6 @@ void test(char *fin, char *fout) {
   deltat_pion_withID->Write();
   deltat_proton_withID->Write();
   deltat_electron_withID->Write();
-  deltat_dt->Write();
   out->Close();
   chain.Reset();
   std::cerr << "\n" << total << std::endl;
