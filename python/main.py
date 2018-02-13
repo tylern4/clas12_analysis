@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 import sys
 
 from physics import *
-from delta_t import delta_t, vertex_time, dt
+from delta_t import delta_t, vertex_time
 
 # Get input and output file names
 if len(sys.argv) == 2:
@@ -33,7 +33,8 @@ beta = []
 p_pos = []
 beta_pos = []
 
-deltat = []
+p_dt = []
+deltat_proton = []
 
 # For every event that was loaded in
 for evnt in chain:
@@ -44,41 +45,49 @@ for evnt in chain:
         # so it will skip filling in p,Q2,W and beta
         if evnt.REC_Particle_beta[i] == 0:
             continue
-
-        electron_vertex = vertex_time(evnt.REC_Scintillator_time[
-                                      0], evnt.REC_Scintillator_path[0], 1.0)
         # Add beta value to array
         beta.append(evnt.REC_Particle_beta[i])
 
         # Add the Momentum to the p array
-        p2 = evnt.REC_Particle_px[
-            i]**2 + evnt.REC_Particle_py[i]**2 + evnt.REC_Particle_pz[i]**2
+        p2 = evnt.REC_Particle_px[i]**2 + evnt.REC_Particle_py[i]**2 + evnt.REC_Particle_pz[i]**2
         p2 = abs(p2)
         p.append(sqrt(p2))
-        #deltat.append(delta_t(electron_vertex, get_mass[evnt.REC_Particle_pid[i]], sqrt(p2), evnt.REC_Scintillator_time[i], evnt.REC_Scintillator_path[i]))
-        deltat.append(dt(electron_vertex, evnt.REC_Particle_beta[
-                      i], evnt.REC_Scintillator_time[i], evnt.REC_Scintillator_path[i]))
-
-        e_mu_p = fvec(evnt.REC_Particle_px[i],
-                      evnt.REC_Particle_py[i],
-                      evnt.REC_Particle_pz[i],
-                      get_mass('ELECTRON'))
+        e_mu_p = fvec(evnt.REC_Particle_px[i], evnt.REC_Particle_py[i],
+                      evnt.REC_Particle_pz[i], get_mass('ELECTRON'))
         Q2.append(Q2_calc(e_mu, e_mu_p))
         W.append(W_calc(e_mu, e_mu_p))
-
         # If the particle is positive
         if evnt.REC_Particle_charge[i] > 0:
             p_pos.append(sqrt(p2))
             beta_pos.append(evnt.REC_Particle_beta[i])
 
+# Loop over length of REC_Scintillator
+    for j in range(len(evnt.REC_Scintillator_pindex)):
+        # Get Electron vertex from first particle
+        electron_vertex = vertex_time(evnt.REC_Scintillator_time[0],
+                                      evnt.REC_Scintillator_path[0], 1.0)
+        # Get index for REC_Particle from REC_Scintillator
+        index = evnt.REC_Scintillator_pindex[j]
+
+        # Calculate momentum and fill array
+        p2 = evnt.REC_Particle_px[index]**2 + evnt.REC_Particle_py[index]**2 + evnt.REC_Particle_pz[index]**2
+        p2 = abs(p2)
+        # This array might be different from the p array so we are calculating and refilling it
+        p_dt.append(sqrt(p2))
+
+        # Calulating delta_t assuming the mass of a proton and append to the array
+        dt = delta_t(electron_vertex, MASS_P, sqrt(p2),
+                     evnt.REC_Scintillator_time[j],
+                     evnt.REC_Scintillator_path[j])
+        deltat_proton.append(dt)
+
 # Momentum
 output_file = "Momentum.pdf"
 # Make the figure for plotting
-fig = plt.figure(num=None, figsize=(16, 9), dpi=200,
-                 facecolor='w', edgecolor='k')
+fig = plt.figure(
+    num=None, figsize=(16, 9), dpi=200, facecolor='w', edgecolor='k')
 # Fill the histogram
-plt.hist(p, 500, normed=1, histtype='stepfilled',
-         alpha=0.75, range=[0, 10])
+plt.hist(p, 500, normed=1, histtype='stepfilled', alpha=0.75, range=[0, 10])
 # Add labels
 plt.title("Electron Momentum")
 plt.xlabel("P (GeV)")
@@ -89,11 +98,10 @@ plt.savefig(output_file)
 # W
 output_file = "W.pdf"
 # Make the figure for plotting
-fig = plt.figure(num=None, figsize=(16, 9), dpi=200,
-                 facecolor='w', edgecolor='k')
+fig = plt.figure(
+    num=None, figsize=(16, 9), dpi=200, facecolor='w', edgecolor='k')
 # Fill the histogram
-plt.hist(W, 500, normed=1, histtype='stepfilled',
-         alpha=0.75, range=[0, 5])
+plt.hist(W, 500, normed=1, histtype='stepfilled', alpha=0.75, range=[0, 5])
 # Add labels
 plt.title("W")
 plt.xlabel("W (GeV)")
@@ -104,11 +112,10 @@ plt.savefig(output_file)
 # Q2
 output_file = "Q2.pdf"
 # Make the figure for plotting
-fig = plt.figure(num=None, figsize=(16, 9), dpi=200,
-                 facecolor='w', edgecolor='k')
+fig = plt.figure(
+    num=None, figsize=(16, 9), dpi=200, facecolor='w', edgecolor='k')
 # Fill the histogram
-plt.hist(Q2, 500, normed=1, histtype='stepfilled',
-         alpha=0.75, range=[0, 10])
+plt.hist(Q2, 500, normed=1, histtype='stepfilled', alpha=0.75, range=[0, 10])
 # Add labels
 plt.title("$Q^2$")
 plt.xlabel("$Q^2$ ($GeV^2$)")
@@ -119,8 +126,8 @@ plt.savefig(output_file)
 # WvsQ2
 output_file = "WvsQ2.pdf"
 # Make the figure for plotting
-fig = plt.figure(num=None, figsize=(16, 9), dpi=200,
-                 facecolor='w', edgecolor='k')
+fig = plt.figure(
+    num=None, figsize=(16, 9), dpi=200, facecolor='w', edgecolor='k')
 # Fill the histogram
 plt.hist2d(W, Q2, bins=500, normed=True, range=[[0, 5], [0, 10]])
 # Add labels
@@ -133,8 +140,8 @@ plt.savefig(output_file)
 # MomVsBeta
 output_file = "MomVsBeta.pdf"
 # Make the figure for plotting
-fig = plt.figure(num=None, figsize=(16, 9), dpi=200,
-                 facecolor='w', edgecolor='k')
+fig = plt.figure(
+    num=None, figsize=(16, 9), dpi=200, facecolor='w', edgecolor='k')
 # Fill the histogram
 plt.hist2d(p, beta, bins=500, normed=True, range=[[0, 5], [0, 1.2]])
 # Add labels
