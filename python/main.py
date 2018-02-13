@@ -11,6 +11,7 @@ import matplotlib.pyplot as plt
 import sys
 
 from physics import *
+from delta_t import delta_t, vertex_time, dt
 
 # Get input and output file names
 if len(sys.argv) == 2:
@@ -32,6 +33,8 @@ beta = []
 p_pos = []
 beta_pos = []
 
+deltat = []
+
 # For every event that was loaded in
 for evnt in chain:
     # For every particle in the event
@@ -42,6 +45,8 @@ for evnt in chain:
         if evnt.REC_Particle_beta[i] == 0:
             continue
 
+        electron_vertex = vertex_time(evnt.REC_Scintillator_time[
+                                      0], evnt.REC_Scintillator_path[0], 1.0)
         # Add beta value to array
         beta.append(evnt.REC_Particle_beta[i])
 
@@ -50,6 +55,10 @@ for evnt in chain:
             i]**2 + evnt.REC_Particle_py[i]**2 + evnt.REC_Particle_pz[i]**2
         p2 = abs(p2)
         p.append(sqrt(p2))
+        #deltat.append(delta_t(electron_vertex, get_mass[evnt.REC_Particle_pid[i]], sqrt(p2), evnt.REC_Scintillator_time[i], evnt.REC_Scintillator_path[i]))
+        deltat.append(dt(electron_vertex, evnt.REC_Particle_beta[
+                      i], evnt.REC_Scintillator_time[i], evnt.REC_Scintillator_path[i]))
+
         e_mu_p = fvec(evnt.REC_Particle_px[i],
                       evnt.REC_Particle_py[i],
                       evnt.REC_Particle_pz[i],

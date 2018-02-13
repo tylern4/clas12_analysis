@@ -41,6 +41,7 @@ std::vector<int> *REC_Particle_status;
 std::vector<float> *REC_Scintillator_time;
 std::vector<float> *REC_Scintillator_path;
 
+std::vector<int> *FTOF_hits_id;
 std::vector<float> *FTOF_hits_pathLength;
 std::vector<float> *FTOF_hits_time;
 
@@ -134,22 +135,18 @@ void test(char *fin, char *fout) {
   chain.SetBranchAddress("REC_Particle_status", &REC_Particle_status);
   chain.SetBranchAddress("REC_Scintillator_time", &REC_Scintillator_time);
   chain.SetBranchAddress("REC_Scintillator_path", &REC_Scintillator_path);
+  chain.SetBranchAddress("FTOF_hits_id", &FTOF_hits_id);
   chain.SetBranchAddress("FTOF_hits_pathLength", &FTOF_hits_pathLength);
   chain.SetBranchAddress("FTOF_hits_time", &FTOF_hits_time);
   int num_of_events = (int)chain.GetEntries();
   int total = 0;
   for (int current_event = 0; current_event < num_of_events; current_event++) {
     chain.GetEntry(current_event);
-    if (REC_Particle_pid->size() == 0 || REC_Scintillator_path->size() == 0 ||
-        REC_Scintillator_path->size() < REC_Particle_pid->size() ||
-        REC_Particle_pid->at(0) != 11)
-      continue;
+    if (REC_Particle_pid->size() == 0) continue;
 
     //    double electron_vertex =
     //        vertex_time(FTOF_hits_time->at(0), FTOF_hits_pathLength->at(0),
     //        1.0);
-
-    std::cout << "First\t" << REC_Particle_pid->at(0) << std::endl;
     double electron_vertex = vertex_time(REC_Scintillator_time->at(0),
                                          REC_Scintillator_path->at(0), 1.0);
 
@@ -158,6 +155,8 @@ void test(char *fin, char *fout) {
                                        (double)num_of_events)) << "%\r\r"
               << std::flush;
     for (int i = 1; i < REC_Particle_pid->size(); i++) {
+      std::cout << "FTOF_hits_id\t" << FTOF_hits_id->at(REC_Particle_pid->at(i))
+                << std::endl;
       double px = REC_Particle_px->at(i) * REC_Particle_px->at(i);
       double py = REC_Particle_py->at(i) * REC_Particle_py->at(i);
       double pz = REC_Particle_pz->at(i) * REC_Particle_pz->at(i);
@@ -204,9 +203,12 @@ void test(char *fin, char *fout) {
         } else if (abs(REC_Particle_pid->at(i)) == 211) {
           deltat_pion_withID->Fill(P, dt_pion);
           mom_vs_beta_pion->Fill(P, REC_Particle_beta->at(i));
-        } else if (REC_Particle_pid->at(i) == 11) {
+
+        } else if (i == 0) {  // else if (REC_Particle_pid->at(i) == 11) {
           deltat_electron_withID->Fill(P, dt_electron);
           mom_vs_beta_electron->Fill(P, REC_Particle_beta->at(i));
+          std::cout << "Electron beta\t" << REC_Particle_beta->at(i)
+                    << std::endl;
         }
       }
 
