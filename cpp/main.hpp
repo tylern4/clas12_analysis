@@ -38,13 +38,14 @@ std::vector<int> *REC_Particle_charge;
 std::vector<float> *REC_Particle_beta;
 std::vector<float> *REC_Particle_chi2pid;
 std::vector<int> *REC_Particle_status;
+
 std::vector<int> *REC_Scintillator_pindex;
 std::vector<float> *REC_Scintillator_time;
 std::vector<float> *REC_Scintillator_path;
 
-std::vector<int> *FTOF_hits_id;
-std::vector<float> *FTOF_hits_pathLength;
-std::vector<float> *FTOF_hits_time;
+std::vector<int> *REC_ForwardTagger_pindex;
+std::vector<float> *REC_ForwardTagger_time;
+std::vector<float> *REC_ForwardTagger_path;
 
 TH1D *momentum = new TH1D("mom", "mom", 500, 0, 10);
 TH1D *W_hist = new TH1D("W", "W", 500, 0, 5);
@@ -82,6 +83,27 @@ TH2D *deltat_pion_withID =
 TH2D *deltat_electron_withID = new TH2D(
     "deltat_electron_withID", "#Deltat assuming mass of electron with ID", 500,
     -1.0, 10.0, 500, -10.0, 10.0);
+
+TH2D *deltat_proton_ForwardTagger =
+    new TH2D("deltat_proton_ForwardTagger", "#Deltat assuming mass of proton",
+             500, -1.0, 10.0, 500, -10.0, 10.0);
+TH2D *deltat_pion_ForwardTagger =
+    new TH2D("deltat_pion_ForwardTagger", "#Deltat assuming mass of pion", 500,
+             -1.0, 10.0, 500, -10.0, 10.0);
+TH2D *deltat_electron_ForwardTagger = new TH2D(
+    "deltat_electron_ForwardTagger", "#Deltat assuming mass of electron", 500,
+    -1.0, 10.0, 500, -10.0, 10.0);
+TH2D *deltat_proton_withID_ForwardTagger =
+    new TH2D("deltat_proton_withID_ForwardTagger",
+             "#Deltat assuming mass of proton with ID", 500, -1.0, 10.0, 500,
+             -10.0, 10.0);
+TH2D *deltat_pion_withID_ForwardTagger = new TH2D(
+    "deltat_pion_withID_ForwardTagger", "#Deltat assuming mass of pion with ID",
+    500, -1.0, 10.0, 500, -10.0, 10.0);
+TH2D *deltat_electron_withID_ForwardTagger =
+    new TH2D("deltat_electron_withID_ForwardTagger",
+             "#Deltat assuming mass of electron with ID", 500, -1.0, 10.0, 500,
+             -10.0, 10.0);
 
 // Calcuating Q^2
 // q^mu^2 = (e^mu - e^mu')^2 = -Q^2
@@ -142,9 +164,9 @@ void test(char *fin, char *fout) {
   chain.SetBranchAddress("REC_Scintillator_pindex", &REC_Scintillator_pindex);
   chain.SetBranchAddress("REC_Scintillator_time", &REC_Scintillator_time);
   chain.SetBranchAddress("REC_Scintillator_path", &REC_Scintillator_path);
-  chain.SetBranchAddress("FTOF_hits_id", &FTOF_hits_id);
-  chain.SetBranchAddress("FTOF_hits_pathLength", &FTOF_hits_pathLength);
-  chain.SetBranchAddress("FTOF_hits_time", &FTOF_hits_time);
+  chain.SetBranchAddress("REC_ForwardTagger_pindex", &REC_ForwardTagger_pindex);
+  chain.SetBranchAddress("REC_ForwardTagger_time", &REC_ForwardTagger_time);
+  chain.SetBranchAddress("REC_ForwardTagger_path", &REC_ForwardTagger_path);
   int num_of_events = (int)chain.GetEntries();
   int total = 0;
   for (int current_event = 0; current_event < num_of_events; current_event++) {
@@ -203,12 +225,12 @@ void test(char *fin, char *fout) {
       W_vs_q2->Fill(W, Q2);
     }
 
-    for (int j = 1; j < REC_Scintillator_time->size(); j++) {
-      if (REC_Scintillator_time->size() == 0) continue;
-      int index = REC_Scintillator_pindex->at(j);
+    for (int j = 1; j < REC_ForwardTagger_time->size(); j++) {
+      if (REC_ForwardTagger_time->size() == 0) continue;
+      int index = REC_ForwardTagger_pindex->at(j);
 
-      double electron_vertex = vertex_time(REC_Scintillator_time->at(0),
-                                           REC_Scintillator_path->at(0), 1.0);
+      double electron_vertex = vertex_time(REC_ForwardTagger_time->at(0),
+                                           REC_ForwardTagger_path->at(0), 1.0);
 
       double px = REC_Particle_px->at(index) * REC_Particle_px->at(index);
       double py = REC_Particle_py->at(index) * REC_Particle_py->at(index);
@@ -216,33 +238,38 @@ void test(char *fin, char *fout) {
       P = TMath::Sqrt(px + py + pz);
 
       double dt_electron =
-          deltat(electron_vertex, MASS_E, P, REC_Scintillator_time->at(j),
-                 REC_Scintillator_path->at(j));
+          deltat(electron_vertex, MASS_E, P, REC_ForwardTagger_time->at(j),
+                 REC_ForwardTagger_path->at(j));
       double dt_pion =
-          deltat(electron_vertex, MASS_PIP, P, REC_Scintillator_time->at(j),
-                 REC_Scintillator_path->at(j));
+          deltat(electron_vertex, MASS_PIP, P, REC_ForwardTagger_time->at(j),
+                 REC_ForwardTagger_path->at(j));
       double dt_proton =
-          deltat(electron_vertex, MASS_P, P, REC_Scintillator_time->at(j),
-                 REC_Scintillator_path->at(j));
+          deltat(electron_vertex, MASS_P, P, REC_ForwardTagger_time->at(j),
+                 REC_ForwardTagger_path->at(j));
 
-      deltat_pion->Fill(P, dt_pion);
-      deltat_proton->Fill(P, dt_proton);
-      deltat_electron->Fill(P, dt_electron);
+      deltat_pion_ForwardTagger->Fill(P, dt_pion);
+      deltat_proton_ForwardTagger->Fill(P, dt_proton);
+      deltat_electron_ForwardTagger->Fill(P, dt_electron);
 
       if (REC_Particle_pid->at(index) == 2212) {
-        deltat_proton_withID->Fill(P, dt_proton);
+        deltat_proton_withID_ForwardTagger->Fill(P, dt_proton);
       } else if (REC_Particle_pid->at(index) == 211) {
-        deltat_pion_withID->Fill(P, dt_pion);
+        deltat_pion_withID_ForwardTagger->Fill(P, dt_pion);
       } else if (REC_Particle_pid->at(index) == 11) {
-        deltat_electron_withID->Fill(P, dt_electron);
+        deltat_electron_withID_ForwardTagger->Fill(P, dt_electron);
       }
     }
   }
   out->cd();
+  TDirectory *wvsq2 = out->mkdir("wvsq2");
+  wvsq2->cd();
   momentum->Write();
   W_hist->Write();
   Q2_hist->Write();
   W_vs_q2->Write();
+
+  TDirectory *mom_vs_beta = out->mkdir("mom_vs_beta");
+  mom_vs_beta->cd();
   mom_vs_beta->Write();
   mom_vs_beta_pos->Write();
   mom_vs_beta_neg->Write();
@@ -250,12 +277,25 @@ void test(char *fin, char *fout) {
   mom_vs_beta_pion->Write();
   mom_vs_beta_electron->Write();
   mom_vs_beta_0->Write();
+
+  TDirectory *deltat_ftof = out->mkdir("deltat_ftof");
+  deltat_ftof->cd();
   deltat_pion->Write();
   deltat_proton->Write();
   deltat_electron->Write();
   deltat_pion_withID->Write();
   deltat_proton_withID->Write();
   deltat_electron_withID->Write();
+
+  TDirectory *deltat_forwardTagger = out->mkdir("deltat_forwardTagger");
+  deltat_forwardTagger->cd();
+  deltat_pion_ForwardTagger->Write();
+  deltat_proton_ForwardTagger->Write();
+  deltat_electron_ForwardTagger->Write();
+  deltat_pion_withID_ForwardTagger->Write();
+  deltat_proton_withID_ForwardTagger->Write();
+  deltat_electron_withID_ForwardTagger->Write();
+
   out->Close();
   chain.Reset();
   std::cerr << "\n" << total << std::endl;
