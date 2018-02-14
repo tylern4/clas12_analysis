@@ -225,6 +225,41 @@ void test(char *fin, char *fout) {
       W_vs_q2->Fill(W, Q2);
     }
 
+    for (int j = 1; j < REC_Scintillator_time->size(); j++) {
+      if (REC_Scintillator_time->size() == 0) continue;
+      int index = REC_Scintillator_pindex->at(j);
+
+      double electron_vertex = vertex_time(REC_Scintillator_time->at(0),
+                                           REC_Scintillator_path->at(0), 1.0);
+
+      double px = REC_Particle_px->at(index) * REC_Particle_px->at(index);
+      double py = REC_Particle_py->at(index) * REC_Particle_py->at(index);
+      double pz = REC_Particle_pz->at(index) * REC_Particle_pz->at(index);
+      P = TMath::Sqrt(px + py + pz);
+
+      double dt_electron =
+          deltat(electron_vertex, MASS_E, P, REC_Scintillator_time->at(j),
+                 REC_Scintillator_path->at(j));
+      double dt_pion =
+          deltat(electron_vertex, MASS_PIP, P, REC_Scintillator_time->at(j),
+                 REC_Scintillator_path->at(j));
+      double dt_proton =
+          deltat(electron_vertex, MASS_P, P, REC_Scintillator_time->at(j),
+                 REC_Scintillator_path->at(j));
+
+      deltat_pion_ForwardTagger->Fill(P, dt_pion);
+      deltat_proton_ForwardTagger->Fill(P, dt_proton);
+      deltat_electron_ForwardTagger->Fill(P, dt_electron);
+
+      if (REC_Particle_pid->at(index) == 2212) {
+        deltat_proton_withID_ForwardTagger->Fill(P, dt_proton);
+      } else if (REC_Particle_pid->at(index) == 211) {
+        deltat_pion_withID_ForwardTagger->Fill(P, dt_pion);
+      } else if (REC_Particle_pid->at(index) == 11) {
+        deltat_electron_withID_ForwardTagger->Fill(P, dt_electron);
+      }
+    }
+
     for (int j = 1; j < REC_ForwardTagger_time->size(); j++) {
       if (REC_ForwardTagger_time->size() == 0) continue;
       int index = REC_ForwardTagger_pindex->at(j);
