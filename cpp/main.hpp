@@ -70,23 +70,23 @@ TH2D *deltat_proton =
     new TH2D("deltat_proton", "#Deltat assuming mass of proton", 500, -1.0,
              10.0, 500, -10.0, 10.0);
 TH2D *deltat_pion = new TH2D("deltat_pion", "#Deltat assuming mass of pion",
-                             500, -1.0, 10.0, 500, -10.0, 10.0);
+                             500, 0.0, 10.0, 500, -10.0, 10.0);
 TH2D *deltat_electron =
     new TH2D("deltat_electron", "#Deltat assuming mass of electron", 500, -1.0,
              10.0, 500, -10.0, 10.0);
 TH2D *deltat_proton_withID =
     new TH2D("deltat_proton_withID", "#Deltat assuming mass of proton with ID",
-             500, -1.0, 10.0, 500, -10.0, 10.0);
+             500, 0.0, 10.0, 500, -10.0, 10.0);
 TH2D *deltat_pion_withID =
     new TH2D("deltat_pion_withID", "#Deltat assuming mass of pion with ID", 500,
-             -1.0, 10.0, 500, -10.0, 10.0);
+             0.0, 10.0, 500, -10.0, 10.0);
 TH2D *deltat_electron_withID = new TH2D(
     "deltat_electron_withID", "#Deltat assuming mass of electron with ID", 500,
-    -1.0, 10.0, 500, -10.0, 10.0);
+    0.0, 10.0, 500, -10.0, 10.0);
 
 TH2D *deltat_electron_0th =
     new TH2D("deltat_electron_0th", "#Deltat assuming mass of electron at 0th",
-             500, -1.0, 10.0, 500, -10.0, 10.0);
+             500, 0.0, 10.0, 500, -10.0, 10.0);
 
 TH2D *deltat_electron_0th_ID =
     new TH2D("deltat_electron_0th_ID",
