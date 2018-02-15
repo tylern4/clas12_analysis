@@ -171,7 +171,7 @@ void test(char *fin, char *fout) {
       double pz = REC_Particle_pz->at(i) * REC_Particle_pz->at(i);
 
       P = TMath::Sqrt(px + py + pz);
-      if (i == 0) {
+      if (i == 0 && REC_Particle_beta->at(i) != 0) {
         mom_vs_beta_0th->Fill(P, REC_Particle_beta->at(i));
         continue;
       }
