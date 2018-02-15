@@ -84,26 +84,14 @@ TH2D *deltat_electron_withID = new TH2D(
     "deltat_electron_withID", "#Deltat assuming mass of electron with ID", 500,
     -1.0, 10.0, 500, -10.0, 10.0);
 
-TH2D *deltat_proton_ForwardTagger =
-    new TH2D("deltat_proton_ForwardTagger", "#Deltat assuming mass of proton",
+TH2D *deltat_electron_0th =
+    new TH2D("deltat_electron_0th", "#Deltat assuming mass of electron at 0th",
              500, -1.0, 10.0, 500, -10.0, 10.0);
-TH2D *deltat_pion_ForwardTagger =
-    new TH2D("deltat_pion_ForwardTagger", "#Deltat assuming mass of pion", 500,
-             -1.0, 10.0, 500, -10.0, 10.0);
-TH2D *deltat_electron_ForwardTagger = new TH2D(
-    "deltat_electron_ForwardTagger", "#Deltat assuming mass of electron", 500,
-    -1.0, 10.0, 500, -10.0, 10.0);
-TH2D *deltat_proton_withID_ForwardTagger =
-    new TH2D("deltat_proton_withID_ForwardTagger",
-             "#Deltat assuming mass of proton with ID", 500, -1.0, 10.0, 500,
-             -10.0, 10.0);
-TH2D *deltat_pion_withID_ForwardTagger = new TH2D(
-    "deltat_pion_withID_ForwardTagger", "#Deltat assuming mass of pion with ID",
-    500, -1.0, 10.0, 500, -10.0, 10.0);
-TH2D *deltat_electron_withID_ForwardTagger =
-    new TH2D("deltat_electron_withID_ForwardTagger",
-             "#Deltat assuming mass of electron with ID", 500, -1.0, 10.0, 500,
-             -10.0, 10.0);
+
+TH2D *deltat_electron_0th_ID =
+    new TH2D("deltat_electron_0th_ID",
+             "#Deltat assuming mass of electron with ID at 0th", 500, -1.0,
+             10.0, 500, -10.0, 10.0);
 
 // Calcuating Q^2
 // q^mu^2 = (e^mu - e^mu')^2 = -Q^2
@@ -141,8 +129,7 @@ double deltat(double electron_vertex_time, double beta, double sc_t,
 
 void test(char *fin, char *fout) {
   double energy = CLAS12_E;
-  if (getenv("CLAS12_E") != NULL)
-    energy = atof(getenv("CLAS12_E"));
+  if (getenv("CLAS12_E") != NULL) energy = atof(getenv("CLAS12_E"));
 
   TFile *out = new TFile(fout, "RECREATE");
   double P;
@@ -172,8 +159,7 @@ void test(char *fin, char *fout) {
   int total = 0;
   for (int current_event = 0; current_event < num_of_events; current_event++) {
     chain.GetEntry(current_event);
-    if (REC_Particle_pid->size() == 0)
-      continue;
+    if (REC_Particle_pid->size() == 0) continue;
 
     double per = ((double)current_event / (double)num_of_events);
     std::cerr << "\t\t" << std::floor((100 * (double)current_event /
@@ -207,8 +193,7 @@ void test(char *fin, char *fout) {
       }
 
       total++;
-      if (REC_Particle_pid->at(0) != 11)
-        continue;
+      if (REC_Particle_pid->at(0) != 11) continue;
       // Setup scattered electron 4 vector
       TVector3 e_mu_prime_3;
       TLorentzVector e_mu_prime;
@@ -225,8 +210,7 @@ void test(char *fin, char *fout) {
     }
 
     for (int j = 0; j < REC_Scintillator_time->size(); j++) {
-      if (REC_Scintillator_time->size() == 0)
-        continue;
+      if (REC_Scintillator_time->size() == 0) continue;
       int index = REC_Scintillator_pindex->at(j);
 
       double electron_vertex = vertex_time(REC_Scintillator_time->at(0),
@@ -247,52 +231,25 @@ void test(char *fin, char *fout) {
           deltat(electron_vertex, MASS_P, P, REC_Scintillator_time->at(j),
                  REC_Scintillator_path->at(j));
 
+      if (index == 0) {
+        deltat_electron_0th->Fill(P, dt_electron);
+      }
+      if (index == 0 && REC_Particle_pid->at(index) == 11) {
+        deltat_electron_0th_ID->Fill(P, dt_electron);
+      }
+
+      if (index == 0) continue;
+
       deltat_pion->Fill(P, dt_pion);
       deltat_proton->Fill(P, dt_proton);
       deltat_electron->Fill(P, dt_electron);
 
       if (REC_Particle_pid->at(index) == 2212) {
         deltat_proton_withID->Fill(P, dt_proton);
-      } else if (abs(REC_Particle_pid->at(index)) == 211) {
+      } else if (REC_Particle_pid->at(index) == 211) {
         deltat_pion_withID->Fill(P, dt_pion);
       } else if (REC_Particle_pid->at(index) == 11) {
         deltat_electron_withID->Fill(P, dt_electron);
-      }
-    }
-
-    for (int j = 0; j < REC_ForwardTagger_time->size(); j++) {
-      if (REC_ForwardTagger_time->size() == 0)
-        continue;
-      int index = REC_ForwardTagger_pindex->at(j);
-
-      double electron_vertex = vertex_time(REC_ForwardTagger_time->at(0),
-                                           REC_ForwardTagger_path->at(0), 1.0);
-
-      double px = REC_Particle_px->at(index) * REC_Particle_px->at(index);
-      double py = REC_Particle_py->at(index) * REC_Particle_py->at(index);
-      double pz = REC_Particle_pz->at(index) * REC_Particle_pz->at(index);
-      P = TMath::Sqrt(px + py + pz);
-
-      double dt_electron =
-          deltat(electron_vertex, MASS_E, P, REC_ForwardTagger_time->at(j),
-                 REC_ForwardTagger_path->at(j));
-      double dt_pion =
-          deltat(electron_vertex, MASS_PIP, P, REC_ForwardTagger_time->at(j),
-                 REC_ForwardTagger_path->at(j));
-      double dt_proton =
-          deltat(electron_vertex, MASS_P, P, REC_ForwardTagger_time->at(j),
-                 REC_ForwardTagger_path->at(j));
-
-      deltat_pion_ForwardTagger->Fill(P, dt_pion);
-      deltat_proton_ForwardTagger->Fill(P, dt_proton);
-      deltat_electron_ForwardTagger->Fill(P, dt_electron);
-
-      if (REC_Particle_pid->at(index) == 2212) {
-        deltat_proton_withID_ForwardTagger->Fill(P, dt_proton);
-      } else if (REC_Particle_pid->at(index) == 211) {
-        deltat_pion_withID_ForwardTagger->Fill(P, dt_pion);
-      } else if (REC_Particle_pid->at(index) == 11) {
-        deltat_electron_withID_ForwardTagger->Fill(P, dt_electron);
       }
     }
   }
@@ -322,15 +279,8 @@ void test(char *fin, char *fout) {
   deltat_pion_withID->Write();
   deltat_proton_withID->Write();
   deltat_electron_withID->Write();
-
-  TDirectory *deltat_forwardTagger = out->mkdir("deltat_forwardTagger");
-  deltat_forwardTagger->cd();
-  deltat_pion_ForwardTagger->Write();
-  deltat_proton_ForwardTagger->Write();
-  deltat_electron_ForwardTagger->Write();
-  deltat_pion_withID_ForwardTagger->Write();
-  deltat_proton_withID_ForwardTagger->Write();
-  deltat_electron_withID_ForwardTagger->Write();
+  deltat_electron_0th_ID->Write();
+  deltat_electron_0th->Write();
 
   out->Close();
   chain.Reset();
