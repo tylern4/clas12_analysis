@@ -53,8 +53,8 @@ TH1D *Q2_hist = new TH1D("Q2", "Q2", 500, 0, 10);
 TH2D *W_vs_q2 = new TH2D("W_vs_q2", "W_vs_q2", 500, 0, 5, 500, 0, 8);
 TH2D *mom_vs_beta =
     new TH2D("mom_vs_beta", "mom_vs_beta", 500, 0, 5, 500, 0.0, 1.2);
-TH2D *mom_vs_beta_0 =
-    new TH2D("mom_vs_beta_0", "mom_vs_beta_0", 500, 0, 5, 500, 0.0, 1.2);
+TH2D *mom_vs_beta_0th =
+    new TH2D("mom_vs_beta_0th", "mom_vs_beta_0th", 500, 0, 5, 500, 0.0, 1.2);
 TH2D *mom_vs_beta_pos =
     new TH2D("mom_vs_beta_pos", "mom_vs_beta_pos", 500, 0, 5, 500, 0.0, 1.2);
 TH2D *mom_vs_beta_neg =
@@ -171,9 +171,8 @@ void test(char *fin, char *fout) {
       double pz = REC_Particle_pz->at(i) * REC_Particle_pz->at(i);
 
       P = TMath::Sqrt(px + py + pz);
-      if (REC_Particle_pid->at(i) == 0)
-        mom_vs_beta_0->Fill(P, REC_Particle_beta->at(i));
       if (REC_Particle_beta->at(i) != 0) {
+        if (i == 0) mom_vs_beta_0th->Fill(P, REC_Particle_beta->at(i));
         momentum->Fill(P);
         mom_vs_beta->Fill(P, REC_Particle_beta->at(i));
 
@@ -269,7 +268,7 @@ void test(char *fin, char *fout) {
   mom_vs_beta_proton->Write();
   mom_vs_beta_pion->Write();
   mom_vs_beta_electron->Write();
-  mom_vs_beta_0->Write();
+  mom_vs_beta_0th->Write();
 
   TDirectory *deltat_ftof = out->mkdir("deltat_ftof");
   deltat_ftof->cd();
