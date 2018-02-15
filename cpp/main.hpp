@@ -166,31 +166,31 @@ void test(char *fin, char *fout) {
                                        (double)num_of_events)) << "%\r\r"
               << std::flush;
     for (int i = 0; i < REC_Particle_pid->size(); i++) {
-      double px = REC_Particle_px->at(i) * REC_Particle_px->at(i);
-      double py = REC_Particle_py->at(i) * REC_Particle_py->at(i);
-      double pz = REC_Particle_pz->at(i) * REC_Particle_pz->at(i);
+      double px = REC_Particle_px[i] * REC_Particle_px[i];
+      double py = REC_Particle_py[i] * REC_Particle_py[i];
+      double pz = REC_Particle_pz[i] * REC_Particle_pz[i];
 
       P = TMath::Sqrt(px + py + pz);
-      if (i == 0 && REC_Particle_beta->at(i) != 0) {
-        mom_vs_beta_0th->Fill(P, REC_Particle_beta->at(i));
+      if (i == 0 && REC_Particle_beta[i] != 0) {
+        mom_vs_beta_0th->Fill(P, REC_Particle_beta[i]);
         continue;
       }
-      if (REC_Particle_beta->at(i) != 0) {
+      if (REC_Particle_beta[i] != 0) {
         momentum->Fill(P);
-        mom_vs_beta->Fill(P, REC_Particle_beta->at(i));
+        mom_vs_beta->Fill(P, REC_Particle_beta[i]);
 
-        if (REC_Particle_charge->at(i) > 0) {
-          mom_vs_beta_pos->Fill(P, REC_Particle_beta->at(i));
-        } else if (REC_Particle_charge->at(i) < 0) {
-          mom_vs_beta_neg->Fill(P, REC_Particle_beta->at(i));
+        if (REC_Particle_charge[i] > 0) {
+          mom_vs_beta_pos->Fill(P, REC_Particle_beta[i]);
+        } else if (REC_Particle_charge[i] < 0) {
+          mom_vs_beta_neg->Fill(P, REC_Particle_beta[i]);
         }
 
-        if (REC_Particle_pid->at(i) == 2212) {
-          mom_vs_beta_proton->Fill(P, REC_Particle_beta->at(i));
-        } else if (abs(REC_Particle_pid->at(i)) == 211) {
-          mom_vs_beta_pion->Fill(P, REC_Particle_beta->at(i));
-        } else if (REC_Particle_pid->at(i) == 11) {
-          mom_vs_beta_electron->Fill(P, REC_Particle_beta->at(i));
+        if (REC_Particle_pid[i] == 2212) {
+          mom_vs_beta_proton->Fill(P, REC_Particle_beta[i]);
+        } else if (abs(REC_Particle_pid[i]) == 211) {
+          mom_vs_beta_pion->Fill(P, REC_Particle_beta[i]);
+        } else if (REC_Particle_pid[i] == 11) {
+          mom_vs_beta_electron->Fill(P, REC_Particle_beta[i]);
         }
       }
 
