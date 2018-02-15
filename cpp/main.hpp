@@ -175,10 +175,6 @@ void test(char *fin, char *fout) {
     if (REC_Particle_pid->size() == 0)
       continue;
 
-    //    double electron_vertex =
-    //        vertex_time(FTOF_hits_time->at(0), FTOF_hits_pathLength->at(0),
-    //        1.0);
-
     double per = ((double)current_event / (double)num_of_events);
     std::cerr << "\t\t" << std::floor((100 * (double)current_event /
                                        (double)num_of_events)) << "%\r\r"
@@ -205,7 +201,7 @@ void test(char *fin, char *fout) {
           mom_vs_beta_proton->Fill(P, REC_Particle_beta->at(i));
         } else if (abs(REC_Particle_pid->at(i)) == 211) {
           mom_vs_beta_pion->Fill(P, REC_Particle_beta->at(i));
-        } else if (i == 0) { // else if (REC_Particle_pid->at(i) == 11) {
+        } else if (REC_Particle_pid->at(i) == 11) {
           mom_vs_beta_electron->Fill(P, REC_Particle_beta->at(i));
         }
       }
@@ -228,7 +224,7 @@ void test(char *fin, char *fout) {
       W_vs_q2->Fill(W, Q2);
     }
 
-    for (int j = 1; j < REC_Scintillator_time->size(); j++) {
+    for (int j = 0; j < REC_Scintillator_time->size(); j++) {
       if (REC_Scintillator_time->size() == 0)
         continue;
       int index = REC_Scintillator_pindex->at(j);
@@ -251,20 +247,20 @@ void test(char *fin, char *fout) {
           deltat(electron_vertex, MASS_P, P, REC_Scintillator_time->at(j),
                  REC_Scintillator_path->at(j));
 
-      deltat_pion_ForwardTagger->Fill(P, dt_pion);
-      deltat_proton_ForwardTagger->Fill(P, dt_proton);
-      deltat_electron_ForwardTagger->Fill(P, dt_electron);
+      deltat_pion->Fill(P, dt_pion);
+      deltat_proton->Fill(P, dt_proton);
+      deltat_electron->Fill(P, dt_electron);
 
       if (REC_Particle_pid->at(index) == 2212) {
-        deltat_proton_withID_ForwardTagger->Fill(P, dt_proton);
-      } else if (REC_Particle_pid->at(index) == 211) {
-        deltat_pion_withID_ForwardTagger->Fill(P, dt_pion);
+        deltat_proton_withID->Fill(P, dt_proton);
+      } else if (abs(REC_Particle_pid->at(index)) == 211) {
+        deltat_pion_withID->Fill(P, dt_pion);
       } else if (REC_Particle_pid->at(index) == 11) {
-        deltat_electron_withID_ForwardTagger->Fill(P, dt_electron);
+        deltat_electron_withID->Fill(P, dt_electron);
       }
     }
 
-    for (int j = 1; j < REC_ForwardTagger_time->size(); j++) {
+    for (int j = 0; j < REC_ForwardTagger_time->size(); j++) {
       if (REC_ForwardTagger_time->size() == 0)
         continue;
       int index = REC_ForwardTagger_pindex->at(j);
