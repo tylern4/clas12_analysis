@@ -165,14 +165,17 @@ void test(char *fin, char *fout) {
     std::cerr << "\t\t" << std::floor((100 * (double)current_event /
                                        (double)num_of_events)) << "%\r\r"
               << std::flush;
-    for (int i = 1; i < REC_Particle_pid->size(); i++) {
+    for (int i = 0; i < REC_Particle_pid->size(); i++) {
       double px = REC_Particle_px->at(i) * REC_Particle_px->at(i);
       double py = REC_Particle_py->at(i) * REC_Particle_py->at(i);
       double pz = REC_Particle_pz->at(i) * REC_Particle_pz->at(i);
 
       P = TMath::Sqrt(px + py + pz);
+      if (i == 0) {
+        mom_vs_beta_0th->Fill(P, REC_Particle_beta->at(i));
+        continue;
+      }
       if (REC_Particle_beta->at(i) != 0) {
-        if (i == 0) mom_vs_beta_0th->Fill(P, REC_Particle_beta->at(i));
         momentum->Fill(P);
         mom_vs_beta->Fill(P, REC_Particle_beta->at(i));
 
