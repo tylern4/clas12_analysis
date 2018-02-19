@@ -224,6 +224,10 @@ void test(char *fin, char *fout) {
 
     for (int j = 0; j < REC_Scintillator_time->size(); j++) {
       if (REC_Scintillator_time->size() == 0) continue;
+
+      std::cout << electron_vertex - vertex_time(REC_Scintillator_time->at(0),
+                                                 REC_Scintillator_path->at(0),
+                                                 1.0) << std::endl;
       int index = REC_Scintillator_pindex->at(j);
 
       double px = REC_Particle_px->at(index) * REC_Particle_px->at(index);
