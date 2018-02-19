@@ -43,10 +43,6 @@ std::vector<int> *REC_Scintillator_pindex;
 std::vector<float> *REC_Scintillator_time;
 std::vector<float> *REC_Scintillator_path;
 
-std::vector<int> *REC_ForwardTagger_pindex;
-std::vector<float> *REC_ForwardTagger_time;
-std::vector<float> *REC_ForwardTagger_path;
-
 TH1D *momentum = new TH1D("mom", "mom", 500, 0, 10);
 TH1D *W_hist = new TH1D("W", "W", 500, 0, 5);
 TH1D *Q2_hist = new TH1D("Q2", "Q2", 500, 0, 10);
@@ -152,9 +148,7 @@ void test(char *fin, char *fout) {
   chain.SetBranchAddress("REC_Scintillator_pindex", &REC_Scintillator_pindex);
   chain.SetBranchAddress("REC_Scintillator_time", &REC_Scintillator_time);
   chain.SetBranchAddress("REC_Scintillator_path", &REC_Scintillator_path);
-  chain.SetBranchAddress("REC_ForwardTagger_pindex", &REC_ForwardTagger_pindex);
-  chain.SetBranchAddress("REC_ForwardTagger_time", &REC_ForwardTagger_time);
-  chain.SetBranchAddress("REC_ForwardTagger_path", &REC_ForwardTagger_path);
+
   int num_of_events = (int)chain.GetEntries();
   int total = 0;
   for (int current_event = 0; current_event < num_of_events; current_event++) {
@@ -214,8 +208,8 @@ void test(char *fin, char *fout) {
     double electron_vertex = 0.0;
     for (int j = 0; j < REC_Scintillator_time->size(); j++) {
       if (REC_Scintillator_time->size() == 0) continue;
-      int index = REC_Scintillator_pindex->at(j);
-      if (index == 0) {
+      std::cout << "index: " << index << "\tj: " << j << std::endl;
+      if (REC_Scintillator_pindex->at(j) == 0) {
         electron_vertex = vertex_time(REC_Scintillator_time->at(index),
                                       REC_Scintillator_path->at(index), 1.0);
         continue;
@@ -225,9 +219,6 @@ void test(char *fin, char *fout) {
     for (int j = 0; j < REC_Scintillator_time->size(); j++) {
       if (REC_Scintillator_time->size() == 0) continue;
 
-      std::cout << electron_vertex - vertex_time(REC_Scintillator_time->at(0),
-                                                 REC_Scintillator_path->at(0),
-                                                 1.0) << std::endl;
       int index = REC_Scintillator_pindex->at(j);
 
       double px = REC_Particle_px->at(index) * REC_Particle_px->at(index);
