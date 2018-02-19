@@ -211,12 +211,20 @@ void test(char *fin, char *fout) {
       W_vs_q2->Fill(W, Q2);
     }
 
+    double electron_vertex = 0.0;
     for (int j = 0; j < REC_Scintillator_time->size(); j++) {
       if (REC_Scintillator_time->size() == 0) continue;
       int index = REC_Scintillator_pindex->at(j);
+      if (index == 0) {
+        electron_vertex = vertex_time(REC_Scintillator_time->at(index),
+                                      REC_Scintillator_path->at(index), 1.0);
+        continue;
+      }
+    }
 
-      double electron_vertex = vertex_time(REC_Scintillator_time->at(0),
-                                           REC_Scintillator_path->at(0), 1.0);
+    for (int j = 0; j < REC_Scintillator_time->size(); j++) {
+      if (REC_Scintillator_time->size() == 0) continue;
+      int index = REC_Scintillator_pindex->at(j);
 
       double px = REC_Particle_px->at(index) * REC_Particle_px->at(index);
       double py = REC_Particle_py->at(index) * REC_Particle_py->at(index);
