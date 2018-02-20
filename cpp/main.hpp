@@ -11,12 +11,14 @@
 #include <fstream>
 #include "TChain.h"
 #include <vector>
+#include "colors.hpp"
 #include "filehandeler.hpp"
 #include "constants.hpp"
 #include "physics.hpp"
 #include "histogram.hpp"
+#include "deltat.hpp"
 
-void test(char *fin, char *fout) {
+void datahandeler(char *fin, char *fout) {
   double energy = CLAS12_E;
   if (getenv("CLAS12_E") != NULL) energy = atof(getenv("CLAS12_E"));
   TLorentzVector e_mu(0.0, 0.0, energy, energy);
@@ -66,12 +68,13 @@ void test(char *fin, char *fout) {
     }
 
     double electron_vertex = 0.0;
-
+    int vertex_id;
     for (int j = 0; j < sc_time->size(); j++) {
       if (sc_time->size() == 0) continue;
 
       int index = pindex->at(j);
       if (pindex->at(j) == 0) {
+        vertex_id = pindex->at(j);
         electron_vertex =
             physics::vertex_time(sc_time->at(index), sc_r->at(index), 1.0);
         continue;
@@ -80,6 +83,7 @@ void test(char *fin, char *fout) {
 
     for (int j = 0; j < sc_time->size(); j++) {
       if (sc_time->size() == 0) continue;
+      DeltaT *dt = new DeltaT(sc_time->at(vertex_id), sc_r->at(vertex_id));
       int index = pindex->at(j);
 
       double P_x = px->at(index) * px->at(index);
@@ -87,19 +91,14 @@ void test(char *fin, char *fout) {
       double P_z = pz->at(index) * pz->at(index);
       P = TMath::Sqrt(P_x + P_y + P_z);
 
-      double dt_electron = physics::deltat(electron_vertex, MASS_E, P,
-                                           sc_time->at(j), sc_r->at(j));
+      dt->deltat(P, sc_time->at(j), sc_r->at(j));
+
       if (index == 0) {
-        hist->Fill_mom_vs_beta_0th(pid->at(index), P, dt_electron);
+        hist->Fill_mom_vs_beta_0th(pid->at(index), P, dt);
         continue;
       }
 
-      double dt_pion = physics::deltat(electron_vertex, MASS_PIP, P,
-                                       sc_time->at(j), sc_r->at(j));
-      double dt_proton = physics::deltat(electron_vertex, MASS_P, P,
-                                         sc_time->at(j), sc_r->at(j));
-
-      hist->Fill_deltat(pid->at(index), P, dt_proton, dt_pion, dt_electron);
+      hist->Fill_deltat(pid->at(index), P, dt);
     }
   }
 

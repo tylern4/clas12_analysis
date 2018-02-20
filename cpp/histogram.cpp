@@ -90,11 +90,20 @@ void Histogram::Fill_deltat(int pid, double P, double dt_proton, double dt_pion,
     deltat_electron_withID->Fill(P, dt_electron);
   }
 }
+
+void Histogram::Fill_mom_vs_beta_0th(int pid, double P, DeltaT *dt) {
+  Fill_mom_vs_beta_0th(pid, P, dt->Get_dt_E());
+}
+
 void Histogram::Fill_mom_vs_beta_0th(int pid, double P, double dt) {
   deltat_electron_0th->Fill(P, dt);
   if (pid == ELECTRON) {
     deltat_electron_0th_ID->Fill(P, dt);
   }
+}
+
+void Histogram::Fill_deltat(int pid, double P, DeltaT *dt) {
+  Fill_deltat(pid, P, dt->Get_dt_P(), dt->Get_dt_Pi(), dt->Get_dt_E());
 }
 
 void Histogram::Write_MomVsBeta() {
