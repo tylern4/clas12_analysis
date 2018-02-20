@@ -86,9 +86,9 @@ class Histogram {
   // Delta T
   void Fill_deltat(int pid, double P, double dt_proton, double dt_pion,
                    double dt_electron);
-  void Fill_deltat(int pid, double P, DeltaT *dt);
+  void Fill_deltat(int pid, double P, Delta_T *dt);
   void Fill_mom_vs_beta_0th(int pid, double P, double dt);
-  void Fill_mom_vs_beta_0th(int pid, double P, DeltaT *dt);
+  void Fill_mom_vs_beta_0th(int pid, double P, Delta_T *dt);
   void Write_deltat();
 };
 

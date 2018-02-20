@@ -6,18 +6,18 @@
 #include "deltat.hpp"
 #include "constants.hpp"
 
-DeltaT::DeltaT(double sc_time, double sc_pathlength) {
+Delta_T::Delta_T(double sc_time, double sc_pathlength) {
   this->vertex = vertex_time(sc_time, sc_pathlength, 1.0);
 }
 
-DeltaT::~DeltaT() {}
+Delta_T::~Delta_T() {}
 
-double DeltaT::vertex_time(double sc_time, double sc_pathlength,
+double Delta_T::vertex_time(double sc_time, double sc_pathlength,
                            double relatavistic_beta) {
   return sc_time - sc_pathlength / (relatavistic_beta * c_special_units);
 }
 
-void DeltaT::deltat(double momentum, double sc_t, double sc_r) {
+void Delta_T::deltat(double momentum, double sc_t, double sc_r) {
   double beta = 0.0;
   beta = 1.0 / sqrt(1.0 +
                     (this->masses.at(0) / momentum) *
@@ -35,6 +35,6 @@ void DeltaT::deltat(double momentum, double sc_t, double sc_r) {
   this->dt_Pi = this->vertex - vertex_time(sc_t, sc_r, beta);
 }
 
-double DeltaT::Get_dt_E() { return this->dt_E; }
-double DeltaT::Get_dt_P() { return this->dt_P; }
-double DeltaT::Get_dt_Pi() { return this->dt_Pi; }
+double Delta_T::Get_dt_E() { return this->dt_E; }
+double Delta_T::Get_dt_P() { return this->dt_P; }
+double Delta_T::Get_dt_Pi() { return this->dt_Pi; }

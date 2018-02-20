@@ -67,23 +67,16 @@ void datahandeler(char *fin, char *fout) {
       hist->Fill_WvsQ2(W, Q2);
     }
 
-    double electron_vertex = 0.0;
     int vertex_id;
-    for (int j = 0; j < sc_time->size(); j++) {
-      if (sc_time->size() == 0) continue;
-
-      int index = pindex->at(j);
+    for (int j = 0; j < sc_time->size(); j++)
       if (pindex->at(j) == 0) {
         vertex_id = pindex->at(j);
-        electron_vertex =
-            physics::vertex_time(sc_time->at(index), sc_r->at(index), 1.0);
         continue;
       }
-    }
 
     for (int j = 0; j < sc_time->size(); j++) {
       if (sc_time->size() == 0) continue;
-      DeltaT *dt = new DeltaT(sc_time->at(vertex_id), sc_r->at(vertex_id));
+      Delta_T *dt = new Delta_T(sc_time->at(vertex_id), sc_r->at(vertex_id));
       int index = pindex->at(j);
 
       double P_x = px->at(index) * px->at(index);

@@ -7,7 +7,7 @@
 #define DT_H_GUARD
 #include "constants.hpp"
 
-class DeltaT {
+class Delta_T {
  private:
   std::vector<double> masses = {MASS_E, MASS_P, MASS_PIP};
   double vertex = 0.0;
@@ -19,8 +19,8 @@ class DeltaT {
                      double relatavistic_beta);
 
  public:
-  DeltaT(double sc_time, double sc_pathlength);
-  ~DeltaT();
+  Delta_T(double sc_time, double sc_pathlength);
+  ~Delta_T();
 
   void deltat(double momentum, double sc_t, double sc_r);
   double Get_dt_E();
