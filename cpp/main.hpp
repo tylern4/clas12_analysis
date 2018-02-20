@@ -31,6 +31,8 @@ void test(char *fin, char *fout) {
   int num_of_events = (int)chain->GetEntries();
   int total = 0;
 
+  Histogram *hist = new Histogram();
+
   for (int current_event = 0; current_event < num_of_events; current_event++) {
     chain->GetEntry(current_event);
     if (pid->size() == 0) continue;
@@ -39,36 +41,19 @@ void test(char *fin, char *fout) {
     std::cerr << "\t\t" << std::floor(100 * per) << "%\r\r" << std::flush;
 
     for (int i = 0; i < pid->size(); i++) {
+      if (pid->size() == 0) continue;
       total++;
       double P_x = px->at(i) * px->at(i);
       double P_y = py->at(i) * py->at(i);
       double P_z = pz->at(i) * pz->at(i);
 
       P = TMath::Sqrt(P_x + P_y + P_z);
+
       if (i == 0 && beta->at(i) != 0) {
-        mom_vs_beta_0th->Fill(P, beta->at(i));
+        hist->Fill_mom_vs_beta_0th(P, beta->at(i));
         continue;
       }
-
-      if (beta->at(i) != 0) {
-        momentum->Fill(P);
-        mom_vs_beta->Fill(P, beta->at(i));
-
-        if (charge->at(i) > 0) {
-          mom_vs_beta_pos->Fill(P, beta->at(i));
-        } else if (charge->at(i) < 0) {
-          mom_vs_beta_neg->Fill(P, beta->at(i));
-        }
-
-        if (pid->at(i) == 2212) {
-          mom_vs_beta_proton->Fill(P, beta->at(i));
-        } else if (abs(pid->at(i)) == 211) {
-          mom_vs_beta_pion->Fill(P, beta->at(i));
-        } else if (pid->at(i) == 11) {
-          mom_vs_beta_electron->Fill(P, beta->at(i));
-        }
-      }
-
+      hist->Fill_MomVsBeta(pid->at(i), charge->at(i), P, beta->at(i));
       if (pid->at(0) != 11) continue;
       // Setup scattered electron 4 vector
       TVector3 e_mu_prime_3;
@@ -77,18 +62,15 @@ void test(char *fin, char *fout) {
       e_mu_prime.SetVectM(e_mu_prime_3, MASS_E);
       double W = physics::W_calc(e_mu, e_mu_prime);
       double Q2 = physics::Q2_calc(e_mu, e_mu_prime);
-
-      W_hist->Fill(W);
-      Q2_hist->Fill(Q2);
-      W_vs_q2->Fill(W, Q2);
+      hist->Fill_WvsQ2(W, Q2);
     }
 
     double electron_vertex = 0.0;
 
     for (int j = 0; j < sc_time->size(); j++) {
       if (sc_time->size() == 0) continue;
-      int index = pindex->at(j);
 
+      int index = pindex->at(j);
       if (pindex->at(j) == 0) {
         electron_vertex =
             physics::vertex_time(sc_time->at(index), sc_r->at(index), 1.0);
@@ -98,7 +80,6 @@ void test(char *fin, char *fout) {
 
     for (int j = 0; j < sc_time->size(); j++) {
       if (sc_time->size() == 0) continue;
-
       int index = pindex->at(j);
 
       double P_x = px->at(index) * px->at(index);
@@ -108,65 +89,32 @@ void test(char *fin, char *fout) {
 
       double dt_electron = physics::deltat(electron_vertex, MASS_E, P,
                                            sc_time->at(j), sc_r->at(j));
+      if (index == 0) {
+        hist->Fill_mom_vs_beta_0th(pid->at(index), P, dt_electron);
+        continue;
+      }
+
       double dt_pion = physics::deltat(electron_vertex, MASS_PIP, P,
                                        sc_time->at(j), sc_r->at(j));
       double dt_proton = physics::deltat(electron_vertex, MASS_P, P,
                                          sc_time->at(j), sc_r->at(j));
 
-      if (index == 0) {
-        deltat_electron_0th->Fill(P, dt_electron);
-      }
-      if (index == 0 && pid->at(index) == 11) {
-        deltat_electron_0th_ID->Fill(P, dt_electron);
-      }
-
-      if (index == 0) continue;
-
-      deltat_pion->Fill(P, dt_pion);
-      deltat_proton->Fill(P, dt_proton);
-      deltat_electron->Fill(P, dt_electron);
-
-      if (pid->at(index) != 2212) deltat_proton_antiID->Fill(P, dt_proton);
-
-      if (pid->at(index) == 2212) {
-        deltat_proton_withID->Fill(P, dt_proton);
-      } else if (pid->at(index) == 211) {
-        deltat_pion_withID->Fill(P, dt_pion);
-      } else if (pid->at(index) == 11) {
-        deltat_electron_withID->Fill(P, dt_electron);
-      }
+      hist->Fill_deltat(pid->at(index), P, dt_proton, dt_pion, dt_electron);
     }
   }
 
   out->cd();
   TDirectory *wvsq2 = out->mkdir("wvsq2");
   wvsq2->cd();
-  momentum->Write();
-  W_hist->Write();
-  Q2_hist->Write();
-  W_vs_q2->Write();
+  hist->Write_WvsQ2();
 
   TDirectory *mom_vs_beta = out->mkdir("mom_vs_beta");
   mom_vs_beta->cd();
-  mom_vs_beta->Write();
-  mom_vs_beta_pos->Write();
-  mom_vs_beta_neg->Write();
-  mom_vs_beta_proton->Write();
-  mom_vs_beta_pion->Write();
-  mom_vs_beta_electron->Write();
-  mom_vs_beta_0th->Write();
+  hist->Write_MomVsBeta();
 
   TDirectory *deltat_ftof = out->mkdir("deltat_ftof");
   deltat_ftof->cd();
-  deltat_pion->Write();
-  deltat_proton->Write();
-  deltat_electron->Write();
-  deltat_pion_withID->Write();
-  deltat_proton_withID->Write();
-  deltat_proton_antiID->Write();
-  deltat_electron_withID->Write();
-  deltat_electron_0th_ID->Write();
-  deltat_electron_0th->Write();
+  hist->Write_deltat();
 
   out->Close();
   chain->Reset();
