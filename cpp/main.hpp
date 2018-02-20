@@ -7,198 +7,76 @@
 #define MAIN_H_GUARD
 #include <TFile.h>
 #include <TLorentzVector.h>
-#include "TH2.h"
 #include <TFile.h>
 #include <fstream>
-#include "TF1.h"
 #include "TChain.h"
 #include <vector>
-
-// PDG particle masses in GeV/c2
-static const double MASS_P = 0.93827203;
-static const double MASS_N = 0.93956556;
-static const double MASS_E = 0.000511;
-static const double MASS_PIP = 0.13957018;
-static const double MASS_PIM = 0.13957018;
-static const double MASS_PI0 = 0.1349766;
-static const double MASS_KP = 0.493677;
-static const double MASS_KM = 0.493677;
-static const double MASS_G = 0.0;
-static const double MASS_OMEGA = 0.78265;
-static const double CLAS12_E = 10.7;
-const double c_special_units = 29.9792458;
-std::vector<int> *REC_Particle_pid;
-std::vector<float> *REC_Particle_px;
-std::vector<float> *REC_Particle_py;
-std::vector<float> *REC_Particle_pz;
-std::vector<float> *REC_Particle_vx;
-std::vector<float> *REC_Particle_vy;
-std::vector<float> *REC_Particle_vz;
-std::vector<int> *REC_Particle_charge;
-std::vector<float> *REC_Particle_beta;
-std::vector<float> *REC_Particle_chi2pid;
-std::vector<int> *REC_Particle_status;
-
-std::vector<int> *REC_Scintillator_pindex;
-std::vector<float> *REC_Scintillator_time;
-std::vector<float> *REC_Scintillator_path;
-
-TH1D *momentum = new TH1D("mom", "mom", 500, 0, 10);
-TH1D *W_hist = new TH1D("W", "W", 500, 0, 5);
-TH1D *Q2_hist = new TH1D("Q2", "Q2", 500, 0, 10);
-TH2D *W_vs_q2 = new TH2D("W_vs_q2", "W_vs_q2", 500, 0, 5, 500, 0, 8);
-TH2D *mom_vs_beta =
-    new TH2D("mom_vs_beta", "mom_vs_beta", 500, 0, 5, 500, 0.0, 1.2);
-TH2D *mom_vs_beta_0th =
-    new TH2D("mom_vs_beta_0th", "mom_vs_beta_0th", 500, 0, 5, 500, 0.0, 1.2);
-TH2D *mom_vs_beta_pos =
-    new TH2D("mom_vs_beta_pos", "mom_vs_beta_pos", 500, 0, 5, 500, 0.0, 1.2);
-TH2D *mom_vs_beta_neg =
-    new TH2D("mom_vs_beta_neg", "mom_vs_beta_neg", 500, 0, 5, 500, 0.0, 1.2);
-TH2D *mom_vs_beta_proton = new TH2D("mom_vs_beta_proton", "mom_vs_beta_proton",
-                                    500, 0, 5, 500, 0.0, 1.2);
-TH2D *mom_vs_beta_pion =
-    new TH2D("mom_vs_beta_pion", "mom_vs_beta_pion", 500, 0, 5, 500, 0.0, 1.2);
-TH2D *mom_vs_beta_electron = new TH2D(
-    "mom_vs_beta_electron", "mom_vs_beta_electron", 500, 0, 5, 500, 0.0, 1.2);
-
-TH2D *deltat_proton =
-    new TH2D("deltat_proton", "#Deltat assuming mass of proton", 500, 0.0, 10.0,
-             500, -10.0, 10.0);
-TH2D *deltat_pion = new TH2D("deltat_pion", "#Deltat assuming mass of pion",
-                             500, 0.0, 10.0, 500, -10.0, 10.0);
-TH2D *deltat_electron =
-    new TH2D("deltat_electron", "#Deltat assuming mass of electron", 500, 0.0,
-             10.0, 500, -10.0, 10.0);
-TH2D *deltat_proton_withID =
-    new TH2D("deltat_proton_withID", "#Deltat assuming mass of proton with ID",
-             500, 0.0, 10.0, 500, -10.0, 10.0);
-TH2D *deltat_pion_withID =
-    new TH2D("deltat_pion_withID", "#Deltat assuming mass of pion with ID", 500,
-             0.0, 10.0, 500, -10.0, 10.0);
-TH2D *deltat_electron_withID = new TH2D(
-    "deltat_electron_withID", "#Deltat assuming mass of electron with ID", 500,
-    0.0, 10.0, 500, -10.0, 10.0);
-
-TH2D *deltat_electron_0th =
-    new TH2D("deltat_electron_0th", "#Deltat assuming mass of electron at 0th",
-             500, 0.0, 10.0, 500, -10.0, 10.0);
-
-TH2D *deltat_electron_0th_ID =
-    new TH2D("deltat_electron_0th_ID",
-             "#Deltat assuming mass of electron with ID at 0th", 500, 0.0, 10.0,
-             500, -10.0, 10.0);
-
-// Calcuating Q^2
-// q^mu^2 = (e^mu - e^mu')^2 = -Q^2
-double Q2_calc(TLorentzVector e_mu, TLorentzVector e_mu_prime) {
-  TLorentzVector q_mu = (e_mu - e_mu_prime);
-  return -q_mu.Mag2();
-}
-//	Calcualting W
-//	Gotten from s channel [(gamma - P)^2 == s == w^2]
-//	Sqrt√[M_p^2 - Q^2 + 2 M_p gamma]
-double W_calc(TLorentzVector e_mu, TLorentzVector e_mu_prime) {
-  TLorentzVector q_mu = (e_mu - e_mu_prime);
-  TVector3 p_mu_3(0, 0, 0);
-  TLorentzVector p_mu;
-  p_mu.SetVectM(p_mu_3, MASS_P);
-  return (p_mu + q_mu).Mag();
-}
-
-double vertex_time(double sc_time, double sc_pathlength,
-                   double relatavistic_beta) {
-  return sc_time - sc_pathlength / (relatavistic_beta * c_special_units);
-}
-
-double deltat(double electron_vertex_time, double mass, double momentum,
-              double sc_t, double sc_r) {
-  double relatavistic_beta =
-      1.0 / sqrt(1.0 + (mass / momentum) * (mass / momentum));
-  return electron_vertex_time - vertex_time(sc_t, sc_r, relatavistic_beta);
-}
-
-double deltat(double electron_vertex_time, double beta, double sc_t,
-              double sc_r) {
-  return electron_vertex_time - vertex_time(sc_t, sc_r, beta);
-}
+#include "filehandeler.hpp"
+#include "constants.hpp"
+#include "physics.hpp"
+#include "histogram.hpp"
 
 void test(char *fin, char *fout) {
   double energy = CLAS12_E;
   if (getenv("CLAS12_E") != NULL) energy = atof(getenv("CLAS12_E"));
+  TLorentzVector e_mu(0.0, 0.0, energy, energy);
 
   TFile *out = new TFile(fout, "RECREATE");
   double P;
   bool electron_cuts;
   // Load chain from branch h10
-  TChain chain("clas12");
-  chain.Add(fin);
+  TChain *chain = filehandeler::addFiles(fin);
+  filehandeler::getBranches(chain);
 
-  chain.SetBranchAddress("REC_Particle_pid", &REC_Particle_pid);
-  chain.SetBranchAddress("REC_Particle_px", &REC_Particle_px);
-  chain.SetBranchAddress("REC_Particle_py", &REC_Particle_py);
-  chain.SetBranchAddress("REC_Particle_pz", &REC_Particle_pz);
-  chain.SetBranchAddress("REC_Particle_vx", &REC_Particle_vx);
-  chain.SetBranchAddress("REC_Particle_vy", &REC_Particle_vy);
-  chain.SetBranchAddress("REC_Particle_vz", &REC_Particle_vz);
-  chain.SetBranchAddress("REC_Particle_charge", &REC_Particle_charge);
-  chain.SetBranchAddress("REC_Particle_beta", &REC_Particle_beta);
-  chain.SetBranchAddress("REC_Particle_chi2pid", &REC_Particle_chi2pid);
-  chain.SetBranchAddress("REC_Particle_status", &REC_Particle_status);
-  chain.SetBranchAddress("REC_Scintillator_pindex", &REC_Scintillator_pindex);
-  chain.SetBranchAddress("REC_Scintillator_time", &REC_Scintillator_time);
-  chain.SetBranchAddress("REC_Scintillator_path", &REC_Scintillator_path);
-
-  int num_of_events = (int)chain.GetEntries();
+  int num_of_events = (int)chain->GetEntries();
   int total = 0;
+
   for (int current_event = 0; current_event < num_of_events; current_event++) {
-    chain.GetEntry(current_event);
-    if (REC_Particle_pid->size() == 0) continue;
+    chain->GetEntry(current_event);
+    if (pid->size() == 0) continue;
 
     double per = ((double)current_event / (double)num_of_events);
-    std::cerr << "\t\t" << std::floor((100 * (double)current_event /
-                                       (double)num_of_events)) << "%\r\r"
-              << std::flush;
-    for (int i = 0; i < REC_Particle_pid->size(); i++) {
-      double px = REC_Particle_px->at(i) * REC_Particle_px->at(i);
-      double py = REC_Particle_py->at(i) * REC_Particle_py->at(i);
-      double pz = REC_Particle_pz->at(i) * REC_Particle_pz->at(i);
+    std::cerr << "\t\t" << std::floor(100 * per) << "%\r\r" << std::flush;
 
-      P = TMath::Sqrt(px + py + pz);
-      if (i == 0 && REC_Particle_beta->at(i) != 0) {
-        mom_vs_beta_0th->Fill(P, REC_Particle_beta->at(i));
+    for (int i = 0; i < pid->size(); i++) {
+      total++;
+      double P_x = px->at(i) * px->at(i);
+      double P_y = py->at(i) * py->at(i);
+      double P_z = pz->at(i) * pz->at(i);
+
+      P = TMath::Sqrt(P_x + P_y + P_z);
+      if (i == 0 && beta->at(i) != 0) {
+        mom_vs_beta_0th->Fill(P, beta->at(i));
         continue;
       }
-      if (REC_Particle_beta->at(i) != 0) {
-        momentum->Fill(P);
-        mom_vs_beta->Fill(P, REC_Particle_beta->at(i));
 
-        if (REC_Particle_charge->at(i) > 0) {
-          mom_vs_beta_pos->Fill(P, REC_Particle_beta->at(i));
-        } else if (REC_Particle_charge->at(i) < 0) {
-          mom_vs_beta_neg->Fill(P, REC_Particle_beta->at(i));
+      if (beta->at(i) != 0) {
+        momentum->Fill(P);
+        mom_vs_beta->Fill(P, beta->at(i));
+
+        if (charge->at(i) > 0) {
+          mom_vs_beta_pos->Fill(P, beta->at(i));
+        } else if (charge->at(i) < 0) {
+          mom_vs_beta_neg->Fill(P, beta->at(i));
         }
 
-        if (REC_Particle_pid->at(i) == 2212) {
-          mom_vs_beta_proton->Fill(P, REC_Particle_beta->at(i));
-        } else if (abs(REC_Particle_pid->at(i)) == 211) {
-          mom_vs_beta_pion->Fill(P, REC_Particle_beta->at(i));
-        } else if (REC_Particle_pid->at(i) == 11) {
-          mom_vs_beta_electron->Fill(P, REC_Particle_beta->at(i));
+        if (pid->at(i) == 2212) {
+          mom_vs_beta_proton->Fill(P, beta->at(i));
+        } else if (abs(pid->at(i)) == 211) {
+          mom_vs_beta_pion->Fill(P, beta->at(i));
+        } else if (pid->at(i) == 11) {
+          mom_vs_beta_electron->Fill(P, beta->at(i));
         }
       }
 
-      total++;
-      if (REC_Particle_pid->at(0) != 11) continue;
+      if (pid->at(0) != 11) continue;
       // Setup scattered electron 4 vector
       TVector3 e_mu_prime_3;
       TLorentzVector e_mu_prime;
-      TLorentzVector e_mu(0.0, 0.0, energy, energy);
-      e_mu_prime_3.SetXYZ(REC_Particle_px->at(0), REC_Particle_py->at(0),
-                          REC_Particle_pz->at(0));
+      e_mu_prime_3.SetXYZ(px->at(0), py->at(0), pz->at(0));
       e_mu_prime.SetVectM(e_mu_prime_3, MASS_E);
-      double W = W_calc(e_mu, e_mu_prime);
-      double Q2 = Q2_calc(e_mu, e_mu_prime);
+      double W = physics::W_calc(e_mu, e_mu_prime);
+      double Q2 = physics::Q2_calc(e_mu, e_mu_prime);
 
       W_hist->Fill(W);
       Q2_hist->Fill(Q2);
@@ -206,40 +84,39 @@ void test(char *fin, char *fout) {
     }
 
     double electron_vertex = 0.0;
-    for (int j = 0; j < REC_Scintillator_time->size(); j++) {
-      if (REC_Scintillator_time->size() == 0) continue;
-      std::cout << "index: " << index << "\tj: " << j << std::endl;
-      if (REC_Scintillator_pindex->at(j) == 0) {
-        electron_vertex = vertex_time(REC_Scintillator_time->at(index),
-                                      REC_Scintillator_path->at(index), 1.0);
+
+    for (int j = 0; j < sc_time->size(); j++) {
+      if (sc_time->size() == 0) continue;
+      int index = pindex->at(j);
+
+      if (pindex->at(j) == 0) {
+        electron_vertex =
+            physics::vertex_time(sc_time->at(index), sc_r->at(index), 1.0);
         continue;
       }
     }
 
-    for (int j = 0; j < REC_Scintillator_time->size(); j++) {
-      if (REC_Scintillator_time->size() == 0) continue;
+    for (int j = 0; j < sc_time->size(); j++) {
+      if (sc_time->size() == 0) continue;
 
-      int index = REC_Scintillator_pindex->at(j);
+      int index = pindex->at(j);
 
-      double px = REC_Particle_px->at(index) * REC_Particle_px->at(index);
-      double py = REC_Particle_py->at(index) * REC_Particle_py->at(index);
-      double pz = REC_Particle_pz->at(index) * REC_Particle_pz->at(index);
-      P = TMath::Sqrt(px + py + pz);
+      double P_x = px->at(index) * px->at(index);
+      double P_y = py->at(index) * py->at(index);
+      double P_z = pz->at(index) * pz->at(index);
+      P = TMath::Sqrt(P_x + P_y + P_z);
 
-      double dt_electron =
-          deltat(electron_vertex, MASS_E, P, REC_Scintillator_time->at(j),
-                 REC_Scintillator_path->at(j));
-      double dt_pion =
-          deltat(electron_vertex, MASS_PIP, P, REC_Scintillator_time->at(j),
-                 REC_Scintillator_path->at(j));
-      double dt_proton =
-          deltat(electron_vertex, MASS_P, P, REC_Scintillator_time->at(j),
-                 REC_Scintillator_path->at(j));
+      double dt_electron = physics::deltat(electron_vertex, MASS_E, P,
+                                           sc_time->at(j), sc_r->at(j));
+      double dt_pion = physics::deltat(electron_vertex, MASS_PIP, P,
+                                       sc_time->at(j), sc_r->at(j));
+      double dt_proton = physics::deltat(electron_vertex, MASS_P, P,
+                                         sc_time->at(j), sc_r->at(j));
 
       if (index == 0) {
         deltat_electron_0th->Fill(P, dt_electron);
       }
-      if (index == 0 && REC_Particle_pid->at(index) == 11) {
+      if (index == 0 && pid->at(index) == 11) {
         deltat_electron_0th_ID->Fill(P, dt_electron);
       }
 
@@ -249,15 +126,18 @@ void test(char *fin, char *fout) {
       deltat_proton->Fill(P, dt_proton);
       deltat_electron->Fill(P, dt_electron);
 
-      if (REC_Particle_pid->at(index) == 2212) {
+      if (pid->at(index) != 2212) deltat_proton_antiID->Fill(P, dt_proton);
+
+      if (pid->at(index) == 2212) {
         deltat_proton_withID->Fill(P, dt_proton);
-      } else if (REC_Particle_pid->at(index) == 211) {
+      } else if (pid->at(index) == 211) {
         deltat_pion_withID->Fill(P, dt_pion);
-      } else if (REC_Particle_pid->at(index) == 11) {
+      } else if (pid->at(index) == 11) {
         deltat_electron_withID->Fill(P, dt_electron);
       }
     }
   }
+
   out->cd();
   TDirectory *wvsq2 = out->mkdir("wvsq2");
   wvsq2->cd();
@@ -283,12 +163,13 @@ void test(char *fin, char *fout) {
   deltat_electron->Write();
   deltat_pion_withID->Write();
   deltat_proton_withID->Write();
+  deltat_proton_antiID->Write();
   deltat_electron_withID->Write();
   deltat_electron_0th_ID->Write();
   deltat_electron_0th->Write();
 
   out->Close();
-  chain.Reset();
-  std::cerr << "\n" << total << std::endl;
+  chain->Reset();
+  std::cerr << "\n" << total << "\t" << std::endl;
 }
 #endif

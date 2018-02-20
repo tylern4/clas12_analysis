@@ -1,14 +1,9 @@
-UNAME := $(shell uname)
-ifeq ($(UNAME), Linux)
-    FOPENMP = -fopenmp -lgfortran
-endif
-
 ROOTLIBS	= $(shell root-config --libs)
 CXX = g++
-CXXFLAGS = -O3 -march=native -fPIC -w -g $(FOPENMP) $(shell root-config --cflags)
-TARGET =	    test
+CXXFLAGS = -O3 -march=native -fPIC -w -g $(shell root-config --cflags)
+TARGET =	    clas12_ana
 
-MAINS = main.cpp
+MAINS = physics.cpp main.cpp
 MAIN = $(MAINS:%.cpp=%.o)
 
 .PHONY: all clean
