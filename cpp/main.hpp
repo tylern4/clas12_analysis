@@ -68,14 +68,16 @@ void datahandeler(char *fin, char *fout) {
     }
 
     int vertex_id;
-    for (int j = 0; j < sc_time->size(); j++)
-      if (pindex->at(j) == 0) {
-        vertex_id = pindex->at(j);
+    for (int j = 0; j < sc_time->size(); j++) {
+      vertex_id = -1;
+      int temp = pindex->at(j);
+      if (temp == 0 && abs(pid->at(temp)) == 11) {
+        vertex_id = temp;
         continue;
       }
-
+    }
     for (int j = 0; j < sc_time->size(); j++) {
-      if (sc_time->size() == 0) continue;
+      if (sc_time->size() == 0 || vertex_id == -1) continue;
       Delta_T *dt = new Delta_T(sc_time->at(vertex_id), sc_r->at(vertex_id));
       int index = pindex->at(j);
 
