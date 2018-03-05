@@ -9,14 +9,14 @@
 
 class Delta_T {
  private:
-  std::vector<double> masses = {MASS_E, MASS_P, MASS_PIP};
+  std::vector<double> masses = {MASS_E, MASS_P, MASS_PIP, MASS_KP};
   double vertex = 0.0;
   double dt_E = 0.0;
   double dt_P = 0.0;
   double dt_Pi = 0.0;
+  double dt_K = 0.0;
 
-  double vertex_time(double sc_time, double sc_pathlength,
-                     double relatavistic_beta);
+  double vertex_time(double sc_time, double sc_pathlength, double relatavistic_beta);
 
  public:
   Delta_T(double sc_time, double sc_pathlength);
@@ -26,6 +26,7 @@ class Delta_T {
   double Get_dt_E();
   double Get_dt_P();
   double Get_dt_Pi();
+  double Get_dt_K();
 };
 
 #endif

@@ -51,10 +51,8 @@ void datahandeler(char *fin, char *fout) {
 
       P = TMath::Sqrt(P_x + P_y + P_z);
 
-      if (i == 0 && beta->at(i) != 0) {
-        hist->Fill_mom_vs_beta_0th(P, beta->at(i));
-        continue;
-      }
+      if (i == 0 && beta->at(i) != 0) continue;
+
       hist->Fill_MomVsBeta(pid->at(i), charge->at(i), P, beta->at(i));
       if (pid->at(0) != 11) continue;
       // Setup scattered electron 4 vector
@@ -69,15 +67,15 @@ void datahandeler(char *fin, char *fout) {
 
     int vertex_id;
     for (int j = 0; j < sc_time->size(); j++) {
-      vertex_id = -1;
       int temp = pindex->at(j);
-      if (temp == 0 && abs(pid->at(temp)) == 11) {
+      if (temp == 0) {
         vertex_id = temp;
         continue;
       }
     }
+
     for (int j = 0; j < sc_time->size(); j++) {
-      if (sc_time->size() == 0 || vertex_id == -1) continue;
+      if (sc_time->size() == 0) continue;
       Delta_T *dt = new Delta_T(sc_time->at(vertex_id), sc_r->at(vertex_id));
       int index = pindex->at(j);
 
@@ -88,12 +86,8 @@ void datahandeler(char *fin, char *fout) {
 
       dt->deltat(P, sc_time->at(j), sc_r->at(j));
 
-      if (index == 0) {
-        hist->Fill_mom_vs_beta_0th(pid->at(index), P, dt);
-        continue;
-      }
-
-      hist->Fill_deltat(pid->at(index), P, dt);
+      if (index == 0) continue;
+      hist->Fill_deltat(pid->at(index), charge->at(index), P, dt);
     }
   }
 
