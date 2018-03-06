@@ -86,7 +86,10 @@ void datahandeler(char *fin, char *fout) {
 
       dt->deltat(P, sc_time->at(j), sc_r->at(j));
 
-      if (index == 0) continue;
+      if (index == 0) {
+        hist->Fill_deltat_vertex(pid->at(index), charge->at(index), P, dt);
+        continue;
+      }
       hist->Fill_deltat(pid->at(index), charge->at(index), P, dt);
     }
   }

@@ -42,6 +42,7 @@ class Histogram {
 
   // Delta T
   TH2D *delta_t_hist[particle_num][charge_num][with_id_num];
+  TH2D *delta_t_vertex[with_id_num];
   // Delta T
  public:
   Histogram();
@@ -59,6 +60,7 @@ class Histogram {
 
   // Delta T
   void makeHists_deltat();
+  void Fill_deltat_vertex(int pid, int charge, double P, Delta_T *dt);
   void Fill_deltat(int pid, int charge, double P, Delta_T *dt);
   void Write_deltat();
 };

@@ -39,6 +39,18 @@ void Histogram::Write_WvsQ2() {
 }
 
 void Histogram::makeHists_deltat() {
+  for (size_t i = 0; i < with_id_num; i++) {
+    hname.append("delta_t_vertex");
+    htitle.append("#Deltat vertex particle");
+    hname.append("_");
+    htitle.append(" ");
+    hname.append(id_name[i]);
+    htitle.append(id_name[i]);
+    delta_t_vertex[i] = new TH2D(hname.c_str(), htitle.c_str(), bins, p_min, p_max, bins, Dt_min, Dt_max);
+    hname.clear();
+    htitle.clear();
+  }
+
   for (size_t p = 0; p < particle_num; p++) {
     for (size_t c = 0; c < charge_num; c++) {
       for (size_t i = 0; i < with_id_num; i++) {
@@ -60,6 +72,15 @@ void Histogram::makeHists_deltat() {
         htitle.clear();
       }
     }
+  }
+}
+
+void Histogram::Fill_deltat_vertex(int pid, int charge, double P, Delta_T *dt) {
+  delta_t_vertex[0]->Fill(P, dt->Get_dt_E());
+  if (pid == ELECTRON) {
+    delta_t_vertex[1]->Fill(P, dt->Get_dt_E());
+  } else {
+    delta_t_vertex[2]->Fill(P, dt->Get_dt_E());
   }
 }
 
@@ -113,6 +134,14 @@ void Histogram::Fill_deltat(int pid, int charge, double P, Delta_T *dt) {
 }
 
 void Histogram::Write_deltat() {
+  for (size_t i = 0; i < with_id_num; i++) {
+    delta_t_vertex[i]->SetXTitle("Momentum (GeV)");
+    delta_t_vertex[i]->SetYTitle("#Deltat");
+    delta_t_vertex[i]->SetOption("COLZ");
+    delta_t_vertex[i]->Write();
+    delete delta_t_vertex[i];
+  }
+
   for (size_t p = 0; p < particle_num; p++) {
     for (size_t c = 0; c < charge_num; c++) {
       for (size_t i = 0; i < with_id_num; i++) {
@@ -120,6 +149,7 @@ void Histogram::Write_deltat() {
         delta_t_hist[p][c][i]->SetYTitle("#Deltat");
         delta_t_hist[p][c][i]->SetOption("COLZ");
         delta_t_hist[p][c][i]->Write();
+        delete delta_t_hist[p][c][i];
       }
     }
   }
