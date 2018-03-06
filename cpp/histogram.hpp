@@ -38,6 +38,7 @@ class Histogram {
 
   // Mom vs Beta
   TH2D *momvsbeta_hist[particle_num][charge_num][with_id_num];
+  TH2D *momvsbeta_vertex[with_id_num];
   // Mom vs Beta
 
   // Delta T
@@ -55,6 +56,7 @@ class Histogram {
   // P and E
   void makeHists_MomVsBeta();
   void Fill_momentum(double P);
+  void Fill_MomVsBeta_vertex(int pid, int charge, double P, double beta);
   void Fill_MomVsBeta(int pid, int charge, double P, double beta);
   void Write_MomVsBeta();
 

@@ -51,7 +51,11 @@ void datahandeler(char *fin, char *fout) {
 
       P = TMath::Sqrt(P_x + P_y + P_z);
 
-      hist->Fill_MomVsBeta(pid->at(i), charge->at(i), P, beta->at(i));
+      if (index == 0) {
+        hist->Fill_MomVsBeta_vertex(pid->at(i), charge->at(i), P, beta->at(i));
+      } else {
+        hist->Fill_MomVsBeta(pid->at(i), charge->at(i), P, beta->at(i));
+      }
       if (pid->at(0) != 11) continue;
       // Setup scattered electron 4 vector
       TVector3 e_mu_prime_3;

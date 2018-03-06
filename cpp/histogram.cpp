@@ -156,6 +156,18 @@ void Histogram::Write_deltat() {
 }
 
 void Histogram::makeHists_MomVsBeta() {
+  for (size_t i = 0; i < with_id_num; i++) {
+    hname.append("mom_vs_beta_vertex");
+    htitle.append("Momentum vs #beta vertex");
+    hname.append("_");
+    htitle.append(" ");
+    hname.append(id_name[i]);
+    htitle.append(id_name[i]);
+    momvsbeta_vertex[i] = new TH2D(hname.c_str(), htitle.c_str(), bins, p_min, p_max, bins, zero, 1.2);
+    hname.clear();
+    htitle.clear();
+  }
+
   for (size_t p = 0; p < particle_num; p++) {
     for (size_t c = 0; c < charge_num; c++) {
       for (size_t i = 0; i < with_id_num; i++) {
@@ -176,6 +188,17 @@ void Histogram::makeHists_MomVsBeta() {
         hname.clear();
         htitle.clear();
       }
+    }
+  }
+}
+
+void Histogram::Fill_MomVsBeta_vertex(int pid, int charge, double P, double beta) {
+  if (beta != 0) {
+    momvsbeta_vertex[0]->Fill(P, beta);
+    if (pid == ELECTRON) {
+      momvsbeta_vertex[1]->Fill(P, beta);
+    } else {
+      momvsbeta_vertex[2]->Fill(P, beta);
     }
   }
 }
@@ -227,6 +250,14 @@ void Histogram::Fill_MomVsBeta(int pid, int charge, double P, double beta) {
 }
 
 void Histogram::Write_MomVsBeta() {
+  for (size_t i = 0; i < with_id_num; i++) {
+    momvsbeta_vertex[i]->SetXTitle("Momentum (GeV)");
+    momvsbeta_vertex[i]->SetYTitle("#beta");
+    momvsbeta_vertex[i]->SetOption("COLZ");
+    momvsbeta_vertex[i]->Write();
+    delete momvsbeta_vertex[i];
+  }
+
   momentum->SetXTitle("Momentum (GeV)");
   momentum->Write();
   for (size_t p = 0; p < particle_num; p++) {
@@ -236,6 +267,7 @@ void Histogram::Write_MomVsBeta() {
         momvsbeta_hist[p][c][i]->SetYTitle("#beta");
         momvsbeta_hist[p][c][i]->SetOption("COLZ");
         momvsbeta_hist[p][c][i]->Write();
+        delete momvsbeta_hist[p][c][i];
       }
     }
   }
