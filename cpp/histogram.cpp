@@ -142,7 +142,7 @@ void Histogram::makeHists_MomVsBeta() {
         hname.append(id_name[i]);
         htitle.append(id_name[i]);
         momvsbeta_hist[p][c][i] =
-            new TH2D(hname.c_str(), htitle.c_str(), bins, p_min, p_max, bins, Dt_min, Dt_max);
+            new TH2D(hname.c_str(), htitle.c_str(), bins, p_min, p_max, bins, zero, 1.2);
         hname.clear();
         htitle.clear();
       }
