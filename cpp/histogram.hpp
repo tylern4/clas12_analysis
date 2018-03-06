@@ -37,15 +37,7 @@ class Histogram {
   TH2D *W_vs_q2 = new TH2D("W_vs_q2", "W_vs_q2", bins, zero, 5, bins, zero, 8);
 
   // Mom vs Beta
-  TH2D *mom_vs_beta = new TH2D("mom_vs_beta", "mom_vs_beta", bins, zero, 5, bins, zero, 1.2);
-  TH2D *mom_vs_beta_0th = new TH2D("mom_vs_beta_0th", "mom_vs_beta_0th", bins, zero, 5, bins, zero, 1.2);
-  TH2D *mom_vs_beta_pos = new TH2D("mom_vs_beta_pos", "mom_vs_beta_pos", bins, zero, 5, bins, zero, 1.2);
-  TH2D *mom_vs_beta_neg = new TH2D("mom_vs_beta_neg", "mom_vs_beta_neg", bins, zero, 5, bins, zero, 1.2);
-  TH2D *mom_vs_beta_proton =
-      new TH2D("mom_vs_beta_proton", "mom_vs_beta_proton", bins, zero, 5, bins, zero, 1.2);
-  TH2D *mom_vs_beta_pion = new TH2D("mom_vs_beta_pion", "mom_vs_beta_pion", bins, zero, 5, bins, zero, 1.2);
-  TH2D *mom_vs_beta_electron =
-      new TH2D("mom_vs_beta_electron", "mom_vs_beta_electron", bins, zero, 5, bins, zero, 1.2);
+  TH2D *momvsbeta_hist[particle_num][charge_num][with_id_num];
   // Mom vs Beta
 
   // Delta T
@@ -60,6 +52,7 @@ class Histogram {
   void Write_WvsQ2();
 
   // P and E
+  void makeHists_MomVsBeta();
   void Fill_momentum(double P);
   void Fill_MomVsBeta(int pid, int charge, double P, double beta);
   void Write_MomVsBeta();
