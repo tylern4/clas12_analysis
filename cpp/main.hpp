@@ -90,6 +90,7 @@ void datahandeler(char *fin, char *fout) {
         hist->Fill_MomVsBeta(pid->at(index), charge->at(index), P, beta->at(index));
         hist->Fill_deltat(pid->at(index), charge->at(index), P, dt);
       }
+      delete dt;
     }
   }
 
