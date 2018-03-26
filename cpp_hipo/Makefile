@@ -14,10 +14,10 @@ LZ4 = lz4/lib/lz4.o
 all: $(TARGET)
 
 $(LIB): %.o: %.cpp
-	$(CXX) $(LIBFLAG) -o $@ $<
+	$(CXX) -std=c++11 $(LIBFLAG) -o $@ $<
 
 $(LZ4):
-	make -C lz4
+	make lib -C lz4
 
 $(MAIN): %.o : %.cpp
 		$(CXX) $(CXXFLAGS) -c $< -o $@
