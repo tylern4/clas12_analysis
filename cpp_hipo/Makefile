@@ -26,7 +26,7 @@ $(TARGET): $(MAIN) $(LZ4) $(LIB)
 	$(CXX) $(MAIN) $(LIB) $(LZ4) $(CXXFLAGS) $(ROOTLIBS) -o $(TARGET)
 
 clean:
-	-rm -f $(TARGET)
+	-rm -f $(TARGET) $(MAIN)
 purge: clean
 	-rm -f $(HIPOOBJ) $(LIB)
 	make clean -C lz4
