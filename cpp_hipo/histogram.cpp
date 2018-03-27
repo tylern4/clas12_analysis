@@ -23,6 +23,16 @@ void Histogram::Fill_WvsQ2(double W, double Q2) {
   W_vs_q2->Fill(W, Q2);
   W_hist->Fill(W);
   Q2_hist->Fill(Q2);
+
+  if (Q2 <= 0.4) {
+    W_vs_q2_lower->Fill(W, Q2);
+    W_hist_lower->Fill(W);
+    Q2_hist_lower->Fill(Q2);
+  } else {
+    W_vs_q2_upper->Fill(W, Q2);
+    W_hist_upper->Fill(W);
+    Q2_hist_upper->Fill(Q2);
+  }
 }
 
 void Histogram::Write_WvsQ2() {
@@ -36,6 +46,28 @@ void Histogram::Write_WvsQ2() {
 
   Q2_hist->SetXTitle("Q^{2} (GeV^{2})");
   Q2_hist->Write();
+
+  W_vs_q2_lower->SetXTitle("W (GeV)");
+  W_vs_q2_lower->SetYTitle("Q^{2} (GeV^{2})");
+  W_vs_q2_lower->SetOption("COLZ");
+  W_vs_q2_lower->Write();
+
+  W_hist_lower->SetXTitle("W (GeV)");
+  W_hist_lower->Write();
+
+  Q2_hist_lower->SetXTitle("Q^{2} (GeV^{2})");
+  Q2_hist_lower->Write();
+
+  W_vs_q2_upper->SetXTitle("W (GeV)");
+  W_vs_q2_upper->SetYTitle("Q^{2} (GeV^{2})");
+  W_vs_q2_upper->SetOption("COLZ");
+  W_vs_q2_upper->Write();
+
+  W_hist_upper->SetXTitle("W (GeV)");
+  W_hist_upper->Write();
+
+  Q2_hist_upper->SetXTitle("Q^{2} (GeV^{2})");
+  Q2_hist_upper->Write();
 }
 
 void Histogram::makeHists_deltat() {
@@ -46,7 +78,8 @@ void Histogram::makeHists_deltat() {
     htitle.append(" ");
     hname.append(id_name[i]);
     htitle.append(id_name[i]);
-    delta_t_vertex[i] = new TH2D(hname.c_str(), htitle.c_str(), bins, p_min, p_max, bins, Dt_min, Dt_max);
+    delta_t_vertex[i] = new TH2D(hname.c_str(), htitle.c_str(), bins, p_min,
+                                 p_max, bins, Dt_min, Dt_max);
     hname.clear();
     htitle.clear();
   }
@@ -66,8 +99,8 @@ void Histogram::makeHists_deltat() {
         htitle.append(" ");
         hname.append(id_name[i]);
         htitle.append(id_name[i]);
-        delta_t_hist[p][c][i] =
-            new TH2D(hname.c_str(), htitle.c_str(), bins, p_min, p_max, bins, Dt_min, Dt_max);
+        delta_t_hist[p][c][i] = new TH2D(hname.c_str(), htitle.c_str(), bins,
+                                         p_min, p_max, bins, Dt_min, Dt_max);
         hname.clear();
         htitle.clear();
       }
@@ -90,22 +123,22 @@ void Histogram::Fill_deltat(int pid, int charge, double P, Delta_T *dt) {
 
   for (size_t p = 0; p < particle_num; p++) {
     switch (p) {
-      case 0:
-        good_ID = ELECTRON;
-        deltaT = dt->Get_dt_E();
-        break;
-      case 1:
-        good_ID = PIP;
-        deltaT = dt->Get_dt_Pi();
-        break;
-      case 2:
-        good_ID = PROTON;
-        deltaT = dt->Get_dt_P();
-        break;
-      case 3:
-        good_ID = KP;
-        deltaT = dt->Get_dt_K();
-        break;
+    case 0:
+      good_ID = ELECTRON;
+      deltaT = dt->Get_dt_E();
+      break;
+    case 1:
+      good_ID = PIP;
+      deltaT = dt->Get_dt_Pi();
+      break;
+    case 2:
+      good_ID = PROTON;
+      deltaT = dt->Get_dt_P();
+      break;
+    case 3:
+      good_ID = KP;
+      deltaT = dt->Get_dt_K();
+      break;
     }
 
     delta_t_hist[p][0][0]->Fill(P, deltaT);
@@ -163,7 +196,8 @@ void Histogram::makeHists_MomVsBeta() {
     htitle.append(" ");
     hname.append(id_name[i]);
     htitle.append(id_name[i]);
-    momvsbeta_vertex[i] = new TH2D(hname.c_str(), htitle.c_str(), bins, p_min, p_max, bins, zero, 1.2);
+    momvsbeta_vertex[i] = new TH2D(hname.c_str(), htitle.c_str(), bins, p_min,
+                                   p_max, bins, zero, 1.2);
     hname.clear();
     htitle.clear();
   }
@@ -183,8 +217,8 @@ void Histogram::makeHists_MomVsBeta() {
         htitle.append(" ");
         hname.append(id_name[i]);
         htitle.append(id_name[i]);
-        momvsbeta_hist[p][c][i] =
-            new TH2D(hname.c_str(), htitle.c_str(), bins, p_min, p_max, bins, zero, 1.2);
+        momvsbeta_hist[p][c][i] = new TH2D(hname.c_str(), htitle.c_str(), bins,
+                                           p_min, p_max, bins, zero, 1.2);
         hname.clear();
         htitle.clear();
       }
@@ -192,7 +226,8 @@ void Histogram::makeHists_MomVsBeta() {
   }
 }
 
-void Histogram::Fill_MomVsBeta_vertex(int pid, int charge, double P, double beta) {
+void Histogram::Fill_MomVsBeta_vertex(int pid, int charge, double P,
+                                      double beta) {
   if (beta != 0) {
     momvsbeta_vertex[0]->Fill(P, beta);
     if (pid == ELECTRON) {
@@ -209,18 +244,18 @@ void Histogram::Fill_MomVsBeta(int pid, int charge, double P, double beta) {
     momentum->Fill(P);
     for (size_t p = 0; p < particle_num; p++) {
       switch (p) {
-        case 0:
-          good_ID = ELECTRON;
-          break;
-        case 1:
-          good_ID = PIP;
-          break;
-        case 2:
-          good_ID = PROTON;
-          break;
-        case 3:
-          good_ID = KP;
-          break;
+      case 0:
+        good_ID = ELECTRON;
+        break;
+      case 1:
+        good_ID = PIP;
+        break;
+      case 2:
+        good_ID = PROTON;
+        break;
+      case 3:
+        good_ID = KP;
+        break;
       }
 
       momvsbeta_hist[p][0][0]->Fill(P, beta);

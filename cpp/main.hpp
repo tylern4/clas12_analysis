@@ -45,6 +45,8 @@ void datahandeler(char *fin, char *fout) {
     for (int i = 0; i < pid->size(); i++) {
       if (pid->size() == 0) continue;
       total++;
+      if (beta->at(i) <= 0.05) continue;
+
       double P_x = px->at(i) * px->at(i);
       double P_y = py->at(i) * py->at(i);
       double P_z = pz->at(i) * pz->at(i);
@@ -73,8 +75,10 @@ void datahandeler(char *fin, char *fout) {
 
     for (int j = 0; j < sc_time->size(); j++) {
       if (sc_time->size() == 0) continue;
+
       Delta_T *dt = new Delta_T(sc_time->at(vertex_id), sc_r->at(vertex_id));
       int index = pindex->at(j);
+      if (beta->at(index) <= 0.05) continue;
 
       double P_x = px->at(index) * px->at(index);
       double P_y = py->at(index) * py->at(index);
