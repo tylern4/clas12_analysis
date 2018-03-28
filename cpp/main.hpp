@@ -91,8 +91,10 @@ void datahandeler(char *fin, char *fout) {
         hist->Fill_MomVsBeta_vertex(pid->at(index), charge->at(index), P, beta->at(index));
         hist->Fill_deltat_vertex(pid->at(index), charge->at(index), P, dt);
       } else {
-        hist->Fill_MomVsBeta(pid->at(index), charge->at(index), P, beta->at(index));
-        hist->Fill_deltat(pid->at(index), charge->at(index), P, dt);
+        if (beta->at(index) >= 0.05) {
+          hist->Fill_MomVsBeta(pid->at(index), charge->at(index), P, beta->at(index));
+          hist->Fill_deltat(pid->at(index), charge->at(index), P, dt);
+        }
       }
       delete dt;
     }
