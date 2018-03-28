@@ -45,7 +45,6 @@ void datahandeler(char *fin, char *fout) {
     for (int i = 0; i < pid->size(); i++) {
       if (pid->size() == 0) continue;
       total++;
-      if (beta->at(i) <= 0.05) continue;
 
       double P_x = px->at(i) * px->at(i);
       double P_y = py->at(i) * py->at(i);
