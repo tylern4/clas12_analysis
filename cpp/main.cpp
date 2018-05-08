@@ -15,7 +15,10 @@ int main(int argc, char **argv) {
   } else if (argc == 3) {
     char *infilename = argv[1];
     char *outfilename = argv[2];
-    datahandeler(infilename, outfilename);
+    std::cerr << RED << "Running SinglePi: \n";
+    SinglePi(infilename, outfilename);
+    // datahandeler(infilename, outfilename);
+    std::cerr << RESET << std::endl;
   } else {
     std::cerr << RED << "Error: \n";
     std::cerr << BOLDRED << "\tNeed input file and output file\n";
