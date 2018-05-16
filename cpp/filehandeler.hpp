@@ -19,7 +19,6 @@ std::vector<int> *charge;
 std::vector<float> *beta;
 std::vector<float> *chi2pid;
 std::vector<int> *status;
-
 std::vector<int> *pindex;
 std::vector<float> *sc_time;
 std::vector<float> *sc_r;
@@ -49,6 +48,6 @@ TChain *addFiles(char *fin) {
   clas12->Add(fin);
   return clas12;
 }
-}
+}  // namespace filehandeler
 
 #endif

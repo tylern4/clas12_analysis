@@ -23,10 +23,8 @@ double xb_calc(TLorentzVector e_mu, TLorentzVector e_mu_prime);
 double theta_calc(double cosz);
 double phi_calc(double cosx, double cosy);
 
-double vertex_time(double sc_time, double sc_pathlength,
-                   double relatavistic_beta);
-double deltat(double electron_vertex_time, double mass, double momentum,
-              double sc_t, double sc_r);
-}
+double vertex_time(double sc_time, double sc_pathlength, double relatavistic_beta);
+double deltat(double electron_vertex_time, double mass, double momentum, double sc_t, double sc_r);
+}  // namespace physics
 
 #endif
