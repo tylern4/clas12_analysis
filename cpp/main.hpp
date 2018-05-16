@@ -49,7 +49,7 @@ void datahandeler(char *fin, char *fout) {
       }
     }
     try {
-      if (pid->at(vertex_id) == 11) {
+      if (pid->at(0) == 11) {
         TVector3 e_mu_prime_3;
         TLorentzVector e_mu_prime;
         e_mu_prime_3.SetXYZ(px->at(vertex_id), py->at(vertex_id), pz->at(vertex_id));
@@ -81,10 +81,8 @@ void datahandeler(char *fin, char *fout) {
           hist->Fill_MomVsBeta_vertex(pid->at(index), charge->at(index), P, beta->at(index));
           hist->Fill_deltat_vertex(pid->at(index), charge->at(index), P, dt);
         } else {
-          if (beta->at(index) >= 0.05) {
-            hist->Fill_MomVsBeta(pid->at(index), charge->at(index), P, beta->at(index));
-            hist->Fill_deltat(pid->at(index), charge->at(index), P, dt);
-          }
+          hist->Fill_MomVsBeta(pid->at(index), charge->at(index), P, beta->at(index));
+          hist->Fill_deltat(pid->at(index), charge->at(index), P, dt);
         }
         delete dt;
       } catch (std::exception &e) {
@@ -142,29 +140,43 @@ void SinglePi(char *fin, char *fout) {
 
     per = ((double)current_event / (double)num_of_events);
     std::cerr << "\t\t" << std::floor(100 * per) << "%\r\r" << std::flush;
+
     if (pid->size() == 2) {
-      total++;
-      if (pid->at(0) != ELECTRON) continue;
-      if (pid->at(1) == PIP || pid->at(1) == KP) {
-        // Setup scattered electron 4 vector
-        e_mu_prime_3.SetXYZ(px->at(0), py->at(0), pz->at(0));
-        e_mu_prime.SetVectM(e_mu_prime_3, MASS_E);
-        W = physics::W_calc(e_mu, e_mu_prime);
-        Q2 = physics::Q2_calc(e_mu, e_mu_prime);
-        hist->Fill_WvsQ2(W, Q2);
-      }
-    }
-    for (int index = 0; index < pid->size(); index++) {
-      P_x = px->at(index) * px->at(index);
-      P_y = py->at(index) * py->at(index);
-      P_z = pz->at(index) * pz->at(index);
-      P = TMath::Sqrt(P_x + P_y + P_z);
-      if (index == 0) {
-        hist->Fill_MomVsBeta_vertex(pid->at(index), charge->at(index), P, beta->at(index));
-      } else {
-        if (beta->at(index) >= 0.05) {
-          hist->Fill_MomVsBeta(pid->at(index), charge->at(index), P, beta->at(index));
+      int e_index = 0;
+      int pip_index = 1;
+      for (int j = 0; j < sc_time->size(); j++) {
+        int temp = pindex->at(j);
+        if (temp == 0) {
+          e_index = j;
+          continue;
         }
+      }
+      try {
+        pip_index = (e_index == 0) ? 1 : 0;
+        if (pid->at(e_index) == 11 && (pid->at(pip_index) == PIP || pid->at(pip_index) == KP)) {
+          TVector3 e_mu_prime_3;
+          TLorentzVector e_mu_prime;
+          e_mu_prime_3.SetXYZ(px->at(e_index), py->at(e_index), pz->at(e_index));
+          e_mu_prime.SetVectM(e_mu_prime_3, MASS_E);
+          double W = physics::W_calc(e_mu, e_mu_prime);
+          double Q2 = physics::Q2_calc(e_mu, e_mu_prime);
+          hist->Fill_WvsQ2(W, Q2);
+
+          for (int index = 0; index < pid->size(); index++) {
+            P_x = px->at(index) * px->at(index);
+            P_y = py->at(index) * py->at(index);
+            P_z = pz->at(index) * pz->at(index);
+            P = TMath::Sqrt(P_x + P_y + P_z);
+            if (index == 0) {
+              hist->Fill_MomVsBeta_vertex(pid->at(index), charge->at(index), P, beta->at(index));
+            } else {
+              hist->Fill_MomVsBeta(pid->at(index), charge->at(index), P, beta->at(index));
+            }
+          }
+        }
+      } catch (std::exception &e) {
+        continue;
+        // std::cerr << "Bad Event: " << current_event << std::endl;
       }
     }
   }
