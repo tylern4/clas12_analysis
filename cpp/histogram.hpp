@@ -53,6 +53,12 @@ class Histogram {
   TH2D *delta_t_hist[particle_num][charge_num][with_id_num];
   TH2D *delta_t_vertex[with_id_num];
   // Delta T
+
+  // EC Sampling Fraction
+  TH2D *EC_sampling_fraction =
+      new TH2D("EC_sampling_fraction", "EC_sampling_fraction", bins, p_min, p_max, bins, zero, 1.0);
+  // EC Sampling Fraction
+
  public:
   Histogram();
   ~Histogram();
@@ -73,6 +79,10 @@ class Histogram {
   void Fill_deltat_vertex(int pid, int charge, double P, Delta_T *dt);
   void Fill_deltat(int pid, int charge, double P, Delta_T *dt);
   void Write_deltat();
+
+  // EC Sampling Fraction
+  void Fill_EC(double etot, double momentum);
+  void Write_EC();
 };
 
 #endif

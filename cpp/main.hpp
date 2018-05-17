@@ -40,35 +40,44 @@ void datahandeler(char *fin, char *fout) {
 
     double per = ((double)current_event / (double)num_of_events);
     std::cerr << "\t\t" << std::floor(100 * per) << "%\r\r" << std::flush;
-    int vertex_id = 0;
-    for (int j = 0; j < sc_time->size(); j++) {
-      int temp = pindex->at(j);
-      if (temp == 0) {
-        vertex_id = j;
-        continue;
+
+    for (int j = 0; j < ec_pindex->size(); j++) {
+      if (ec_pindex->size() == 0) continue;
+      try {
+        int index = ec_pindex->at(j);
+        if (pid->at(index) == 11) {
+          double P_x = px->at(index) * px->at(index);
+          double P_y = py->at(index) * py->at(index);
+          double P_z = pz->at(index) * pz->at(index);
+          P = TMath::Sqrt(P_x + P_y + P_z);
+          hist->Fill_EC(etot->at(j), P);
+        }
+      } catch (std::exception &e) {
+        std::cerr << "Bad Event: " << current_event << std::endl;
+        total++;
       }
     }
+
     try {
       if (pid->at(0) == 11) {
         TVector3 e_mu_prime_3;
         TLorentzVector e_mu_prime;
-        e_mu_prime_3.SetXYZ(px->at(vertex_id), py->at(vertex_id), pz->at(vertex_id));
+        e_mu_prime_3.SetXYZ(px->at(0), py->at(0), pz->at(0));
         e_mu_prime.SetVectM(e_mu_prime_3, MASS_E);
         double W = physics::W_calc(e_mu, e_mu_prime);
         double Q2 = physics::Q2_calc(e_mu, e_mu_prime);
         hist->Fill_WvsQ2(W, Q2);
       }
     } catch (std::exception &e) {
-      continue;
       // std::cerr << "Bad Event: " << current_event << std::endl;
+      total++;
     }
 
     for (int j = 0; j < sc_time->size(); j++) {
       if (sc_time->size() == 0) continue;
       try {
-        Delta_T *dt = new Delta_T(sc_time->at(vertex_id), sc_r->at(vertex_id));
-        int index = pindex->at(j);
-        if (beta->at(index) <= 0.05) continue;
+        Delta_T *dt = new Delta_T(sc_time->at(0), sc_r->at(0));
+        int index = sc_pindex->at(j);
 
         double P_x = px->at(index) * px->at(index);
         double P_y = py->at(index) * py->at(index);
@@ -88,6 +97,121 @@ void datahandeler(char *fin, char *fout) {
       } catch (std::exception &e) {
         continue;
         // std::cerr << "Bad Event: " << current_event << std::endl;
+        total++;
+      }
+    }
+  }
+
+  out->cd();
+  hist->Write_EC();
+  TDirectory *wvsq2 = out->mkdir("wvsq2");
+  wvsq2->cd();
+  hist->Write_WvsQ2();
+
+  TDirectory *mom_vs_beta = out->mkdir("mom_vs_beta");
+  mom_vs_beta->cd();
+  hist->Write_MomVsBeta();
+
+  TDirectory *deltat_ftof = out->mkdir("deltat_ftof");
+  deltat_ftof->cd();
+  hist->Write_deltat();
+
+  out->Close();
+  chain->Reset();
+  std::cerr << "\nErrors: " << total << "\t" << std::endl;
+}
+
+void datahandeler2(char *fin) {
+  double energy = CLAS12_E;
+  if (getenv("CLAS12_E") != NULL) energy = atof(getenv("CLAS12_E"));
+  TLorentzVector e_mu(0.0, 0.0, energy, energy);
+
+  TFile *out = new TFile("out_reindex.root", "RECREATE");
+  double P;
+  bool electron_cuts;
+  // Load chain from branch h10
+  TChain *chain = filehandeler::addFiles(fin);
+  filehandeler::getBranches(chain);
+
+  int num_of_events = (int)chain->GetEntries();
+  int total = 0;
+
+  Histogram *hist = new Histogram();
+
+  for (int current_event = 0; current_event < num_of_events; current_event++) {
+    chain->GetEntry(current_event);
+    if (pid->size() == 0 || sc_time->size() == 0) continue;
+
+    double per = ((double)current_event / (double)num_of_events);
+    std::cerr << "\t\t" << std::floor(100 * per) << "%\r\r" << std::flush;
+
+    int vertex_id = 0;
+    for (int j = 0; j < sc_time->size(); j++) {
+      int temp = sc_pindex->at(j);
+      if (temp == 0) {
+        vertex_id = j;
+        continue;
+      }
+    }
+
+    for (int j = 0; j < ec_pindex->size(); j++) {
+      if (ec_pindex->size() == 0) continue;
+      try {
+        int index = ec_pindex->at(j);
+        if (pid->at(index) == 11) {
+          double P_x = px->at(index) * px->at(index);
+          double P_y = py->at(index) * py->at(index);
+          double P_z = pz->at(index) * pz->at(index);
+          P = TMath::Sqrt(P_x + P_y + P_z);
+          hist->Fill_EC(etot->at(j), P);
+        }
+      } catch (std::exception &e) {
+        // std::cerr << "Bad Event: " << current_event << std::endl;
+        total++;
+      }
+    }
+
+    try {
+      if (pid->at(vertex_id) == 11) {
+        TVector3 e_mu_prime_3;
+        TLorentzVector e_mu_prime;
+        e_mu_prime_3.SetXYZ(px->at(vertex_id), py->at(vertex_id), pz->at(vertex_id));
+        e_mu_prime.SetVectM(e_mu_prime_3, MASS_E);
+        double W = physics::W_calc(e_mu, e_mu_prime);
+        double Q2 = physics::Q2_calc(e_mu, e_mu_prime);
+        hist->Fill_WvsQ2(W, Q2);
+      }
+    } catch (std::exception &e) {
+      continue;
+      // std::cerr << "Bad Event: " << current_event << std::endl;
+      total++;
+    }
+
+    for (int j = 0; j < sc_time->size(); j++) {
+      if (sc_time->size() == 0) continue;
+      try {
+        Delta_T *dt = new Delta_T(sc_time->at(vertex_id), sc_r->at(vertex_id));
+        int index = sc_pindex->at(j);
+
+        double P_x = px->at(index) * px->at(index);
+        double P_y = py->at(index) * py->at(index);
+        double P_z = pz->at(index) * pz->at(index);
+        P = TMath::Sqrt(P_x + P_y + P_z);
+
+        dt->deltat(P, sc_time->at(j), sc_r->at(j));
+
+        if (index == 0) {
+          hist->Fill_MomVsBeta_vertex(pid->at(index), charge->at(index), P, beta->at(index));
+          hist->Fill_deltat_vertex(pid->at(index), charge->at(index), P, dt);
+        } else {
+          hist->Fill_MomVsBeta(pid->at(index), charge->at(index), P, beta->at(index));
+          hist->Fill_deltat(pid->at(index), charge->at(index), P, dt);
+        }
+        delete dt;
+      } catch (std::exception &e) {
+        continue;
+        // std::cerr << "Bad Event: " << current_event << std::endl;
+        total++;
       }
     }
   }
@@ -145,7 +269,7 @@ void SinglePi(char *fin, char *fout) {
       int e_index = 0;
       int pip_index = 1;
       for (int j = 0; j < sc_time->size(); j++) {
-        int temp = pindex->at(j);
+        int temp = sc_pindex->at(j);
         if (temp == 0) {
           e_index = j;
           continue;
@@ -177,6 +301,7 @@ void SinglePi(char *fin, char *fout) {
       } catch (std::exception &e) {
         continue;
         // std::cerr << "Bad Event: " << current_event << std::endl;
+        total++;
       }
     }
   }
@@ -258,7 +383,7 @@ void TwoPi(char *fin, char *fout) {
 
   out->Close();
   chain->Reset();
-  std::cerr << "\n" << total << "\t" << std::endl;
+  std::cerr << "\nErrors:" << total << "\t" << std::endl;
 }
 
 #endif

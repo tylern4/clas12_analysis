@@ -19,9 +19,13 @@ std::vector<int> *charge;
 std::vector<float> *beta;
 std::vector<float> *chi2pid;
 std::vector<int> *status;
-std::vector<int> *pindex;
+
+std::vector<int> *sc_pindex;
 std::vector<float> *sc_time;
 std::vector<float> *sc_r;
+
+std::vector<int> *ec_pindex;
+std::vector<float> *etot;
 
 namespace filehandeler {
 void getBranches(TTree *myTree) {
@@ -36,9 +40,13 @@ void getBranches(TTree *myTree) {
   myTree->SetBranchAddress("REC_Particle_beta", &beta);
   myTree->SetBranchAddress("REC_Particle_chi2pid", &chi2pid);
   myTree->SetBranchAddress("REC_Particle_status", &status);
-  myTree->SetBranchAddress("REC_Scintillator_pindex", &pindex);
+
+  myTree->SetBranchAddress("REC_Scintillator_pindex", &sc_pindex);
   myTree->SetBranchAddress("REC_Scintillator_time", &sc_time);
   myTree->SetBranchAddress("REC_Scintillator_path", &sc_r);
+
+  myTree->SetBranchAddress("REC_Calorimeter_pindex", &ec_pindex);
+  myTree->SetBranchAddress("REC_Calorimeter_energy", &etot);
 
   myTree->SetBranchStatus("*", 1);
 }

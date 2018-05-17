@@ -302,3 +302,11 @@ void Histogram::Write_MomVsBeta() {
     }
   }
 }
+
+void Histogram::Fill_EC(double etot, double momentum) { EC_sampling_fraction->Fill(momentum, etot / momentum); }
+void Histogram::Write_EC() {
+  EC_sampling_fraction->SetXTitle("Momentum (GeV)");
+  EC_sampling_fraction->SetYTitle("Sampling Fraction");
+  EC_sampling_fraction->SetOption("COLZ");
+  EC_sampling_fraction->Write();
+}
