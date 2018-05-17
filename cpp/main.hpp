@@ -31,19 +31,22 @@ void datahandeler(char *fin, char *fout) {
 
   int num_of_events = (int)chain->GetEntries();
   int total = 0;
-  double W, Q2;
+  double W, Q2, sf;
   TVector3 e_mu_prime_3;
   TLorentzVector e_mu_prime;
+  bool good_e = false;
 
   Histogram *hist = new Histogram();
 
   for (int current_event = 0; current_event < num_of_events; current_event++) {
     chain->GetEntry(current_event);
+
     if (pid->size() == 0 || sc_time->size() == 0) continue;
 
     double per = ((double)current_event / (double)num_of_events);
     std::cerr << "\t\t" << std::floor(100 * per) << "%\r\r" << std::flush;
 
+    good_e = false;
     for (int j = 0; j < ec_pindex->size(); j++) {
       if (ec_pindex->size() == 0) continue;
       try {
@@ -52,21 +55,22 @@ void datahandeler(char *fin, char *fout) {
           e_mu_prime_3.SetXYZ(px->at(index), py->at(index), pz->at(index));
           P = e_mu_prime_3.Mag();
           hist->Fill_EC(etot->at(j), P);
-          if (P > 1.5) {
+          sf = etot->at(j) / P;
+          if (P > 1.5 && sf >= 0.07 && sf <= 0.26) {
             e_mu_prime.SetVectM(e_mu_prime_3, MASS_E);
             W = physics::W_calc(e_mu, e_mu_prime);
             Q2 = physics::Q2_calc(e_mu, e_mu_prime);
             hist->Fill_WvsQ2(W, Q2);
+            good_e = true;
           }
         }
       } catch (std::exception &e) {
-        // std::cerr << "Bad Event: " << current_event << std::endl;
         total++;
       }
     }
 
     for (int j = 0; j < sc_time->size(); j++) {
-      if (sc_time->size() == 0) continue;
+      if (sc_time->size() == 0 && !good_e) continue;
       try {
         Delta_T *dt = new Delta_T(sc_time->at(0), sc_r->at(0));
         int index = sc_pindex->at(j);
@@ -87,7 +91,6 @@ void datahandeler(char *fin, char *fout) {
         }
         delete dt;
       } catch (std::exception &e) {
-        // std::cerr << "Bad Event: " << current_event << std::endl;
         total++;
       }
     }
@@ -157,7 +160,6 @@ void datahandeler2(char *fin) {
           hist->Fill_EC(etot->at(j), P);
         }
       } catch (std::exception &e) {
-        // std::cerr << "Bad Event: " << current_event << std::endl;
         total++;
       }
     }
@@ -174,7 +176,6 @@ void datahandeler2(char *fin) {
         hist->Fill_WvsQ2(W, Q2);
       }
     } catch (std::exception &e) {
-      // std::cerr << "Bad Event: " << current_event << std::endl;
       total++;
     }
 
@@ -201,7 +202,7 @@ void datahandeler2(char *fin) {
         delete dt;
       } catch (std::exception &e) {
         continue;
-        // std::cerr << "Bad Event: " << current_event << std::endl;
+
         total++;
       }
     }
@@ -291,7 +292,7 @@ void SinglePi(char *fin, char *fout) {
         }
       } catch (std::exception &e) {
         continue;
-        // std::cerr << "Bad Event: " << current_event << std::endl;
+
         total++;
       }
     }
