@@ -31,6 +31,9 @@ void datahandeler(char *fin, char *fout) {
 
   int num_of_events = (int)chain->GetEntries();
   int total = 0;
+  double W, Q2;
+  TVector3 e_mu_prime_3;
+  TLorentzVector e_mu_prime;
 
   Histogram *hist = new Histogram();
 
@@ -46,33 +49,20 @@ void datahandeler(char *fin, char *fout) {
       try {
         int index = ec_pindex->at(j);
         if (pid->at(index) == 11) {
-          double P_x = px->at(index) * px->at(index);
-          double P_y = py->at(index) * py->at(index);
-          double P_z = pz->at(index) * pz->at(index);
-          P = TMath::Sqrt(P_x + P_y + P_z);
+          e_mu_prime_3.SetXYZ(px->at(index), py->at(index), pz->at(index));
+          P = e_mu_prime_3.Mag();
           hist->Fill_EC(etot->at(j), P);
+          if (P > 1.5) {
+            e_mu_prime.SetVectM(e_mu_prime_3, MASS_E);
+            W = physics::W_calc(e_mu, e_mu_prime);
+            Q2 = physics::Q2_calc(e_mu, e_mu_prime);
+            hist->Fill_WvsQ2(W, Q2);
+          }
         }
       } catch (std::exception &e) {
-        std::cerr << "Bad Event: " << current_event << std::endl;
+        // std::cerr << "Bad Event: " << current_event << std::endl;
         total++;
       }
-    }
-
-    try {
-      if (pid->at(0) == 11) {
-        TVector3 e_mu_prime_3;
-        TLorentzVector e_mu_prime;
-        e_mu_prime_3.SetXYZ(px->at(0), py->at(0), pz->at(0));
-        // if (e_mu_prime_3.Mag() > 1.5) {
-        e_mu_prime.SetVectM(e_mu_prime_3, MASS_E);
-        double W = physics::W_calc(e_mu, e_mu_prime);
-        double Q2 = physics::Q2_calc(e_mu, e_mu_prime);
-        hist->Fill_WvsQ2(W, Q2);
-        //}
-      }
-    } catch (std::exception &e) {
-      // std::cerr << "Bad Event: " << current_event << std::endl;
-      total++;
     }
 
     for (int j = 0; j < sc_time->size(); j++) {
