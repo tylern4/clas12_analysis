@@ -63,14 +63,12 @@ void datahandeler(char *fin, char *fout) {
         TVector3 e_mu_prime_3;
         TLorentzVector e_mu_prime;
         e_mu_prime_3.SetXYZ(px->at(0), py->at(0), pz->at(0));
-        if (e_mu_prime_3.Mag() > 1.5) {
-          e_mu_prime.SetVectM(e_mu_prime_3, MASS_E);
-          double W = physics::W_calc(e_mu, e_mu_prime);
-          double Q2 = physics::Q2_calc(e_mu, e_mu_prime);
-          hist->Fill_WvsQ2(W, Q2);
-        } else {
-          std::cout << e_mu_prime_3.Mag() << std::endl;
-        }
+        // if (e_mu_prime_3.Mag() > 1.5) {
+        e_mu_prime.SetVectM(e_mu_prime_3, MASS_E);
+        double W = physics::W_calc(e_mu, e_mu_prime);
+        double Q2 = physics::Q2_calc(e_mu, e_mu_prime);
+        hist->Fill_WvsQ2(W, Q2);
+        //}
       }
     } catch (std::exception &e) {
       // std::cerr << "Bad Event: " << current_event << std::endl;
