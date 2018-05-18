@@ -54,9 +54,9 @@ void datahandeler(char *fin, char *fout) {
         if (pid->at(index) == 11) {
           e_mu_prime_3.SetXYZ(px->at(index), py->at(index), pz->at(index));
           P = e_mu_prime_3.Mag();
-          hist->Fill_EC(etot->at(j), P);
           sf = etot->at(j) / P;
           if (P > 1.5 && sf >= 0.07 && sf <= 0.26) {
+            hist->Fill_EC(sf, P);
             e_mu_prime.SetVectM(e_mu_prime_3, MASS_E);
             W = physics::W_calc(e_mu, e_mu_prime);
             Q2 = physics::Q2_calc(e_mu, e_mu_prime);
@@ -68,9 +68,9 @@ void datahandeler(char *fin, char *fout) {
         total++;
       }
     }
-
+    if (!good_e) continue;
     for (int j = 0; j < sc_time->size(); j++) {
-      if (sc_time->size() == 0 && !good_e) continue;
+      if (sc_time->size() == 0) continue;
       try {
         Delta_T *dt = new Delta_T(sc_time->at(0), sc_r->at(0));
         int index = sc_pindex->at(j);
