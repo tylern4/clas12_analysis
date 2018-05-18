@@ -65,7 +65,7 @@ void datahandeler(char *fin, char *fout) {
           e_mu_prime_3.SetXYZ(px->at(index), py->at(index), pz->at(index));
           P = e_mu_prime_3.Mag();
           e_mu_prime.SetVectM(e_mu_prime_3, MASS_E);
-          sf = etot->at(j) / e_mu_prime.P();
+          sf = ec_energy->at(j) / e_mu_prime.P();
           good_e = true;
         }
       } catch (std::exception &e) {
@@ -77,7 +77,7 @@ void datahandeler(char *fin, char *fout) {
     for (int j = 0; j < sc_time->size(); j++) {
       if (sc_time->size() == 0) continue;
       try {
-        Delta_T *dt = new Delta_T(sc_time->at(0), sc_r->at(0));
+        Delta_T *dt = new Delta_T(sc_time->at(0), sc_path->at(0));
         index = sc_pindex->at(j);
         sc_d = sc_detector->at(j);
         // I think 12 is FTOF
@@ -87,7 +87,7 @@ void datahandeler(char *fin, char *fout) {
           P_z = pz->at(index) * pz->at(index);
           P = TMath::Sqrt(P_x + P_y + P_z);
 
-          dt->deltat(P, sc_time->at(j), sc_r->at(j));
+          dt->deltat(P, sc_time->at(j), sc_path->at(j));
 
           if (index == 0) {
             hist->Fill_MomVsBeta_vertex(pid->at(index), charge->at(index), P, beta->at(index));
@@ -176,7 +176,7 @@ void datahandeler2(char *fin) {
           double P_y = py->at(index) * py->at(index);
           double P_z = pz->at(index) * pz->at(index);
           P = TMath::Sqrt(P_x + P_y + P_z);
-          hist->Fill_EC(etot->at(j), P);
+          hist->Fill_EC(ec_energy->at(j), P);
         }
       } catch (std::exception &e) {
         total++;
@@ -201,7 +201,7 @@ void datahandeler2(char *fin) {
     for (int j = 0; j < sc_time->size(); j++) {
       if (sc_time->size() == 0) continue;
       try {
-        Delta_T *dt = new Delta_T(sc_time->at(vertex_id), sc_r->at(vertex_id));
+        Delta_T *dt = new Delta_T(sc_time->at(vertex_id), sc_path->at(vertex_id));
         int index = sc_pindex->at(j);
 
         double P_x = px->at(index) * px->at(index);
@@ -209,7 +209,7 @@ void datahandeler2(char *fin) {
         double P_z = pz->at(index) * pz->at(index);
         P = TMath::Sqrt(P_x + P_y + P_z);
 
-        dt->deltat(P, sc_time->at(j), sc_r->at(j));
+        dt->deltat(P, sc_time->at(j), sc_path->at(j));
 
         if (index == 0) {
           hist->Fill_MomVsBeta_vertex(pid->at(index), charge->at(index), P, beta->at(index));
