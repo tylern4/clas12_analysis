@@ -40,6 +40,7 @@ void datahandeler(char *fin, char *fout) {
   double P_z = 0;
   double per = 0;
   int index = 0;
+  int num_pip = 0;
   TVector3 e_mu_prime_3;
   TLorentzVector e_mu_prime;
   bool good_e = false;
@@ -54,16 +55,17 @@ void datahandeler(char *fin, char *fout) {
     per = ((double)current_event / (double)num_of_events);
     std::cerr << "\t\t" << std::floor(100 * per) << "%\r\r" << std::flush;
 
+    num_pip = 0;
     good_e = false;
     for (int j = 0; j < ec_pindex->size(); j++) {
       if (ec_pindex->size() == 0) continue;
       try {
         index = ec_pindex->at(j);
-        if (pid->at(index) == 11) {
+        if (pid->at(index) == ELECTRON) {
           e_mu_prime_3.SetXYZ(px->at(index), py->at(index), pz->at(index));
           P = e_mu_prime_3.Mag();
-          sf = etot->at(j) / P;
           e_mu_prime.SetVectM(e_mu_prime_3, MASS_E);
+          sf = etot->at(j) / e_mu_prime.P();
           good_e = true;
         }
       } catch (std::exception &e) {
@@ -95,7 +97,8 @@ void datahandeler(char *fin, char *fout) {
             hist->Fill_deltat(pid->at(index), charge->at(index), P, dt);
           }
         }
-        if (pid->at(sc_pindex->at(j)) == 11 && sc_detector->at(sc_pindex->at(j)) == 12) good_e = true;
+        if (pid->at(sc_pindex->at(j)) == PIP) num_pip++;
+        if (pid->at(sc_pindex->at(j)) == ELECTRON && sc_detector->at(sc_pindex->at(j)) == 12) good_e = true;
         delete dt;
       } catch (std::exception &e) {
         total++;
@@ -104,10 +107,11 @@ void datahandeler(char *fin, char *fout) {
     if (!good_e) continue;
     // && sf >= 0.07 && sf <= 0.26
     if (good_e && e_mu_prime.P() > 1.5) {
-      hist->Fill_EC(sf, P);
+      hist->Fill_EC(sf, e_mu_prime.P());
       W = physics::W_calc(e_mu, e_mu_prime);
       Q2 = physics::Q2_calc(e_mu, e_mu_prime);
       hist->Fill_WvsQ2(W, Q2);
+      if (num_pip == 1 && pid->size() == 2) hist->Fill_WvsQ2_singlePi(W, Q2);
     }
   }
 
@@ -167,7 +171,7 @@ void datahandeler2(char *fin) {
       if (ec_pindex->size() == 0) continue;
       try {
         int index = ec_pindex->at(j);
-        if (pid->at(index) == 11) {
+        if (pid->at(index) == ELECTRON) {
           double P_x = px->at(index) * px->at(index);
           double P_y = py->at(index) * py->at(index);
           double P_z = pz->at(index) * pz->at(index);
@@ -180,7 +184,7 @@ void datahandeler2(char *fin) {
     }
 
     try {
-      if (pid->at(vertex_id) == 11) {
+      if (pid->at(vertex_id) == ELECTRON) {
         TVector3 e_mu_prime_3;
         TLorentzVector e_mu_prime;
         e_mu_prime_3.SetXYZ(px->at(vertex_id), py->at(vertex_id), pz->at(vertex_id));
@@ -284,7 +288,7 @@ void SinglePi(char *fin, char *fout) {
       }
       try {
         pip_index = (e_index == 0) ? 1 : 0;
-        if (pid->at(e_index) == 11 && (pid->at(pip_index) == PIP || pid->at(pip_index) == KP)) {
+        if (pid->at(e_index) == ELECTRON && (pid->at(pip_index) == PIP || pid->at(pip_index) == KP)) {
           TVector3 e_mu_prime_3;
           TLorentzVector e_mu_prime;
           e_mu_prime_3.SetXYZ(px->at(e_index), py->at(e_index), pz->at(e_index));

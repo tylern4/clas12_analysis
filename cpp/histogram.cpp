@@ -35,6 +35,23 @@ void Histogram::Fill_WvsQ2(double W, double Q2) {
   }
 }
 
+// W and Q^2
+void Histogram::Fill_WvsQ2_singlePi(double W, double Q2) {
+  W_vs_q2_singlePi->Fill(W, Q2);
+  W_hist_singlePi->Fill(W);
+  Q2_hist_singlePi->Fill(Q2);
+
+  if (Q2 <= 0.4) {
+    W_vs_q2_lower_singlePi->Fill(W, Q2);
+    W_hist_lower_singlePi->Fill(W);
+    Q2_hist_lower_singlePi->Fill(Q2);
+  } else {
+    W_vs_q2_upper_singlePi->Fill(W, Q2);
+    W_hist_upper_singlePi->Fill(W);
+    Q2_hist_upper_singlePi->Fill(Q2);
+  }
+}
+
 void Histogram::Write_WvsQ2() {
   W_vs_q2->SetXTitle("W (GeV)");
   W_vs_q2->SetYTitle("Q^{2} (GeV^{2})");
@@ -68,6 +85,39 @@ void Histogram::Write_WvsQ2() {
 
   Q2_hist_upper->SetXTitle("Q^{2} (GeV^{2})");
   Q2_hist_upper->Write();
+
+  W_vs_q2_singlePi->SetXTitle("W (GeV)");
+  W_vs_q2_singlePi->SetYTitle("Q^{2} (GeV^{2})");
+  W_vs_q2_singlePi->SetOption("COLZ");
+  W_vs_q2_singlePi->Write();
+
+  W_hist_singlePi->SetXTitle("W (GeV)");
+  W_hist_singlePi->Write();
+
+  Q2_hist_singlePi->SetXTitle("Q^{2} (GeV^{2})");
+  Q2_hist_singlePi->Write();
+
+  W_vs_q2_lower_singlePi->SetXTitle("W (GeV)");
+  W_vs_q2_lower_singlePi->SetYTitle("Q^{2} (GeV^{2})");
+  W_vs_q2_lower_singlePi->SetOption("COLZ");
+  W_vs_q2_lower_singlePi->Write();
+
+  W_hist_lower_singlePi->SetXTitle("W (GeV)");
+  W_hist_lower_singlePi->Write();
+
+  Q2_hist_lower_singlePi->SetXTitle("Q^{2} (GeV^{2})");
+  Q2_hist_lower_singlePi->Write();
+
+  W_vs_q2_upper_singlePi->SetXTitle("W (GeV)");
+  W_vs_q2_upper_singlePi->SetYTitle("Q^{2} (GeV^{2})");
+  W_vs_q2_upper_singlePi->SetOption("COLZ");
+  W_vs_q2_upper_singlePi->Write();
+
+  W_hist_upper_singlePi->SetXTitle("W (GeV)");
+  W_hist_upper_singlePi->Write();
+
+  Q2_hist_upper_singlePi->SetXTitle("Q^{2} (GeV^{2})");
+  Q2_hist_upper_singlePi->Write();
 }
 
 void Histogram::makeHists_deltat() {

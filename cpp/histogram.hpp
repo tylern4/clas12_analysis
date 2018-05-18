@@ -44,6 +44,20 @@ class Histogram {
   TH1D *Q2_hist_upper = new TH1D("Q2_upper", "Q2_upper", bins, 0.4, 10);
   TH2D *W_vs_q2_upper = new TH2D("W_vs_q2_upper", "W_vs_q2_upper", bins, zero, 5, bins, 0.4, 8);
 
+  TH1D *W_hist_singlePi = new TH1D("W_singlePi", "W_singlePi", bins, zero, 5);
+  TH1D *Q2_hist_singlePi = new TH1D("Q2_singlePi", "Q2_singlePi", bins, zero, 10);
+  TH2D *W_vs_q2_singlePi = new TH2D("W_vs_q2_singlePi", "W_vs_q2_singlePi", bins, zero, 5, bins, zero, 8);
+
+  TH1D *W_hist_lower_singlePi = new TH1D("W_lower_singlePi", "W_lower_singlePi", bins, zero, 5);
+  TH1D *Q2_hist_lower_singlePi = new TH1D("Q2_lower_singlePi", "Q2_lower_singlePi", bins, zero, 0.4);
+  TH2D *W_vs_q2_lower_singlePi =
+      new TH2D("W_vs_q2_lower_singlePi", "W_vs_q2_lower_singlePi", bins, zero, 5, bins, zero, 0.4);
+
+  TH1D *W_hist_upper_singlePi = new TH1D("W_upper_singlePi", "W_upper_singlePi", bins, zero, 5);
+  TH1D *Q2_hist_upper_singlePi = new TH1D("Q2_upper_singlePi", "Q2_upper_singlePi", bins, 0.4, 10);
+  TH2D *W_vs_q2_upper_singlePi =
+      new TH2D("W_vs_q2_upper_singlePi", "W_vs_q2_upper_singlePi", bins, zero, 5, bins, 0.4, 8);
+
   // Mom vs Beta
   TH2D *momvsbeta_hist[particle_num][charge_num][with_id_num];
   TH2D *momvsbeta_vertex[with_id_num];
@@ -65,6 +79,7 @@ class Histogram {
 
   // W and Q^2
   void Fill_WvsQ2(double W, double Q2);
+  void Fill_WvsQ2_singlePi(double W, double Q2);
   void Write_WvsQ2();
 
   // P and E
