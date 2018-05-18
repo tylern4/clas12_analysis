@@ -31,7 +31,15 @@ void datahandeler(char *fin, char *fout) {
 
   int num_of_events = (int)chain->GetEntries();
   int total = 0;
-  double W, Q2, sf;
+  int sc_d = 0;
+  double W = 0;
+  double Q2 = 0;
+  double sf = 0;
+  double P_x = 0;
+  double P_y = 0;
+  double P_z = 0;
+  double per = 0;
+  int index = 0;
   TVector3 e_mu_prime_3;
   TLorentzVector e_mu_prime;
   bool good_e = false;
@@ -41,58 +49,64 @@ void datahandeler(char *fin, char *fout) {
   for (int current_event = 0; current_event < num_of_events; current_event++) {
     chain->GetEntry(current_event);
 
-    if (pid->size() == 0 || sc_time->size() == 0) continue;
+    if (pid->size() == 0 || sc_time->size() == 0 || ec_pindex->size() == 0) continue;
 
-    double per = ((double)current_event / (double)num_of_events);
+    per = ((double)current_event / (double)num_of_events);
     std::cerr << "\t\t" << std::floor(100 * per) << "%\r\r" << std::flush;
 
     good_e = false;
     for (int j = 0; j < ec_pindex->size(); j++) {
       if (ec_pindex->size() == 0) continue;
       try {
-        int index = ec_pindex->at(j);
+        index = ec_pindex->at(j);
         if (pid->at(index) == 11) {
           e_mu_prime_3.SetXYZ(px->at(index), py->at(index), pz->at(index));
           P = e_mu_prime_3.Mag();
           sf = etot->at(j) / P;
-          if (P > 1.5 && sf >= 0.07 && sf <= 0.26) {
-            hist->Fill_EC(sf, P);
-            e_mu_prime.SetVectM(e_mu_prime_3, MASS_E);
-            W = physics::W_calc(e_mu, e_mu_prime);
-            Q2 = physics::Q2_calc(e_mu, e_mu_prime);
-            hist->Fill_WvsQ2(W, Q2);
-            good_e = true;
-          }
+          e_mu_prime.SetVectM(e_mu_prime_3, MASS_E);
+          good_e = true;
         }
       } catch (std::exception &e) {
         total++;
       }
     }
     if (!good_e) continue;
+    good_e = false;
     for (int j = 0; j < sc_time->size(); j++) {
       if (sc_time->size() == 0) continue;
       try {
         Delta_T *dt = new Delta_T(sc_time->at(0), sc_r->at(0));
-        int index = sc_pindex->at(j);
+        index = sc_pindex->at(j);
+        sc_d = sc_detector->at(j);
+        // I think 12 is FTOF
+        if (sc_d == 12) {
+          P_x = px->at(index) * px->at(index);
+          P_y = py->at(index) * py->at(index);
+          P_z = pz->at(index) * pz->at(index);
+          P = TMath::Sqrt(P_x + P_y + P_z);
 
-        double P_x = px->at(index) * px->at(index);
-        double P_y = py->at(index) * py->at(index);
-        double P_z = pz->at(index) * pz->at(index);
-        P = TMath::Sqrt(P_x + P_y + P_z);
+          dt->deltat(P, sc_time->at(j), sc_r->at(j));
 
-        dt->deltat(P, sc_time->at(j), sc_r->at(j));
-
-        if (index == 0) {
-          hist->Fill_MomVsBeta_vertex(pid->at(index), charge->at(index), P, beta->at(index));
-          hist->Fill_deltat_vertex(pid->at(index), charge->at(index), P, dt);
-        } else {
-          hist->Fill_MomVsBeta(pid->at(index), charge->at(index), P, beta->at(index));
-          hist->Fill_deltat(pid->at(index), charge->at(index), P, dt);
+          if (index == 0) {
+            hist->Fill_MomVsBeta_vertex(pid->at(index), charge->at(index), P, beta->at(index));
+            hist->Fill_deltat_vertex(pid->at(index), charge->at(index), P, dt);
+          } else {
+            hist->Fill_MomVsBeta(pid->at(index), charge->at(index), P, beta->at(index));
+            hist->Fill_deltat(pid->at(index), charge->at(index), P, dt);
+          }
         }
+        if (pid->at(sc_pindex->at(j)) == 11 && sc_detector->at(sc_pindex->at(j)) == 12) good_e = true;
         delete dt;
       } catch (std::exception &e) {
         total++;
       }
+    }
+    if (!good_e) continue;
+    if (good_e && e_mu_prime.P() > 1.5 && sf >= 0.07 && sf <= 0.26) {
+      hist->Fill_EC(sf, P);
+      W = physics::W_calc(e_mu, e_mu_prime);
+      Q2 = physics::Q2_calc(e_mu, e_mu_prime);
+      hist->Fill_WvsQ2(W, Q2);
     }
   }
 

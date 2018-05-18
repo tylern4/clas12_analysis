@@ -21,6 +21,7 @@ std::vector<float> *chi2pid;
 std::vector<int> *status;
 
 std::vector<int> *sc_pindex;
+std::vector<int> *sc_detector;
 std::vector<float> *sc_time;
 std::vector<float> *sc_r;
 
@@ -42,6 +43,7 @@ void getBranches(TTree *myTree) {
   myTree->SetBranchAddress("REC_Particle_status", &status);
 
   myTree->SetBranchAddress("REC_Scintillator_pindex", &sc_pindex);
+  myTree->SetBranchAddress("REC_Scintillator_detector", &sc_detector);
   myTree->SetBranchAddress("REC_Scintillator_time", &sc_time);
   myTree->SetBranchAddress("REC_Scintillator_path", &sc_r);
 
