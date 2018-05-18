@@ -102,7 +102,8 @@ void datahandeler(char *fin, char *fout) {
       }
     }
     if (!good_e) continue;
-    if (good_e && e_mu_prime.P() > 1.5 && sf >= 0.07 && sf <= 0.26) {
+    // && sf >= 0.07 && sf <= 0.26
+    if (good_e && e_mu_prime.P() > 1.5) {
       hist->Fill_EC(sf, P);
       W = physics::W_calc(e_mu, e_mu_prime);
       Q2 = physics::Q2_calc(e_mu, e_mu_prime);
