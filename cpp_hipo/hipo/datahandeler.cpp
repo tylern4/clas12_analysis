@@ -32,6 +32,7 @@ DataHandeler::~DataHandeler() {
 }
 
 void DataHandeler::run() {
+#pragma omp parallel for
   for (auto file_name : input_files) {
     std::cout << "Processing: " << file_name << std::endl;
     file_handeler(file_name);

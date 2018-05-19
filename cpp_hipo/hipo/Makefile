@@ -8,6 +8,11 @@ MAINS = deltat.cpp histogram.cpp physics.cpp glob_files.cpp datahandeler.cpp mai
 TARGET = clas12_ana
 MAIN = $(MAINS:%.cpp=%.o)
 
+UNAME := $(shell uname)
+ifeq ($(UNAME), Linux)
+	CXXFLAGS += -fopenmp
+endif
+
 LZ4 = ../lz4/lib/lz4.o
 .PHONY: clean
 
