@@ -27,7 +27,7 @@ $(LZ4):
 $(MAIN): %.o : %.cpp
 		$(CXX) $(CXXFLAGS) -c $< -o $@
 
-$(TARGET): $(MAIN) $(LZ4) $(LIB)
+$(TARGET): $(LZ4) $(LIB) $(MAIN)
 	$(CXX) $(MAIN) $(LIB) $(LZ4) $(CXXFLAGS) $(ROOTLIBS) -o $(TARGET)
 
 clean:
