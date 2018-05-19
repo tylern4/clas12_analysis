@@ -3,8 +3,8 @@
 /*  Created by Nick Tyler             */
 /*	University Of South Carolina      */
 /**************************************/
-#include "deltat.hpp"
 #include "constants.hpp"
+#include "deltat.hpp"
 
 Delta_T::Delta_T(double sc_time, double sc_pathlength) { vertex = vertex_time(sc_time, sc_pathlength, 1.0); }
 

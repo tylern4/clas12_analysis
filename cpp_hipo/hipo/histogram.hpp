@@ -5,14 +5,14 @@
 
 #ifndef HIST_H_GUARD
 #define HIST_H_GUARD
-#include "TH2.h"
-#include "TH1.h"
 #include "TF1.h"
+#include "TH1.h"
+#include "TH2.h"
 #include "constants.hpp"
 #include "deltat.hpp"
 
 class Histogram {
-private:
+ private:
   int bins = 500;
   double p_min = 0.0;
   double p_max = 10;
@@ -23,11 +23,11 @@ private:
   std::string hname;
   std::string htitle;
 
-  static const short particle_num = 4; // 0-e 1-Pi 2-P 3-K
+  static const short particle_num = 4;  // 0-e 1-Pi 2-P 3-K
   std::string particle_name[particle_num] = {"e", "pi", "P", "K"};
-  static const short charge_num = 3; // 0-un 1-pos 2-neg
+  static const short charge_num = 3;  // 0-un 1-pos 2-neg
   std::string charge_name[charge_num] = {"both", "positive", "negative"};
-  static const short with_id_num = 3; // 0-without 1-with 2-anti
+  static const short with_id_num = 3;  // 0-without 1-with 2-anti
   std::string id_name[with_id_num] = {"withoutID", "withID", "antiID"};
 
   // Kinematics
@@ -38,13 +38,25 @@ private:
 
   TH1D *W_hist_lower = new TH1D("W_lower", "W_lower", bins, zero, 5);
   TH1D *Q2_hist_lower = new TH1D("Q2_lower", "Q2_lower", bins, zero, 0.4);
-  TH2D *W_vs_q2_lower = new TH2D("W_vs_q2_lower", "W_vs_q2_lower", bins, zero,
-                                 5, bins, zero, 0.4);
+  TH2D *W_vs_q2_lower = new TH2D("W_vs_q2_lower", "W_vs_q2_lower", bins, zero, 5, bins, zero, 0.4);
 
   TH1D *W_hist_upper = new TH1D("W_upper", "W_upper", bins, zero, 5);
   TH1D *Q2_hist_upper = new TH1D("Q2_upper", "Q2_upper", bins, 0.4, 10);
-  TH2D *W_vs_q2_upper =
-      new TH2D("W_vs_q2_upper", "W_vs_q2_upper", bins, zero, 5, bins, 0.4, 8);
+  TH2D *W_vs_q2_upper = new TH2D("W_vs_q2_upper", "W_vs_q2_upper", bins, zero, 5, bins, 0.4, 8);
+
+  TH1D *W_hist_singlePi = new TH1D("W_singlePi", "W_singlePi", bins, zero, 5);
+  TH1D *Q2_hist_singlePi = new TH1D("Q2_singlePi", "Q2_singlePi", bins, zero, 10);
+  TH2D *W_vs_q2_singlePi = new TH2D("W_vs_q2_singlePi", "W_vs_q2_singlePi", bins, zero, 5, bins, zero, 8);
+
+  TH1D *W_hist_lower_singlePi = new TH1D("W_lower_singlePi", "W_lower_singlePi", bins, zero, 5);
+  TH1D *Q2_hist_lower_singlePi = new TH1D("Q2_lower_singlePi", "Q2_lower_singlePi", bins, zero, 0.4);
+  TH2D *W_vs_q2_lower_singlePi =
+      new TH2D("W_vs_q2_lower_singlePi", "W_vs_q2_lower_singlePi", bins, zero, 5, bins, zero, 0.4);
+
+  TH1D *W_hist_upper_singlePi = new TH1D("W_upper_singlePi", "W_upper_singlePi", bins, zero, 5);
+  TH1D *Q2_hist_upper_singlePi = new TH1D("Q2_upper_singlePi", "Q2_upper_singlePi", bins, 0.4, 10);
+  TH2D *W_vs_q2_upper_singlePi =
+      new TH2D("W_vs_q2_upper_singlePi", "W_vs_q2_upper_singlePi", bins, zero, 5, bins, 0.4, 8);
 
   // Mom vs Beta
   TH2D *momvsbeta_hist[particle_num][charge_num][with_id_num];
@@ -55,12 +67,19 @@ private:
   TH2D *delta_t_hist[particle_num][charge_num][with_id_num];
   TH2D *delta_t_vertex[with_id_num];
   // Delta T
-public:
+
+  // EC Sampling Fraction
+  TH2D *EC_sampling_fraction =
+      new TH2D("EC_sampling_fraction", "EC_sampling_fraction", bins, p_min, p_max, bins, zero, 1.0);
+  // EC Sampling Fraction
+
+ public:
   Histogram();
   ~Histogram();
 
   // W and Q^2
   void Fill_WvsQ2(double W, double Q2);
+  void Fill_WvsQ2_singlePi(double W, double Q2);
   void Write_WvsQ2();
 
   // P and E
@@ -75,6 +94,10 @@ public:
   void Fill_deltat_vertex(int pid, int charge, double P, Delta_T *dt);
   void Fill_deltat(int pid, int charge, double P, Delta_T *dt);
   void Write_deltat();
+
+  // EC Sampling Fraction
+  void Fill_EC(double etot, double momentum);
+  void Write_EC();
 };
 
 #endif

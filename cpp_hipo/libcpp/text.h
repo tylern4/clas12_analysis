@@ -14,38 +14,34 @@
 #ifndef TEXT_H
 #define TEXT_H
 
-#include <iostream>
-#include <cstdlib>
 #include <cstdio>
-#include <string>
+#include <cstdlib>
 #include <fstream>
+#include <iostream>
+#include <string>
 #include <vector>
 
 #include "utils.h"
 
 namespace text {
 
-  class reader {
-  private:
+class reader {
+ private:
+  std::vector<std::string> textLines;
+  std::string delim;
+  std::ifstream inputStream;
+  hipo::utils stringUtils;
 
-    std::vector<std::string> textLines;
-    std::string delim;
-    std::ifstream inputStream;
-    hipo::utils   stringUtils;
+ public:
+  reader();
+  ~reader();
 
-  public:
-
-    reader();
-    ~reader();
-
-    void open(const char *file);
-    void setDalim(std::string &d);
-    bool readLine();
-    std::vector<int>  getIntVector();
-    std::string getLine();
-
-  };
-
-}
+  void open(const char *file);
+  void setDalim(std::string &d);
+  bool readLine();
+  std::vector<int> getIntVector();
+  std::string getLine();
+};
+}  // namespace text
 
 #endif /* TEXT_H */
