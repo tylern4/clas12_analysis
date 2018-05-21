@@ -15,6 +15,8 @@ DataHandeler::DataHandeler(std::vector<std::string> fin, std::string fout) {
 
 DataHandeler::~DataHandeler() {
   out->cd();
+  hist->Write_EC();
+
   TDirectory *wvsq2 = out->mkdir("wvsq2");
   wvsq2->cd();
   hist->Write_WvsQ2();
@@ -28,7 +30,7 @@ DataHandeler::~DataHandeler() {
   hist->Write_deltat();
 
   out->Close();
-  std::cerr << "\n" << total << "\t" << std::endl;
+  if (total > 0) std::cerr << "\nError #: " << total << "\t" << std::endl;
 }
 
 void DataHandeler::run() {
