@@ -8,15 +8,6 @@
 #include <vector>
 #include "TChain.h"
 
-std::vector<int> *RUN_config_run;
-std::vector<int> *RUN_config_event;
-std::vector<int> *RUN_config_unixtime;
-std::vector<int> *RUN_config_trigger;
-std::vector<int> *RUN_config_timestamp;
-std::vector<int> *RUN_config_type;
-std::vector<int> *RUN_config_mode;
-std::vector<float> *RUN_config_torus;
-std::vector<float> *RUN_config_solenoid;
 std::vector<int> *REC_Event_NRUN;
 std::vector<int> *REC_Event_NEVENT;
 std::vector<float> *REC_Event_EVNTime;
@@ -65,9 +56,6 @@ std::vector<float> *ec_dw;
 std::vector<float> *ec_m2u;
 std::vector<float> *ec_m2v;
 std::vector<float> *ec_m2w;
-std::vector<float> *ec_m3u;
-std::vector<float> *ec_m3v;
-std::vector<float> *ec_m3w;
 std::vector<int> *ec_status;
 std::vector<int> *cc_index;
 std::vector<int> *cc_pindex;
@@ -132,15 +120,6 @@ void getBranches(TTree *myTree) {
   myTree->SetBranchAddress("REC_Particle_chi2pid", &chi2pid);
   myTree->SetBranchAddress("REC_Particle_status", &status);
 
-  myTree->SetBranchAddress("RUN_config_run", &RUN_config_run);
-  myTree->SetBranchAddress("RUN_config_event", &RUN_config_event);
-  myTree->SetBranchAddress("RUN_config_unixtime", &RUN_config_unixtime);
-  myTree->SetBranchAddress("RUN_config_trigger", &RUN_config_trigger);
-  myTree->SetBranchAddress("RUN_config_timestamp", &RUN_config_timestamp);
-  myTree->SetBranchAddress("RUN_config_type", &RUN_config_type);
-  myTree->SetBranchAddress("RUN_config_mode", &RUN_config_mode);
-  myTree->SetBranchAddress("RUN_config_torus", &RUN_config_torus);
-  myTree->SetBranchAddress("RUN_config_solenoid", &RUN_config_solenoid);
   myTree->SetBranchAddress("REC_Event_NRUN", &REC_Event_NRUN);
   myTree->SetBranchAddress("REC_Event_NEVENT", &REC_Event_NEVENT);
   myTree->SetBranchAddress("REC_Event_EVNTime", &REC_Event_EVNTime);
@@ -178,9 +157,6 @@ void getBranches(TTree *myTree) {
   myTree->SetBranchAddress("REC_Calorimeter_m2u", &ec_m2u);
   myTree->SetBranchAddress("REC_Calorimeter_m2v", &ec_m2v);
   myTree->SetBranchAddress("REC_Calorimeter_m2w", &ec_m2w);
-  myTree->SetBranchAddress("REC_Calorimeter_m3u", &ec_m3u);
-  myTree->SetBranchAddress("REC_Calorimeter_m3v", &ec_m3v);
-  myTree->SetBranchAddress("REC_Calorimeter_m3w", &ec_m3w);
   myTree->SetBranchAddress("REC_Calorimeter_status", &ec_status);
   myTree->SetBranchAddress("REC_Cherenkov_index", &cc_index);
   myTree->SetBranchAddress("REC_Cherenkov_pindex", &cc_pindex);

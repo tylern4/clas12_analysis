@@ -31,6 +31,7 @@ void datahandeler(char *fin, char *fout) {
 
   int num_of_events = (int)chain->GetEntries();
   int total = 0;
+  double tot_energy_ec = 0;
   int sc_d = 0;
   double W = 0;
   double Q2 = 0;
@@ -43,7 +44,7 @@ void datahandeler(char *fin, char *fout) {
   int num_pip = 0;
   TVector3 e_mu_prime_3;
   TLorentzVector e_mu_prime;
-  bool good_e = false;
+  bool good_e = true;
 
   Histogram *hist = new Histogram();
 
@@ -56,24 +57,26 @@ void datahandeler(char *fin, char *fout) {
     std::cerr << "\t\t" << std::floor(100 * per) << "%\r\r" << std::flush;
 
     num_pip = 0;
-    good_e = false;
+    tot_energy_ec = 0;
+    good_e = true;
     for (int j = 0; j < ec_pindex->size(); j++) {
       if (ec_pindex->size() == 0) continue;
       try {
         index = ec_pindex->at(j);
-        if (pid->at(index) == ELECTRON) {
+        if (pid->at(index) == ELECTRON && index == 0) {
           e_mu_prime_3.SetXYZ(px->at(index), py->at(index), pz->at(index));
           P = e_mu_prime_3.Mag();
           e_mu_prime.SetVectM(e_mu_prime_3, MASS_E);
-          sf = ec_energy->at(j) / e_mu_prime.P();
+          tot_energy_ec += ec_energy->at(j);
           good_e = true;
         }
       } catch (std::exception &e) {
         total++;
       }
     }
-    if (!good_e) continue;
-    good_e = false;
+    sf = tot_energy_ec / e_mu_prime.P();
+    // if (!good_e) continue;
+    good_e = true;
     for (int j = 0; j < sc_time->size(); j++) {
       if (sc_time->size() == 0) continue;
       try {
@@ -106,12 +109,16 @@ void datahandeler(char *fin, char *fout) {
     }
     if (!good_e) continue;
     // && sf >= 0.07 && sf <= 0.26
-    if (good_e && e_mu_prime.P() > 1.5) {
-      hist->Fill_EC(sf, e_mu_prime.P());
-      W = physics::W_calc(e_mu, e_mu_prime);
-      Q2 = physics::Q2_calc(e_mu, e_mu_prime);
-      hist->Fill_WvsQ2(W, Q2);
-      if (num_pip == 1 && pid->size() == 2) hist->Fill_WvsQ2_singlePi(W, Q2);
+    if (px->size() > 0) {
+      e_mu_prime_3.SetXYZ(px->at(0), py->at(0), pz->at(0));
+      e_mu_prime.SetVectM(e_mu_prime_3, MASS_E);
+      if (e_mu_prime.P() > 1.5) {
+        hist->Fill_EC(sf, e_mu_prime.P());
+        W = physics::W_calc(e_mu, e_mu_prime);
+        Q2 = physics::Q2_calc(e_mu, e_mu_prime);
+        hist->Fill_WvsQ2(W, Q2);
+        if (num_pip == 1 && pid->size() == 2) hist->Fill_WvsQ2_singlePi(W, Q2);
+      }
     }
   }
 
@@ -167,21 +174,19 @@ void datahandeler2(char *fin) {
       }
     }
 
+    double tot_energy_ec = 0;
     for (int j = 0; j < ec_pindex->size(); j++) {
       if (ec_pindex->size() == 0) continue;
-      try {
-        int index = ec_pindex->at(j);
-        if (pid->at(index) == ELECTRON) {
-          double P_x = px->at(index) * px->at(index);
-          double P_y = py->at(index) * py->at(index);
-          double P_z = pz->at(index) * pz->at(index);
-          P = TMath::Sqrt(P_x + P_y + P_z);
-          hist->Fill_EC(ec_energy->at(j), P);
-        }
-      } catch (std::exception &e) {
-        total++;
+      int index = ec_pindex->at(j);
+      if (pid->at(ec_pindex->at(j)) == ELECTRON && ec_pindex->at(j) == 0) {
+        tot_energy_ec += ec_energy->at(j);
+        double P_x = px->at(index) * px->at(index);
+        double P_y = py->at(index) * py->at(index);
+        double P_z = pz->at(index) * pz->at(index);
+        P = TMath::Sqrt(P_x + P_y + P_z);
       }
     }
+    hist->Fill_EC(tot_energy_ec, P);
 
     try {
       if (pid->at(vertex_id) == ELECTRON) {
