@@ -119,9 +119,6 @@ void getBranches(TTree *myTree) {
   myTree->SetBranchAddress("REC_Cherenkov_nphe", &cc_nphe);
   myTree->SetBranchAddress("REC_Cherenkov_time", &cc_time);
   myTree->SetBranchAddress("REC_Cherenkov_path", &cc_path);
-  myTree->SetBranchAddress("REC_Cherenkov_x", &cc_x);
-  myTree->SetBranchAddress("REC_Cherenkov_y", &cc_y);
-  myTree->SetBranchAddress("REC_Cherenkov_z", &cc_z);
   myTree->SetBranchAddress("REC_Cherenkov_theta", &cc_theta);
   myTree->SetBranchAddress("REC_Cherenkov_phi", &cc_phi);
   myTree->SetBranchAddress("REC_ForwardTagger_pindex", &ft_pindex);
@@ -129,7 +126,6 @@ void getBranches(TTree *myTree) {
   myTree->SetBranchAddress("REC_ForwardTagger_energy", &ft_energy);
   myTree->SetBranchAddress("REC_ForwardTagger_time", &ft_time);
   myTree->SetBranchAddress("REC_ForwardTagger_path", &ft_path);
-  myTree->SetBranchAddress("REC_ForwardTagger_chi2", &ft_chi2);
   myTree->SetBranchAddress("REC_ForwardTagger_x", &ft_x);
   myTree->SetBranchAddress("REC_ForwardTagger_y", &ft_y);
   myTree->SetBranchAddress("REC_ForwardTagger_z", &ft_z);
@@ -137,7 +133,6 @@ void getBranches(TTree *myTree) {
   myTree->SetBranchAddress("REC_ForwardTagger_dy", &ft_dy);
   myTree->SetBranchAddress("REC_ForwardTagger_radius", &ft_radius);
   myTree->SetBranchAddress("REC_ForwardTagger_size", &ft_size);
-  myTree->SetBranchAddress("REC_ForwardTagger_status", &ft_status);
   myTree->SetBranchAddress("REC_Scintillator_pindex", &sc_pindex);
   myTree->SetBranchAddress("REC_Scintillator_detector", &sc_detector);
   myTree->SetBranchAddress("REC_Scintillator_sector", &sc_sector);
