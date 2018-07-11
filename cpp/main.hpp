@@ -75,6 +75,7 @@ void datahandeler(char *fin, char *fout) {
       }
     }
     sf = tot_energy_ec / e_mu_prime.P();
+    if (sf != 0) hist->Fill_EC(sf, e_mu_prime.P());
     // if (!good_e) continue;
     good_e = true;
     for (int j = 0; j < sc_time->size(); j++) {
@@ -113,7 +114,6 @@ void datahandeler(char *fin, char *fout) {
       e_mu_prime_3.SetXYZ(px->at(0), py->at(0), pz->at(0));
       e_mu_prime.SetVectM(e_mu_prime_3, MASS_E);
       if (e_mu_prime.P() > 1.5) {
-        hist->Fill_EC(sf, e_mu_prime.P());
         W = physics::W_calc(e_mu, e_mu_prime);
         Q2 = physics::Q2_calc(e_mu, e_mu_prime);
         hist->Fill_WvsQ2(W, Q2);
@@ -186,7 +186,7 @@ void datahandeler2(char *fin) {
         P = TMath::Sqrt(P_x + P_y + P_z);
       }
     }
-    if (tot_energy_ec != 0) hist->Fill_EC(tot_energy_ec, P);
+    hist->Fill_EC(tot_energy_ec, P);
 
     try {
       if (pid->at(vertex_id) == ELECTRON) {
