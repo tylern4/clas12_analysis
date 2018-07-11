@@ -88,7 +88,6 @@ std::vector<float> *ft_dy;
 std::vector<float> *ft_radius;
 std::vector<int> *ft_size;
 std::vector<int> *ft_status;
-std::vector<int> *sc_index;
 std::vector<int> *sc_pindex;
 std::vector<int> *sc_detector;
 std::vector<int> *sc_sector;
@@ -97,14 +96,6 @@ std::vector<int> *sc_component;
 std::vector<float> *sc_energy;
 std::vector<float> *sc_time;
 std::vector<float> *sc_path;
-std::vector<float> *sc_chi2;
-std::vector<float> *sc_x;
-std::vector<float> *sc_y;
-std::vector<float> *sc_z;
-std::vector<float> *sc_hx;
-std::vector<float> *sc_hy;
-std::vector<float> *sc_hz;
-std::vector<int> *sc_status;
 
 namespace filehandeler {
 void getBranches(TTree *myTree) {
@@ -189,7 +180,6 @@ void getBranches(TTree *myTree) {
   myTree->SetBranchAddress("REC_ForwardTagger_radius", &ft_radius);
   myTree->SetBranchAddress("REC_ForwardTagger_size", &ft_size);
   myTree->SetBranchAddress("REC_ForwardTagger_status", &ft_status);
-  myTree->SetBranchAddress("REC_Scintillator_index", &sc_index);
   myTree->SetBranchAddress("REC_Scintillator_pindex", &sc_pindex);
   myTree->SetBranchAddress("REC_Scintillator_detector", &sc_detector);
   myTree->SetBranchAddress("REC_Scintillator_sector", &sc_sector);
@@ -198,14 +188,6 @@ void getBranches(TTree *myTree) {
   myTree->SetBranchAddress("REC_Scintillator_energy", &sc_energy);
   myTree->SetBranchAddress("REC_Scintillator_time", &sc_time);
   myTree->SetBranchAddress("REC_Scintillator_path", &sc_path);
-  myTree->SetBranchAddress("REC_Scintillator_chi2", &sc_chi2);
-  myTree->SetBranchAddress("REC_Scintillator_x", &sc_x);
-  myTree->SetBranchAddress("REC_Scintillator_y", &sc_y);
-  myTree->SetBranchAddress("REC_Scintillator_z", &sc_z);
-  myTree->SetBranchAddress("REC_Scintillator_hx", &sc_hx);
-  myTree->SetBranchAddress("REC_Scintillator_hy", &sc_hy);
-  myTree->SetBranchAddress("REC_Scintillator_hz", &sc_hz);
-  myTree->SetBranchAddress("REC_Scintillator_status", &sc_status);
 
   myTree->SetBranchStatus("*", 1);
 }
