@@ -186,7 +186,7 @@ void datahandeler2(char *fin) {
         P = TMath::Sqrt(P_x + P_y + P_z);
       }
     }
-    hist->Fill_EC(tot_energy_ec, P);
+    if (tot_energy_ec != 0) hist->Fill_EC(tot_energy_ec, P);
 
     try {
       if (pid->at(vertex_id) == ELECTRON) {
