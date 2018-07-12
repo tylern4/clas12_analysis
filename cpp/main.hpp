@@ -74,10 +74,11 @@ void datahandeler(char *fin, char *fout) {
         total++;
       }
     }
+    if (!good_e) continue;
     sf = tot_energy_ec / e_mu_prime.P();
-    if (sf != 0) hist->Fill_EC(sf, e_mu_prime.P());
-    // if (!good_e) continue;
-    good_e = true;
+    if (tot_energy_ec != 0) hist->Fill_EC(sf, e_mu_prime.P());
+
+    // good_e = true;
     for (int j = 0; j < sc_time->size(); j++) {
       if (sc_time->size() == 0) continue;
       try {
