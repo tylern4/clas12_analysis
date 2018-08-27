@@ -1,33 +1,16 @@
 #!/usr/bin/env python
 from __future__ import print_function
 import uproot
-# Loads ROOT for opening files
-import ROOT
-from ROOT import gROOT, gBenchmark
-from ROOT.TMath import Sqrt as sqrt
 # Load matplotlib for plotting
-import matplotlib
-matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import sys
 import numpy as np
 
 from physics import *
 from delta_t import delta_t, vertex_time
-
-# Get input and output file names
-if len(sys.argv) == 2:
-    input_files = sys.argv[1]
-else:
-    sys.exit('Error opening files!')
-
-# Start root and load in input_files
-gROOT.SetBatch(True)
-chain = ROOT.TChain('clas12')
-num_files = chain.Add(input_files)
-
-clas12 = uproot.open("/Users/tylern/data/sample_3050.root")['clas12']
-
+print("Hi")
+clas12 = uproot.open(sys.argv[1])['clas12']
+print("Hi")
 # Initialize empty array
 mom = np.array([])
 W = []
@@ -39,34 +22,36 @@ beta_pos = []
 
 p_dt = []
 deltat_proton = []
+print("Hi")
+pid, beta, px, py, pz, charge = tree.arrays(
+    ["REC_Particle_pid", "REC_Particle_beta",
+     "REC_Particle_px", "REC_Particle_py",
+     "REC_Particle_pz", "REC_Particle_charge"], outputtype=tuple)
 
 # For every event that was loaded in
-for pid, b, px, py, pz, charge in zip(
-        clas12.array('REC_Particle_pid'), clas12.array('REC_Particle_beta'),
-        clas12.array('REC_Particle_px'), clas12.array('REC_Particle_py'),
-        clas12.array('REC_Particle_pz'), clas12.array('REC_Particle_charge')):
+for pid_event, beta_event, px_event, py_event, pz_event, charge_event in zip(pid, beta, px, py, pz, charge):
+    if(len(pid_event) > 0):
+        print("Hi")
+        for pidi, pxi, pyi, pzi, bi, qi in zip(pid_event, px_event, py_event, pz_event, beta_event, charge_event):
+            #np.append(bi, beta)
 
-    np.append(b, beta)
+            # Add the Momentum to the p array
+            p2 = pxi**2 + pyi**2 + pzi**2
+            p2 = np.abs(p2)
+            np.append(mom, np.sqrt(p2))
 
-    # Add the Momentum to the p array
-    p2 = px**2 + py**2 + pz**2
-    p2 = np.abs(p2)
-    np.append(mom, np.sqrt(p2))
-
-    print(beta, mom)
-    [(beta, mom) for b, p in zip(beta, mom) if b.any() != 0.0]
-
-    for x in range(len(pid)):
-        e_mu_p = fvec(px[x], py[x], pz[x], get_mass('ELECTRON'))
-        Q2.append(Q2_calc(e_mu, e_mu_p))
-        W.append(W_calc(e_mu, e_mu_p))
+            #[(beta, mom) for b, p in zip(bi, mom) if b.any() != 0.0]
+            # if(pidi == 11):
+            #    e_mu_p = fvec(px[x], py[x], pz[x], get_mass('ELECTRON'))
+            #    Q2.append(Q2_calc(e_mu, e_mu_p))
+            #    W.append(W_calc(e_mu, e_mu_p))
         # If the particle is positive
-        #if charge[x] > 0:
-        #p_pos.append(sqrt(p2[x]))
-        #beta_pos.append(beta[x])
+        # if charge[x] > 0:
+        # p_pos.append(sqrt(p2[x]))
+        # beta_pos.append(beta[x])
 
 # Loop over length of REC_Scintillator
-#for j in range(len(evnt.REC_Scintillator_pindex)):
+# for j in range(len(evnt.REC_Scintillator_pindex)):
 # Get Electron vertex from first particle
 #    electron_vertex = vertex_time(evnt.REC_Scintillator_time[0],
 #                                  evnt.REC_Scintillator_path[0], 1.0)

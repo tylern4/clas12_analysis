@@ -189,26 +189,19 @@ void Histogram::Fill_deltat(int pid, int charge, double P, Delta_T *dt) {
         break;
     }
 
-    delta_t_hist[p][0][0]->Fill(P, deltaT);
-    if (good_ID == abs(pid)) {
-      delta_t_hist[p][0][1]->Fill(P, deltaT);
-    } else {
-      delta_t_hist[p][0][2]->Fill(P, deltaT);
-    }
-
     if (charge == -1) {
-      delta_t_hist[p][2][0]->Fill(P, deltaT);
-      if (-good_ID == pid) {
-        delta_t_hist[p][2][1]->Fill(P, deltaT);
-      } else {
-        delta_t_hist[p][2][2]->Fill(P, deltaT);
-      }
-    } else if (charge == 1) {
       delta_t_hist[p][1][0]->Fill(P, deltaT);
-      if (good_ID == pid) {
+      if (-good_ID == pid) {
         delta_t_hist[p][1][1]->Fill(P, deltaT);
       } else {
         delta_t_hist[p][1][2]->Fill(P, deltaT);
+      }
+    } else if (charge == 1) {
+      delta_t_hist[p][0][0]->Fill(P, deltaT);
+      if (good_ID == pid) {
+        delta_t_hist[p][0][1]->Fill(P, deltaT);
+      } else {
+        delta_t_hist[p][0][2]->Fill(P, deltaT);
       }
     }
   }

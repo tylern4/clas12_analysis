@@ -25,8 +25,8 @@ class Histogram {
 
   static const short particle_num = 4;  // 0-e 1-Pi 2-P 3-K
   std::string particle_name[particle_num] = {"e", "pi", "P", "K"};
-  static const short charge_num = 3;  // 0-un 1-pos 2-neg
-  std::string charge_name[charge_num] = {"both", "positive", "negative"};
+  static const short charge_num = 2;  // 0-un 1-pos 2-neg
+  std::string charge_name[charge_num] = {"positive", "negative"};
   static const short with_id_num = 3;  // 0-without 1-with 2-anti
   std::string id_name[with_id_num] = {"withoutID", "withID", "antiID"};
 

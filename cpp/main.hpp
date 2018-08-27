@@ -63,7 +63,7 @@ void datahandeler(char *fin, char *fout) {
       if (ec_pindex->size() == 0) continue;
       try {
         index = ec_pindex->at(j);
-        if (pid->at(index) == ELECTRON && index == 0) {
+        if (index == 0) {
           e_mu_prime_3.SetXYZ(px->at(index), py->at(index), pz->at(index));
           P = e_mu_prime_3.Mag();
           e_mu_prime.SetVectM(e_mu_prime_3, MASS_E);
