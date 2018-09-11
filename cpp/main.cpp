@@ -9,17 +9,10 @@
 using namespace std;
 
 int main(int argc, char **argv) {
-  if (argc == 2) {
-    char *infilename = argv[1];
-    datahandeler(infilename, "out.root");
-    // datahandeler2(infilename);
-  } else if (argc == 3) {
+  if (argc == 3) {
     char *infilename = argv[1];
     char *outfilename = argv[2];
-    // std::cerr << RED << "Running SinglePi: \n";
-    // SinglePi(infilename, outfilename);
     datahandeler(infilename, outfilename);
-    // datahandeler2(infilename);
     std::cerr << RESET << std::endl;
   } else {
     std::cerr << RED << "Error: \n";
