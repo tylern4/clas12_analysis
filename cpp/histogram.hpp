@@ -15,7 +15,7 @@ class Histogram {
  private:
   int bins = 500;
   double p_min = 0.0;
-  double p_max = 10;
+  double p_max = 3.0;
   double Dt_max = 10.0;
   double Dt_min = -Dt_max;
 
@@ -31,32 +31,32 @@ class Histogram {
   std::string id_name[with_id_num] = {"withoutID", "withID", "antiID"};
 
   // Kinematics
-  TH1D *momentum = new TH1D("mom", "mom", bins, zero, 10);
-  TH1D *W_hist = new TH1D("W", "W", bins, zero, 5);
-  TH1D *Q2_hist = new TH1D("Q2", "Q2", bins, zero, 10);
-  TH2D *W_vs_q2 = new TH2D("W_vs_q2", "W_vs_q2", bins, zero, 5, bins, zero, 8);
+  TH1D *momentum = new TH1D("mom", "mom", bins, p_min, p_max);
+  TH1D *W_hist = new TH1D("W", "W", bins, zero, p_max);
+  TH1D *Q2_hist = new TH1D("Q2", "Q2", bins, zero, 1);
+  TH2D *W_vs_q2 = new TH2D("W_vs_q2", "W_vs_q2", bins, zero, p_max, bins, zero, 1);
 
-  TH1D *W_hist_lower = new TH1D("W_lower", "W_lower", bins, zero, 5);
+  TH1D *W_hist_lower = new TH1D("W_lower", "W_lower", bins, zero, p_max);
   TH1D *Q2_hist_lower = new TH1D("Q2_lower", "Q2_lower", bins, zero, 0.4);
-  TH2D *W_vs_q2_lower = new TH2D("W_vs_q2_lower", "W_vs_q2_lower", bins, zero, 5, bins, zero, 0.4);
+  TH2D *W_vs_q2_lower = new TH2D("W_vs_q2_lower", "W_vs_q2_lower", bins, zero, p_max, bins, zero, 0.4);
 
-  TH1D *W_hist_upper = new TH1D("W_upper", "W_upper", bins, zero, 5);
-  TH1D *Q2_hist_upper = new TH1D("Q2_upper", "Q2_upper", bins, 0.4, 10);
-  TH2D *W_vs_q2_upper = new TH2D("W_vs_q2_upper", "W_vs_q2_upper", bins, zero, 5, bins, 0.4, 8);
+  TH1D *W_hist_upper = new TH1D("W_upper", "W_upper", bins, zero, p_max);
+  TH1D *Q2_hist_upper = new TH1D("Q2_upper", "Q2_upper", bins, 0.4, 1);
+  TH2D *W_vs_q2_upper = new TH2D("W_vs_q2_upper", "W_vs_q2_upper", bins, zero, p_max, bins, 0.4, 1);
 
-  TH1D *W_hist_singlePi = new TH1D("W_singlePi", "W_singlePi", bins, zero, 5);
-  TH1D *Q2_hist_singlePi = new TH1D("Q2_singlePi", "Q2_singlePi", bins, zero, 10);
-  TH2D *W_vs_q2_singlePi = new TH2D("W_vs_q2_singlePi", "W_vs_q2_singlePi", bins, zero, 5, bins, zero, 8);
+  TH1D *W_hist_singlePi = new TH1D("W_singlePi", "W_singlePi", bins, zero, p_max);
+  TH1D *Q2_hist_singlePi = new TH1D("Q2_singlePi", "Q2_singlePi", bins, zero, 1);
+  TH2D *W_vs_q2_singlePi = new TH2D("W_vs_q2_singlePi", "W_vs_q2_singlePi", bins, zero, p_max, bins, zero, 1);
 
-  TH1D *W_hist_lower_singlePi = new TH1D("W_lower_singlePi", "W_lower_singlePi", bins, zero, 5);
+  TH1D *W_hist_lower_singlePi = new TH1D("W_lower_singlePi", "W_lower_singlePi", bins, zero, p_max);
   TH1D *Q2_hist_lower_singlePi = new TH1D("Q2_lower_singlePi", "Q2_lower_singlePi", bins, zero, 0.4);
   TH2D *W_vs_q2_lower_singlePi =
-      new TH2D("W_vs_q2_lower_singlePi", "W_vs_q2_lower_singlePi", bins, zero, 5, bins, zero, 0.4);
+      new TH2D("W_vs_q2_lower_singlePi", "W_vs_q2_lower_singlePi", bins, zero, p_max, bins, zero, 0.4);
 
-  TH1D *W_hist_upper_singlePi = new TH1D("W_upper_singlePi", "W_upper_singlePi", bins, zero, 5);
-  TH1D *Q2_hist_upper_singlePi = new TH1D("Q2_upper_singlePi", "Q2_upper_singlePi", bins, 0.4, 10);
+  TH1D *W_hist_upper_singlePi = new TH1D("W_upper_singlePi", "W_upper_singlePi", bins, zero, p_max);
+  TH1D *Q2_hist_upper_singlePi = new TH1D("Q2_upper_singlePi", "Q2_upper_singlePi", bins, 0.4, 1);
   TH2D *W_vs_q2_upper_singlePi =
-      new TH2D("W_vs_q2_upper_singlePi", "W_vs_q2_upper_singlePi", bins, zero, 5, bins, 0.4, 8);
+      new TH2D("W_vs_q2_upper_singlePi", "W_vs_q2_upper_singlePi", bins, zero, p_max, bins, 0.4, 1);
 
   // Mom vs Beta
   TH2D *momvsbeta_hist[particle_num][charge_num][with_id_num];
