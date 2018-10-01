@@ -142,6 +142,7 @@ void DataHandeler::file_handeler(std::string fin) {
   double per = 0;
   int index = 0;
   int num_pip = 0;
+  double tot_energy_ec = 0;
   TVector3 e_mu_prime_3;
   TLorentzVector e_mu_prime;
   bool good_e = false;
@@ -149,20 +150,21 @@ void DataHandeler::file_handeler(std::string fin) {
   int current_event = 0;
   while (reader.next() == true) {
     current_event++;
-    if (pid->getLength() == 0) continue;
-
     if (!std::floor(current_event % 1000)) std::cerr << "\t\t" << std::floor(current_event) << "\r\r" << std::flush;
+    if (pid->getLength() == 0 || sc_time->getLength() == 0 || ec_pindex->getLength() == 0) continue;
+
     num_pip = 0;
-    good_e = false;
+    tot_energy_ec = 0;
+    good_e = true;
     for (int j = 0; j < ec_pindex->getLength(); j++) {
       if (ec_pindex->getLength() == 0) continue;
       try {
         index = ec_pindex->getValue(j);
-        if (pid->getValue(index) == ELECTRON) {
+        if (index == 0) {
           e_mu_prime_3.SetXYZ(px->getValue(index), py->getValue(index), pz->getValue(index));
           P = e_mu_prime_3.Mag();
           e_mu_prime.SetVectM(e_mu_prime_3, MASS_E);
-          sf = ec_energy->getValue(j) / e_mu_prime.P();
+          tot_energy_ec += ec_energy->getValue(j);
           good_e = true;
         }
       } catch (std::exception &e) {
@@ -170,7 +172,10 @@ void DataHandeler::file_handeler(std::string fin) {
       }
     }
     if (!good_e) continue;
-    good_e = false;
+    sf = tot_energy_ec / e_mu_prime.P();
+    if (tot_energy_ec != 0) hist->Fill_EC(sf, e_mu_prime.P());
+
+    // good_e = true;
     for (int j = 0; j < sc_time->getLength(); j++) {
       if (sc_time->getLength() == 0) continue;
       try {
@@ -194,6 +199,7 @@ void DataHandeler::file_handeler(std::string fin) {
             hist->Fill_deltat(pid->getValue(index), charge->getValue(index), P, dt);
           }
         }
+
         if (pid->getValue(sc_pindex->getValue(j)) == PIP && abs(dt->Get_dt_Pi()) < 0.5) num_pip++;
         if (pid->getValue(sc_pindex->getValue(j)) == ELECTRON && sc_detector->getValue(sc_pindex->getValue(j)) == 12)
           good_e = true;
@@ -204,12 +210,15 @@ void DataHandeler::file_handeler(std::string fin) {
     }
     if (!good_e) continue;
     // && sf >= 0.07 && sf <= 0.26
-    if (good_e && e_mu_prime.P() > 1.5) {
-      hist->Fill_EC(sf, e_mu_prime.P());
-      W = physics::W_calc(*e_mu, e_mu_prime);
-      Q2 = physics::Q2_calc(*e_mu, e_mu_prime);
-      hist->Fill_WvsQ2(W, Q2);
-      if (num_pip == 1 && pid->getLength() == 2) hist->Fill_WvsQ2_singlePi(W, Q2);
+    if (px->getLength() > 0) {
+      e_mu_prime_3.SetXYZ(px->getValue(0), py->getValue(0), pz->getValue(0));
+      e_mu_prime.SetVectM(e_mu_prime_3, MASS_E);
+      if (e_mu_prime.P() > 1.5) {
+        W = physics::W_calc(*e_mu, e_mu_prime);
+        Q2 = physics::Q2_calc(*e_mu, e_mu_prime);
+        hist->Fill_WvsQ2(W, Q2);
+        if (num_pip == 1 && pid->getLength() == 2) hist->Fill_WvsQ2_singlePi(W, Q2);
+      }
     }
   }
 }

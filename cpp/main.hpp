@@ -102,6 +102,7 @@ void datahandeler(char *fin, char *fout) {
             hist->Fill_deltat(pid->at(index), charge->at(index), P, dt);
           }
         }
+
         if (pid->at(sc_pindex->at(j)) == PIP && abs(dt->Get_dt_Pi()) < 0.5) num_pip++;
         if (pid->at(sc_pindex->at(j)) == ELECTRON && sc_detector->at(sc_pindex->at(j)) == 12) good_e = true;
         delete dt;
