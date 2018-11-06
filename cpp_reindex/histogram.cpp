@@ -10,7 +10,7 @@ Histogram::Histogram() {
   if (getenv("CLAS12_E") != NULL) {
     if (atof(getenv("CLAS12_E")) < 3) {
       q2_max = 1.0;
-      w_max = 3.0;
+      w_max = 3.5;
       p_max = 3.0;
     } else if (atof(getenv("CLAS12_E")) < 7) {
       q2_max = 7.0;

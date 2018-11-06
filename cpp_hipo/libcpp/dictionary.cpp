@@ -120,7 +120,7 @@ std::vector<std::string> schema::branchesAccessCode() {
     node.append(branch.c_str());
     node.append(" = ");
     node.append(branch.c_str());
-    node.append("->getLength();\n");
+    node.append("->size();\n");
     node.append("      for(int b = 0; b < n_");
     node.append(branch.c_str());
     node.append("; b++){\n");

@@ -151,20 +151,20 @@ void DataHandeler::file_handeler(std::string fin) {
   while (reader.next() == true) {
     current_event++;
     if (!std::floor(current_event % 1000)) std::cerr << "\t\t" << std::floor(current_event) << "\r\r" << std::flush;
-    if (pid->getLength() == 0 || sc_time->getLength() == 0 || ec_pindex->getLength() == 0) continue;
+    if (pid->size() == 0 || sc_time->size() == 0 || ec_pindex->size() == 0) continue;
 
     num_pip = 0;
     tot_energy_ec = 0;
     good_e = true;
-    for (int j = 0; j < ec_pindex->getLength(); j++) {
-      if (ec_pindex->getLength() == 0) continue;
+    for (int j = 0; j < ec_pindex->size(); j++) {
+      if (ec_pindex->size() == 0) continue;
       try {
-        index = ec_pindex->getValue(j);
+        index = ec_pindex->at(j);
         if (index == 0) {
-          e_mu_prime_3.SetXYZ(px->getValue(index), py->getValue(index), pz->getValue(index));
+          e_mu_prime_3.SetXYZ(px->at(index), py->at(index), pz->at(index));
           P = e_mu_prime_3.Mag();
           e_mu_prime.SetVectM(e_mu_prime_3, MASS_E);
-          tot_energy_ec += ec_energy->getValue(j);
+          tot_energy_ec += ec_energy->at(j);
           good_e = true;
         }
       } catch (std::exception &e) {
@@ -176,33 +176,32 @@ void DataHandeler::file_handeler(std::string fin) {
     if (tot_energy_ec != 0) hist->Fill_EC(sf, e_mu_prime.P());
 
     // good_e = true;
-    for (int j = 0; j < sc_time->getLength(); j++) {
-      if (sc_time->getLength() == 0) continue;
+    for (int j = 0; j < sc_time->size(); j++) {
+      if (sc_time->size() == 0) continue;
       try {
-        Delta_T *dt = new Delta_T(sc_time->getValue(0), sc_path->getValue(0));
-        index = sc_pindex->getValue(j);
-        sc_d = sc_detector->getValue(j);
+        Delta_T *dt = new Delta_T(sc_time->at(0), sc_path->at(0));
+        index = sc_pindex->at(j);
+        sc_d = sc_detector->at(j);
         // I think 12 is FTOF
         if (sc_d == 12) {
-          P_x = px->getValue(index) * px->getValue(index);
-          P_y = py->getValue(index) * py->getValue(index);
-          P_z = pz->getValue(index) * pz->getValue(index);
+          P_x = px->at(index) * px->at(index);
+          P_y = py->at(index) * py->at(index);
+          P_z = pz->at(index) * pz->at(index);
           P = TMath::Sqrt(P_x + P_y + P_z);
 
-          dt->deltat(P, sc_time->getValue(j), sc_path->getValue(j));
+          dt->deltat(P, sc_time->at(j), sc_path->at(j));
 
           if (index == 0) {
-            hist->Fill_MomVsBeta_vertex(pid->getValue(index), charge->getValue(index), P, beta->getValue(index));
-            hist->Fill_deltat_vertex(pid->getValue(index), charge->getValue(index), P, dt);
+            hist->Fill_MomVsBeta_vertex(pid->at(index), charge->at(index), P, beta->at(index));
+            hist->Fill_deltat_vertex(pid->at(index), charge->at(index), P, dt);
           } else {
-            hist->Fill_MomVsBeta(pid->getValue(index), charge->getValue(index), P, beta->getValue(index));
-            hist->Fill_deltat(pid->getValue(index), charge->getValue(index), P, dt);
+            hist->Fill_MomVsBeta(pid->at(index), charge->at(index), P, beta->at(index));
+            hist->Fill_deltat(pid->at(index), charge->at(index), P, dt);
           }
         }
 
-        if (pid->getValue(sc_pindex->getValue(j)) == PIP && abs(dt->Get_dt_Pi()) < 0.5) num_pip++;
-        if (pid->getValue(sc_pindex->getValue(j)) == ELECTRON && sc_detector->getValue(sc_pindex->getValue(j)) == 12)
-          good_e = true;
+        if (abs(dt->Get_dt_Pi()) < 0.5) num_pip++;
+        if (pid->at(sc_pindex->at(j)) == ELECTRON && sc_detector->at(sc_pindex->at(j)) == 12) good_e = true;
         delete dt;
       } catch (std::exception &e) {
         total++;
@@ -210,14 +209,14 @@ void DataHandeler::file_handeler(std::string fin) {
     }
     if (!good_e) continue;
     // && sf >= 0.07 && sf <= 0.26
-    if (px->getLength() > 0) {
-      e_mu_prime_3.SetXYZ(px->getValue(0), py->getValue(0), pz->getValue(0));
+    if (px->size() > 0) {
+      e_mu_prime_3.SetXYZ(px->at(0), py->at(0), pz->at(0));
       e_mu_prime.SetVectM(e_mu_prime_3, MASS_E);
       if (e_mu_prime.P() > 1.5) {
         W = physics::W_calc(*e_mu, e_mu_prime);
         Q2 = physics::Q2_calc(*e_mu, e_mu_prime);
         hist->Fill_WvsQ2(W, Q2);
-        if (num_pip == 1 && pid->getLength() == 2) hist->Fill_WvsQ2_singlePi(W, Q2);
+        if (num_pip == 1 && pid->size() == 2) hist->Fill_WvsQ2_singlePi(W, Q2);
       }
     }
   }

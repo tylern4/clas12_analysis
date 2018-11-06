@@ -63,11 +63,11 @@ class node : public generic_node {
 
   virtual ~node();
 
-  T getValue(int index);
+  T at(int index);
   // void setNode(int group, int item, hipo::event &event);
   void reset();
   void show();
-  int getLength();
+  int size();
   char *getAddress();
   int getBytesLength();
   void setLength(int l);
@@ -126,7 +126,7 @@ void node<T>::setAddress(char *address) {
 }
 
 template <class T>
-int node<T>::getLength() {
+int node<T>::size() {
   return length();
 }
 
@@ -135,8 +135,11 @@ int node<T>::getBytesLength() {
   return sizeof(*ptr) * length();
 }
 template <class T>
-T node<T>::getValue(int index) {
-  return ptr[index];
+T node<T>::at(int index) {
+  if (index < length())
+    return ptr[index];
+  else
+    return (T)NULL;
 }
 
 template <class T>
@@ -144,7 +147,7 @@ void node<T>::show() {
   int nl = length();
   std::cout << " NODE LENGTH = " << length() << '\n';
   for (int i = 0; i < nl; i++) {
-    std::cout << getValue(i) << ",";
+    std::cout << at(i) << ",";
   }
   std::cout << std::endl;
 }

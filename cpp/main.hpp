@@ -20,7 +20,9 @@
 void datahandeler(char *fin, char *fout) {
   double energy = CLAS12_E;
   if (getenv("CLAS12_E") != NULL) energy = atof(getenv("CLAS12_E"));
-  TLorentzVector e_mu(0.0, 0.0, energy, energy);
+  TLorentzVector *e_mu = new TLorentzVector(0.0, 0.0, energy, energy);
+  TLorentzVector *MM_n = new TLorentzVector(0.0, 0.0, 0.0, MASS_P);
+  TLorentzVector *pion = new TLorentzVector(0.0, 0.0, 0.0, MASS_PIP);
 
   TFile *out = new TFile(fout, "RECREATE");
   double P;
@@ -51,12 +53,21 @@ void datahandeler(char *fin, char *fout) {
   for (int current_event = 0; current_event < num_of_events; current_event++) {
     chain->GetEntry(current_event);
 
-    if (pid->size() == 0 || sc_time->size() == 0 || ec_pindex->size() == 0) continue;
+    if (pid->size() == 0) continue;
 
     per = ((double)current_event / (double)num_of_events);
     std::cerr << "\t\t" << std::floor(100 * per) << "%\r\r" << std::flush;
+    e_mu_prime_3.SetXYZ(px->at(0), py->at(0), pz->at(0));
+    e_mu_prime.SetVectM(e_mu_prime_3, MASS_E);
+    W = physics::W_calc(*e_mu, e_mu_prime);
+    Q2 = physics::Q2_calc(*e_mu, e_mu_prime);
+    hist->Fill_WvsQ2(W, Q2);
+
+    MM_n->SetXYZT(0.0, 0.0, 0.0, MASS_P);
+    *MM_n += *e_mu;
 
     num_pip = 0;
+    int other = 0;
     tot_energy_ec = 0;
     good_e = true;
     for (int j = 0; j < ec_pindex->size(); j++) {
@@ -65,8 +76,8 @@ void datahandeler(char *fin, char *fout) {
         index = ec_pindex->at(j);
         if (index == 0) {
           e_mu_prime_3.SetXYZ(px->at(index), py->at(index), pz->at(index));
-          P = e_mu_prime_3.Mag();
           e_mu_prime.SetVectM(e_mu_prime_3, MASS_E);
+          P = e_mu_prime.P();
           tot_energy_ec += ec_energy->at(j);
           good_e = true;
         }
@@ -103,24 +114,22 @@ void datahandeler(char *fin, char *fout) {
           }
         }
 
-        if (pid->at(sc_pindex->at(j)) == PIP && abs(dt->Get_dt_Pi()) < 0.5) num_pip++;
-        if (pid->at(sc_pindex->at(j)) == ELECTRON && sc_detector->at(sc_pindex->at(j)) == 12) good_e = true;
+        if (abs(dt->Get_dt_Pi()) < 0.5) {
+          num_pip++;
+          pion->SetXYZM(px->at(sc_pindex->at(j)), py->at(sc_pindex->at(j)), pz->at(sc_pindex->at(j)), MASS_PIP);
+          *MM_n -= *pion;
+        } else {
+          other++;
+        }
+        if (sc_detector->at(sc_pindex->at(j)) == 12) good_e = true;
         delete dt;
       } catch (std::exception &e) {
         total++;
       }
     }
-    if (!good_e) continue;
-    // && sf >= 0.07 && sf <= 0.26
-    if (px->size() > 0) {
-      e_mu_prime_3.SetXYZ(px->at(0), py->at(0), pz->at(0));
-      e_mu_prime.SetVectM(e_mu_prime_3, MASS_E);
-      if (e_mu_prime.P() > 1.5) {
-        W = physics::W_calc(e_mu, e_mu_prime);
-        Q2 = physics::Q2_calc(e_mu, e_mu_prime);
-        hist->Fill_WvsQ2(W, Q2);
-        if (num_pip == 1 && pid->size() == 2) hist->Fill_WvsQ2_singlePi(W, Q2);
-      }
+    if (num_pip == 1 && other == 0) {
+      *MM_n -= e_mu_prime;
+      hist->Fill_WvsQ2_singlePi(W, Q2, MM_n);
     }
   }
 
@@ -141,5 +150,6 @@ void datahandeler(char *fin, char *fout) {
   out->Close();
   chain->Reset();
   std::cerr << "\nErrors: " << total << "\t" << std::endl;
+  delete hist;
 }
 #endif
