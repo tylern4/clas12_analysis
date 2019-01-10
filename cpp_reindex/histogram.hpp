@@ -93,8 +93,8 @@ class Histogram {
 
   // Delta T
   void makeHists_deltat();
-  void Fill_deltat_vertex(int pid, int charge, double P, Delta_T *dt);
-  void Fill_deltat(int pid, int charge, double P, Delta_T *dt);
+  void Fill_deltat_vertex(int pid, int charge, float dt, float momentum);
+  void Fill_deltat_pip(int pid, int charge, float dt, float momentum);
   void Write_deltat();
 
   // EC Sampling Fraction

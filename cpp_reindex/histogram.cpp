@@ -3,7 +3,6 @@
 /*  Created by Nick Tyler             */
 /*	University Of South Carolina      */
 /**************************************/
-#include "constants.hpp"
 #include "histogram.hpp"
 
 Histogram::Histogram() {
@@ -200,55 +199,17 @@ void Histogram::makeHists_deltat() {
   }
 }
 
-void Histogram::Fill_deltat_vertex(int pid, int charge, double P, Delta_T *dt) {
-  delta_t_vertex[0]->Fill(P, dt->Get_dt_E());
+void Histogram::Fill_deltat_vertex(int pid, int charge, float dt, float momentum) {
+  delta_t_vertex[0]->Fill(momentum, dt);
   if (pid == ELECTRON) {
-    delta_t_vertex[1]->Fill(P, dt->Get_dt_E());
+    delta_t_vertex[1]->Fill(momentum, dt);
   } else {
-    delta_t_vertex[2]->Fill(P, dt->Get_dt_E());
+    delta_t_vertex[2]->Fill(momentum, dt);
   }
 }
 
-void Histogram::Fill_deltat(int pid, int charge, double P, Delta_T *dt) {
-  double deltaT = -99;
-  int good_ID = 0;
-
-  for (size_t p = 0; p < particle_num; p++) {
-    switch (p) {
-      case 0:
-        good_ID = ELECTRON;
-        deltaT = dt->Get_dt_E();
-        break;
-      case 1:
-        good_ID = PIP;
-        deltaT = dt->Get_dt_Pi();
-        break;
-      case 2:
-        good_ID = PROTON;
-        deltaT = dt->Get_dt_P();
-        break;
-      case 3:
-        good_ID = KP;
-        deltaT = dt->Get_dt_K();
-        break;
-    }
-
-    if (charge == -1) {
-      delta_t_hist[p][1][0]->Fill(P, deltaT);
-      if (-good_ID == pid) {
-        delta_t_hist[p][1][1]->Fill(P, deltaT);
-      } else {
-        delta_t_hist[p][1][2]->Fill(P, deltaT);
-      }
-    } else if (charge == 1) {
-      delta_t_hist[p][0][0]->Fill(P, deltaT);
-      if (good_ID == pid) {
-        delta_t_hist[p][0][1]->Fill(P, deltaT);
-      } else {
-        delta_t_hist[p][0][2]->Fill(P, deltaT);
-      }
-    }
-  }
+void Histogram::Fill_deltat_pip(int pid, int charge, float dt, float momentum) {
+  delta_t_hist[1][1][0]->Fill(momentum, dt);
 }
 
 void Histogram::Write_deltat() {

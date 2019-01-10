@@ -17,12 +17,12 @@
 #include "histogram.hpp"
 #include "physics.hpp"
 
-void datahandeler(char *fin, char *fout) {
+void datahandeler(std::string fin, std::string fout) {
   double energy = CLAS12_E;
   if (getenv("CLAS12_E") != NULL) energy = atof(getenv("CLAS12_E"));
   TLorentzVector *e_mu = new TLorentzVector(0.0, 0.0, energy, energy);
 
-  TFile *out = new TFile(fout, "RECREATE");
+  TFile *out = new TFile(fout.c_str(), "RECREATE");
   double P;
   bool electron_cuts;
   // Load chain from branch h10
@@ -54,21 +54,19 @@ void datahandeler(char *fin, char *fout) {
 
     if (e_mu_prime.P() != 0) hist->Fill_EC(ec_tot_energy->at(0) / e_mu_prime.P(), e_mu_prime.P());
 
-    Delta_T *ftof_dt = new Delta_T(sc_ftof_time->at(0), sc_ftof_path->at(0));
-    Delta_T *ctof_dt = new Delta_T(sc_ctof_time->at(0), sc_ctof_path->at(0));
+    Delta_T *dt = new Delta_T(sc_ftof_1b_time->at(0), sc_ftof_1b_path->at(0), sc_ftof_1a_time->at(0),
+                              sc_ftof_1a_path->at(0), sc_ftof_2_time->at(0), sc_ftof_2_path->at(0));
 
     for (int part = 1; part < pid->size(); part++) {
-      double P = TMath::Sqrt((px->at(part) * px->at(part) + py->at(part) * py->at(part) + pz->at(part) * pz->at(part)));
-      if (beta->at(part) < 0.02 || P < 0.02) continue;
-      ftof_dt->deltat(P, sc_ftof_time->at(part), sc_ftof_path->at(part));
-      ctof_dt->deltat(P, sc_ctof_time->at(part), sc_ctof_path->at(part));
-      hist->Fill_MomVsBeta(pid->at(part), charge->at(part), P, beta->at(part));
-      hist->Fill_deltat(pid->at(part), charge->at(part), P, ftof_dt);
-      hist->Fill_deltat(pid->at(part), charge->at(part), P, ctof_dt);
+      if (beta->at(part) < 0.02 || p->at(part) < 0.02) continue;
+      dt->dt_calc(p->at(part), sc_ftof_1b_time->at(part), sc_ftof_1b_path->at(part), sc_ftof_1a_time->at(part),
+                  sc_ftof_1a_path->at(part), sc_ftof_2_time->at(part), sc_ftof_2_path->at(part), sc_ctof_time->at(part),
+                  sc_ctof_path->at(part));
+      hist->Fill_MomVsBeta(pid->at(part), charge->at(part), p->at(part), beta->at(part));
+      hist->Fill_deltat_pip(pid->at(part), charge->at(part), dt->dt_Pi(), p->at(part));
     }
 
-    delete ftof_dt;
-    delete ctof_dt;
+    delete dt;
     W = physics::W_calc(*e_mu, e_mu_prime);
     Q2 = physics::Q2_calc(*e_mu, e_mu_prime);
     hist->Fill_WvsQ2(W, Q2);
