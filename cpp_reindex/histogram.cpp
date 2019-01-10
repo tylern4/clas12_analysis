@@ -23,30 +23,12 @@ Histogram::Histogram() {
   Q2_hist = new TH1D("Q2", "Q2", bins, zero, q2_max);
   W_vs_q2 = new TH2D("W_vs_q2", "W_vs_q2", bins, zero, w_max, bins, zero, q2_max);
 
-  MM_neutron = new TH1D("missMass", "missMass", bins, zero, p_max);
-  /*
-    W_hist_lower = new TH1D("W_lower", "W_lower", bins, zero, w_max);
-    Q2_hist_lower = new TH1D("Q2_lower", "Q2_lower", bins, zero, 0.4);
-    W_vs_q2_lower = new TH2D("W_vs_q2_lower", "W_vs_q2_lower", bins, zero, w_max, bins, zero, 0.4);
+  MM_neutron = new TH1D("missMass", "missMass", bins, zero, 4.0);
 
-    W_hist_upper = new TH1D("W_upper", "W_upper", bins, zero, w_max);
-    Q2_hist_upper = new TH1D("Q2_upper", "Q2_upper", bins, 0.4, q2_max);
-    W_vs_q2_upper = new TH2D("W_vs_q2_upper", "W_vs_q2_upper", bins, zero, w_max, bins, 0.4, q2_max);
-  */
   W_hist_singlePi = new TH1D("W_singlePi", "W_singlePi", bins, zero, w_max);
   Q2_hist_singlePi = new TH1D("Q2_singlePi", "Q2_singlePi", bins, zero, q2_max);
   W_vs_q2_singlePi = new TH2D("W_vs_q2_singlePi", "W_vs_q2_singlePi", bins, zero, w_max, bins, zero, q2_max);
-  /*
-    W_hist_lower_singlePi = new TH1D("W_lower_singlePi", "W_lower_singlePi", bins, zero, w_max);
-    Q2_hist_lower_singlePi = new TH1D("Q2_lower_singlePi", "Q2_lower_singlePi", bins, zero, 0.4);
-    W_vs_q2_lower_singlePi =
-        new TH2D("W_vs_q2_lower_singlePi", "W_vs_q2_lower_singlePi", bins, zero, w_max, bins, zero, 0.4);
 
-    W_hist_upper_singlePi = new TH1D("W_upper_singlePi", "W_upper_singlePi", bins, zero, w_max);
-    Q2_hist_upper_singlePi = new TH1D("Q2_upper_singlePi", "Q2_upper_singlePi", bins, 0.4, q2_max);
-    W_vs_q2_upper_singlePi =
-        new TH2D("W_vs_q2_upper_singlePi", "W_vs_q2_upper_singlePi", bins, zero, w_max, bins, 0.4, q2_max);
-  */
   EC_sampling_fraction = new TH2D("EC_sampling_fraction", "EC_sampling_fraction", bins, p_min, p_max, bins, zero, 1.0);
 
   makeHists_deltat();
@@ -60,36 +42,14 @@ void Histogram::Fill_WvsQ2(double W, double Q2) {
   W_vs_q2->Fill(W, Q2);
   W_hist->Fill(W);
   Q2_hist->Fill(Q2);
-  /*
-    if (Q2 <= 0.4) {
-      W_vs_q2_lower->Fill(W, Q2);
-      W_hist_lower->Fill(W);
-      Q2_hist_lower->Fill(Q2);
-    } else {
-      W_vs_q2_upper->Fill(W, Q2);
-      W_hist_upper->Fill(W);
-      Q2_hist_upper->Fill(Q2);
-    }
-  */
 }
 
 // W and Q^2
-void Histogram::Fill_WvsQ2_singlePi(double W, double Q2, TLorentzVector *mm) {
+void Histogram::Fill_WvsQ2_singlePi(double W, double Q2, double mm) {
   W_vs_q2_singlePi->Fill(W, Q2);
   W_hist_singlePi->Fill(W);
   Q2_hist_singlePi->Fill(Q2);
-  MM_neutron->Fill(mm->M2());
-  /*
-    if (Q2 <= 0.4) {
-      W_vs_q2_lower_singlePi->Fill(W, Q2);
-      W_hist_lower_singlePi->Fill(W);
-      Q2_hist_lower_singlePi->Fill(Q2);
-    } else {
-      W_vs_q2_upper_singlePi->Fill(W, Q2);
-      W_hist_upper_singlePi->Fill(W);
-      Q2_hist_upper_singlePi->Fill(Q2);
-    }
-  */
+  MM_neutron->Fill(mm);
 }
 
 void Histogram::Write_WvsQ2() {

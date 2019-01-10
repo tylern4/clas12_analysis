@@ -81,7 +81,7 @@ class Histogram {
 
   // W and Q^2
   void Fill_WvsQ2(double W, double Q2);
-  void Fill_WvsQ2_singlePi(double W, double Q2, TLorentzVector *mm);
+  void Fill_WvsQ2_singlePi(double W, double Q2, double mm);
   void Write_WvsQ2();
 
   // P and E

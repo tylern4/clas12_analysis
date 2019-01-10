@@ -12,12 +12,12 @@
 
 class Reaction {
  private:
-  TLorentzVector *_beam;
-  TLorentzVector *_elec;
-  TLorentzVector *_target;
-  TLorentzVector *_prot;
-  TLorentzVector *_pip;
-  TLorentzVector *_pim;
+  std::unique_ptr<TLorentzVector> _beam;
+  std::unique_ptr<TLorentzVector> _elec;
+  std::unique_ptr<TLorentzVector> _target;
+  std::unique_ptr<TLorentzVector> _prot;
+  std::unique_ptr<TLorentzVector> _pip;
+  std::unique_ptr<TLorentzVector> _pim;
 
   bool _hasE;
   bool _hasP;
@@ -32,7 +32,6 @@ class Reaction {
 
  public:
   Reaction();
-  Reaction(TLorentzVector *beam);
   ~Reaction();
 
   void SetElec(float px, float py, float pz, float mass);
@@ -48,6 +47,7 @@ class Reaction {
 
   bool twoPionEvent();
   bool ProtonPimEvent();
+  bool NeutronPip();
 };
 
 #endif
