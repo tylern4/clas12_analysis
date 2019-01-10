@@ -16,12 +16,14 @@
 #include "filehandeler.hpp"
 #include "histogram.hpp"
 #include "physics.hpp"
+#include "reaction.hpp"
 
 void datahandeler(std::string fin, std::string fout) {
   double energy = CLAS12_E;
   if (getenv("CLAS12_E") != NULL) energy = atof(getenv("CLAS12_E"));
   TLorentzVector *e_mu = new TLorentzVector(0.0, 0.0, energy, energy);
 
+  Reaction *event = new Reaction(e_mu);
   TFile *out = new TFile(fout.c_str(), "RECREATE");
   double P;
   bool electron_cuts;
@@ -50,6 +52,8 @@ void datahandeler(std::string fin, std::string fout) {
 
     per = ((double)current_event / (double)num_of_events);
     if (current_event % 1000 == 0) std::cerr << "\t\t" << std::floor(100 * per) << "%\r\r" << std::flush;
+    event->SetElec(px->at(0), py->at(0), pz->at(0), MASS_E);
+
     e_mu_prime.SetXYZM(px->at(0), py->at(0), pz->at(0), MASS_E);
 
     if (e_mu_prime.P() != 0) hist->Fill_EC(ec_tot_energy->at(0) / e_mu_prime.P(), e_mu_prime.P());
