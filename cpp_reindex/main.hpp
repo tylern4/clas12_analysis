@@ -5,10 +5,6 @@
 
 #ifndef MAIN_H_GUARD
 #define MAIN_H_GUARD
-#include <TFile.h>
-#include <TLorentzVector.h>
-#include <fstream>
-#include <vector>
 #include "TChain.h"
 #include "colors.hpp"
 #include "constants.hpp"
@@ -17,6 +13,10 @@
 #include "histogram.hpp"
 #include "physics.hpp"
 #include "reaction.hpp"
+#include <TFile.h>
+#include <TLorentzVector.h>
+#include <fstream>
+#include <vector>
 
 void datahandeler(std::string fin, std::string fout) {
   auto out = std::make_unique<TFile>(fout.c_str(), "RECREATE");
@@ -34,35 +34,44 @@ void datahandeler(std::string fin, std::string fout) {
   for (int current_event = 0; current_event < num_of_events; current_event++) {
     chain->GetEntry(current_event);
     auto event = std::make_unique<Reaction>();
-    if (pid->size() == 0) continue;
+    if (pid->size() == 0)
+      continue;
 
     per = ((double)current_event / (double)num_of_events);
-    if (current_event % 5000 == 0) std::cerr << "\t\t" << std::floor(100 * per) << "%\r\r" << std::flush;
+    if (current_event % 5000 == 0)
+      std::cerr << "\t\t" << std::floor(100 * per) << "%\r\r" << std::flush;
     event->SetElec(px->at(0), py->at(0), pz->at(0), MASS_E);
 
-    if (p->at(0) != 0) hist->Fill_EC(ec_tot_energy->at(0) / p->at(0), p->at(0));
+    if (p->at(0) != 0)
+      hist->Fill_EC(ec_tot_energy->at(0) / p->at(0), p->at(0));
 
-    auto dt = std::make_unique<Delta_T>(sc_ftof_1b_time->at(0), sc_ftof_1b_path->at(0), sc_ftof_1a_time->at(0),
-                                        sc_ftof_1a_path->at(0), sc_ftof_2_time->at(0), sc_ftof_2_path->at(0));
+    auto dt = std::make_unique<Delta_T>(
+        sc_ftof_1b_time->at(0), sc_ftof_1b_path->at(0), sc_ftof_1a_time->at(0),
+        sc_ftof_1a_path->at(0), sc_ftof_2_time->at(0), sc_ftof_2_path->at(0));
 
     for (int part = 1; part < pid->size(); part++) {
-      if (beta->at(part) < 0.02 || p->at(part) < 0.02) continue;
-      dt->dt_calc(p->at(part), sc_ftof_1b_time->at(part), sc_ftof_1b_path->at(part), sc_ftof_1a_time->at(part),
-                  sc_ftof_1a_path->at(part), sc_ftof_2_time->at(part), sc_ftof_2_path->at(part), sc_ctof_time->at(part),
+      dt->dt_calc(p->at(part), sc_ftof_1b_time->at(part),
+                  sc_ftof_1b_path->at(part), sc_ftof_1a_time->at(part),
+                  sc_ftof_1a_path->at(part), sc_ftof_2_time->at(part),
+                  sc_ftof_2_path->at(part), sc_ctof_time->at(part),
                   sc_ctof_path->at(part));
 
-      hist->Fill_MomVsBeta(pid->at(part), charge->at(part), p->at(part), beta->at(part));
-      hist->Fill_deltat_pip(pid->at(part), charge->at(part), dt->dt_Pi(), p->at(part));
-      if (charge->at(part) == 1 && abs(dt->dt_Pi()) < 2)
+      hist->Fill_MomVsBeta(pid->at(part), charge->at(part), p->at(part),
+                           beta->at(part));
+      hist->Fill_deltat_pi(pid->at(part), charge->at(part), dt->dt_Pi(),
+                           p->at(part));
+      if (charge->at(part) == 1 && abs(dt->dt_Pi()) < 0.5)
         event->SetPip(px->at(part), py->at(part), pz->at(part), MASS_PIP);
-      if (charge->at(part) == 1 && abs(dt->dt_P()) < 2)
+      if (charge->at(part) == 1 && abs(dt->dt_P()) < 0.5)
         event->SetProton(px->at(part), py->at(part), pz->at(part), MASS_P);
-      if (charge->at(part) == -1 && abs(dt->dt_Pi()) < 2)
+      if (charge->at(part) == -1 && abs(dt->dt_Pi()) < 0.5)
         event->SetPim(px->at(part), py->at(part), pz->at(part), MASS_PIM);
     }
 
-    hist->Fill_WvsQ2(event->W(), event->Q2());
-    if (event->NeutronPip()) hist->Fill_WvsQ2_singlePi(event->W(), event->Q2(), event->MM());
+    hist->Fill_WvsQ2(event->W(), event->Q2(), ec_pcal_sec->at(0));
+    if (event->NeutronPip())
+      hist->Fill_WvsQ2_singlePi(event->W(), event->Q2(), event->MM(),
+                                ec_pcal_sec->at(0));
   }
 
   out->cd();

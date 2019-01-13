@@ -5,7 +5,8 @@
 /**************************************/
 #include "deltat.hpp"
 
-Delta_T::Delta_T(float time_1b, float path_1b, float time_1a, float path_1a, float time_2, float path_2) {
+Delta_T::Delta_T(float time_1b, float path_1b, float time_1a, float path_1a,
+                 float time_2, float path_2) {
   if (time_1b == time_1b) {
     _sc_t_v = time_1b;
     _sc_r_v = path_1b;
@@ -22,12 +23,15 @@ Delta_T::Delta_T(float time_1b, float path_1b, float time_1a, float path_1a, flo
 
 Delta_T::~Delta_T() {}
 
-float Delta_T::_vertex_time(float sc_time, float sc_pathlength, float relatavistic_beta) {
+float Delta_T::_vertex_time(float sc_time, float sc_pathlength,
+                            float relatavistic_beta) {
   return sc_time - sc_pathlength / (relatavistic_beta * c_special_units);
 }
 
 float Delta_T::_deltat(int num) {
-  _beta = 1.0 / sqrt(1.0 + (masses.at(num) / _momentum) * (masses.at(num) / _momentum));
+  _beta =
+      1.0 /
+      sqrt(1.0 + (masses.at(num) / _momentum) * (masses.at(num) / _momentum));
   if (_sc_t == _sc_t && _sc_r == _sc_r) {
     return _vertex - _vertex_time(_sc_t, _sc_r, _beta);
   } else {
@@ -35,8 +39,9 @@ float Delta_T::_deltat(int num) {
   }
 }
 
-void Delta_T::dt_calc(float momentum, float time_1b, float path_1b, float time_1a, float path_1a, float time_2,
-                      float path_2, float time_ctof, float path_ctof) {
+void Delta_T::dt_calc(float momentum, float time_1b, float path_1b,
+                      float time_1a, float path_1a, float time_2, float path_2,
+                      float time_ctof, float path_ctof) {
   _momentum = momentum;
   if (time_1b == time_1b) {
     _sc_t = time_1b;

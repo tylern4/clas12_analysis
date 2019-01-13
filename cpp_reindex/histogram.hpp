@@ -13,7 +13,7 @@
 #include "deltat.hpp"
 
 class Histogram {
- private:
+private:
   int bins = 500;
   double p_min = 0.0;
   double p_max = 10.0;
@@ -26,11 +26,11 @@ class Histogram {
   std::string hname;
   std::string htitle;
 
-  static const short particle_num = 4;  // 0-e 1-Pi 2-P 3-K
+  static const short particle_num = 4; // 0-e 1-Pi 2-P 3-K
   std::string particle_name[particle_num] = {"e", "pi", "P", "K"};
-  static const short charge_num = 2;  // 0-un 1-pos 2-neg
+  static const short charge_num = 2; // 0-pos 1-neg
   std::string charge_name[charge_num] = {"positive", "negative"};
-  static const short with_id_num = 3;  // 0-without 1-with 2-anti
+  static const short with_id_num = 3; // 0-without 1-with 2-anti
   std::string id_name[with_id_num] = {"withoutID", "withID", "antiID"};
 
   // Kinematics
@@ -39,27 +39,16 @@ class Histogram {
   TH1D *Q2_hist;
   TH2D *W_vs_q2;
 
+  static const short num_sectors = 6;
+  TH2D *W_vs_q2_sec[num_sectors];
+  TH1D *W_sec[num_sectors];
+
   TH1D *MM_neutron;
-
-  TH1D *W_hist_lower;
-  TH1D *Q2_hist_lower;
-  TH2D *W_vs_q2_lower;
-
-  TH1D *W_hist_upper;
-  TH1D *Q2_hist_upper;
-  TH2D *W_vs_q2_upper;
+  TH1D *MM_neutron_sec[num_sectors];
 
   TH1D *W_hist_singlePi;
   TH1D *Q2_hist_singlePi;
   TH2D *W_vs_q2_singlePi;
-
-  TH1D *W_hist_lower_singlePi;
-  TH1D *Q2_hist_lower_singlePi;
-  TH2D *W_vs_q2_lower_singlePi;
-
-  TH1D *W_hist_upper_singlePi;
-  TH1D *Q2_hist_upper_singlePi;
-  TH2D *W_vs_q2_upper_singlePi;
 
   // EC Sampling Fraction
   TH2D *EC_sampling_fraction;
@@ -75,13 +64,14 @@ class Histogram {
   TH2D *delta_t_vertex[with_id_num];
   // Delta T
 
- public:
+public:
   Histogram();
   ~Histogram();
 
   // W and Q^2
-  void Fill_WvsQ2(double W, double Q2);
-  void Fill_WvsQ2_singlePi(double W, double Q2, double mm);
+  void makeHists_sector();
+  void Fill_WvsQ2(double W, double Q2, int sec);
+  void Fill_WvsQ2_singlePi(double W, double Q2, double mm, int sec);
   void Write_WvsQ2();
 
   // P and E
@@ -94,7 +84,7 @@ class Histogram {
   // Delta T
   void makeHists_deltat();
   void Fill_deltat_vertex(int pid, int charge, float dt, float momentum);
-  void Fill_deltat_pip(int pid, int charge, float dt, float momentum);
+  void Fill_deltat_pi(int pid, int charge, float dt, float momentum);
   void Write_deltat();
 
   // EC Sampling Fraction
