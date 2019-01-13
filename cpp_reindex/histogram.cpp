@@ -63,8 +63,11 @@ void Histogram::Fill_WvsQ2_singlePi(double W, double Q2, double mm, int sec) {
   W_hist_singlePi->Fill(W);
   Q2_hist_singlePi->Fill(Q2);
   MM_neutron->Fill(mm);
-  if (sec > 0 && sec <= 6)
+  if (sec > 0 && sec <= 6) {
+    W_vs_q2_singlePi_sec[sec - 1]->Fill(W, Q2);
+    W_singlePi_sec[sec - 1]->Fill(W);
     MM_neutron_sec[sec - 1]->Fill(mm);
+  }
 }
 
 void Histogram::Write_WvsQ2() {
@@ -100,6 +103,14 @@ void Histogram::Write_WvsQ2() {
     W_sec[i]->SetXTitle("W (GeV)");
     W_sec[i]->Write();
 
+    W_vs_q2_singlePi_sec[i]->SetYTitle("Q^{2} (GeV^{2})");
+    W_vs_q2_singlePi_sec[i]->SetXTitle("W (GeV)");
+    W_vs_q2_singlePi_sec[i]->SetOption("COLZ");
+    W_vs_q2_singlePi_sec[i]->Write();
+
+    W_singlePi_sec[i]->SetXTitle("W (GeV)");
+    W_singlePi_sec[i]->Write();
+
     MM_neutron_sec[i]->SetXTitle("Mass (GeV)");
     MM_neutron_sec[i]->Write();
   }
@@ -123,6 +134,26 @@ void Histogram::makeHists_sector() {
     hname.append(std::to_string(i + 1));
     htitle.append(std::to_string(i + 1));
     W_sec[i] = new TH1D(hname.c_str(), htitle.c_str(), bins, zero, w_max);
+    hname.clear();
+    htitle.clear();
+
+    hname.clear();
+    htitle.clear();
+    hname.append("wvsq2_sec_singlePi_");
+    htitle.append("W vs Q^{2} W_singlePi Sector: ");
+    hname.append(std::to_string(i + 1));
+    htitle.append(std::to_string(i + 1));
+    W_vs_q2_singlePi_sec[i] = new TH2D(hname.c_str(), htitle.c_str(), bins,
+                                       zero, w_max, bins, zero, q2_max);
+    hname.clear();
+    htitle.clear();
+
+    hname.append("w_sec_singlePi_");
+    htitle.append("W singlePi Sector: ");
+    hname.append(std::to_string(i + 1));
+    htitle.append(std::to_string(i + 1));
+    W_singlePi_sec[i] =
+        new TH1D(hname.c_str(), htitle.c_str(), bins, zero, w_max);
     hname.clear();
     htitle.clear();
 

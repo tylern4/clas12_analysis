@@ -43,6 +43,9 @@ private:
   TH2D *W_vs_q2_sec[num_sectors];
   TH1D *W_sec[num_sectors];
 
+  TH2D *W_vs_q2_singlePi_sec[num_sectors];
+  TH1D *W_singlePi_sec[num_sectors];
+
   TH1D *MM_neutron;
   TH1D *MM_neutron_sec[num_sectors];
 

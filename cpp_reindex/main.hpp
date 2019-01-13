@@ -33,13 +33,14 @@ void datahandeler(std::string fin, std::string fout) {
 
   for (int current_event = 0; current_event < num_of_events; current_event++) {
     chain->GetEntry(current_event);
-    auto event = std::make_unique<Reaction>();
-    if (pid->size() == 0)
+    if (pid->size() == 0 || pid->at(0) != ELECTRON)
       continue;
 
     per = ((double)current_event / (double)num_of_events);
     if (current_event % 5000 == 0)
       std::cerr << "\t\t" << std::floor(100 * per) << "%\r\r" << std::flush;
+
+    auto event = std::make_unique<Reaction>();
     event->SetElec(px->at(0), py->at(0), pz->at(0), MASS_E);
 
     if (p->at(0) != 0)
@@ -69,7 +70,7 @@ void datahandeler(std::string fin, std::string fout) {
     }
 
     hist->Fill_WvsQ2(event->W(), event->Q2(), ec_pcal_sec->at(0));
-    if (event->NeutronPip())
+    if (event->NeutronPip() && event->MM() < 1.2)
       hist->Fill_WvsQ2_singlePi(event->W(), event->Q2(), event->MM(),
                                 ec_pcal_sec->at(0));
   }
