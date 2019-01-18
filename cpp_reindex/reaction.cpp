@@ -71,6 +71,11 @@ void Reaction::CalcMissMass() {
     mm -= *_pip;
     _MM = mm.M();
     _MM2 = mm.M2();
+  } else if (NeutronPip()) {
+    mm -= *_pip;
+    mm -= *_neutron;
+    _MM = mm.M();
+    _MM2 = mm.M2();
   } else if (twoPionEvent()) {
     mm -= *_prot;
     mm -= *_pip;
@@ -97,7 +102,7 @@ float Reaction::MM2() {
 float Reaction::W() { return _W; }
 float Reaction::Q2() { return _Q2; }
 
-bool Reaction::twoPionEvent() { return (_hasE && _hasP && _hasPip && _hasPim && !_hasOther); }
-bool Reaction::ProtonPimEvent() { return (_hasE && _hasP && _hasPim && !_hasPip && !_hasOther); }
-bool Reaction::SinglePip() { return (_hasE && !_hasP && _hasPip && !_hasOther && !_hasPim); }
-bool Reaction::NeutronPip() { return (_hasE && !_hasP && _hasPip && _hasNeutron && !_hasOther && !_hasPim); }
+bool Reaction::twoPionEvent() { return (_hasE && !_hasP && _hasPip && _hasPim && !_hasOther && !_hasNeutron); }
+bool Reaction::ProtonPimEvent() { return (_hasE && _hasP && !_hasPip && _hasPim && !_hasOther && !_hasNeutron); }
+bool Reaction::SinglePip() { return (_hasE && !_hasP && _hasPip && !_hasPim && !_hasOther && !_hasNeutron); }
+bool Reaction::NeutronPip() { return (_hasE && !_hasP && _hasPip && !_hasPim && !_hasOther && _hasNeutron); }

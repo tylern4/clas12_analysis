@@ -46,19 +46,20 @@ void datahandeler(std::string fin, std::string fout) {
     auto dt = std::make_unique<Delta_T>(sc_ftof_1b_time->at(0), sc_ftof_1b_path->at(0), sc_ftof_1a_time->at(0),
                                         sc_ftof_1a_path->at(0), sc_ftof_2_time->at(0), sc_ftof_2_path->at(0));
 
-    for (int part = 0; part < pid->size(); part++) {
+    for (int part = 1; part < pid->size(); part++) {
       dt->dt_calc(p->at(part), sc_ftof_1b_time->at(part), sc_ftof_1b_path->at(part), sc_ftof_1a_time->at(part),
                   sc_ftof_1a_path->at(part), sc_ftof_2_time->at(part), sc_ftof_2_path->at(part), sc_ctof_time->at(part),
                   sc_ctof_path->at(part));
 
       hist->Fill_MomVsBeta(pid->at(part), charge->at(part), p->at(part), beta->at(part));
       hist->Fill_deltat_pi(pid->at(part), charge->at(part), dt->dt_Pi(), p->at(part));
+      hist->Fill_deltat_prot(pid->at(part), charge->at(part), dt->dt_P(), p->at(part));
 
-      if (charge->at(part) == 1 && abs(dt->dt_Pi()) < 2.0)
+      if (charge->at(part) == 1 && abs(dt->dt_Pi()) < 1.0)
         event->SetPip(px->at(part), py->at(part), pz->at(part));
-      else if (charge->at(part) == 1 && abs(dt->dt_P()) < 2.0)
+      else if (charge->at(part) == 1 && abs(dt->dt_P()) < 1.0)
         event->SetProton(px->at(part), py->at(part), pz->at(part));
-      else if (charge->at(part) == -1 && abs(dt->dt_Pi()) < 2.0)
+      else if (charge->at(part) == -1 && abs(dt->dt_Pi()) < 1.0)
         event->SetPim(px->at(part), py->at(part), pz->at(part));
       else
         event->SetOther(px->at(part), py->at(part), pz->at(part), pid->at(part));
@@ -66,13 +67,14 @@ void datahandeler(std::string fin, std::string fout) {
 
     hist->Fill_WvsQ2(event->W(), event->Q2(), ec_pcal_sec->at(0));
     if (event->SinglePip()) hist->Fill_WvsQ2_singlePi(event->W(), event->Q2(), event->MM(), ec_pcal_sec->at(0));
+    if (event->NeutronPip()) hist->Fill_WvsQ2_Npip(event->W(), event->Q2(), event->MM2(), ec_pcal_sec->at(0));
   }
 
   out->cd();
   hist->Write_EC();
   auto wvsq2 = out->mkdir("wvsq2");
   wvsq2->cd();
-  hist->Write_WvsQ2();
+  hist->Write_WvsQ2(out.get());
 
   auto mom_vs_beta = out->mkdir("mom_vs_beta");
   mom_vs_beta->cd();

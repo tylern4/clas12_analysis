@@ -6,11 +6,14 @@
 #ifndef DT_H_GUARD
 #define DT_H_GUARD
 #include <iostream>
+#include <map>
 #include "constants.hpp"
 
 class Delta_T {
  private:
-  std::vector<double> masses = {MASS_E, MASS_P, MASS_PIP, MASS_KP};
+  std::map<int, double> _mass_map = {{PROTON, MASS_P}, {-PROTON, MASS_P},  {NEUTRON, MASS_N},  {PIP, MASS_PIP},
+                                     {PIM, MASS_PIM},  {PI0, MASS_PI0},    {KP, MASS_KP},      {KM, MASS_KM},
+                                     {PHOTON, MASS_G}, {ELECTRON, MASS_E}, {-ELECTRON, MASS_E}};
   float _sc_t_v = std::nanf("-99");
   float _sc_r_v = std::nanf("-99");
   float _vertex = std::nanf("-99");
@@ -18,6 +21,8 @@ class Delta_T {
   float _sc_r = std::nanf("-99");
   float _beta = std::nanf("-99");
   float _momentum = std::nanf("-99");
+
+  bool _ctof = false;
 
   float _vertex_time(float sc_time, float sc_pathlength, float relatavistic_beta);
   float _deltat(int num);
@@ -32,6 +37,7 @@ class Delta_T {
   float dt_P();
   float dt_Pi();
   float dt_K();
+  float dt(int pid);
   float momentum();
 };
 
