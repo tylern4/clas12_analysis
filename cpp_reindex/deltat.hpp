@@ -33,22 +33,6 @@ class Delta_T {
   float dt_Pi();
   float dt_K();
   float momentum();
-
-  /*
-  TODO:
-  Add Parts for each detector 1a/1b/2/ctof
-
-  float dt_1b_E(int part);
-  float dt_1b_P(int part);
-  float dt_1b_Pi(int part);
-  float dt_1b_K(int part);
-
-  float dt_1a_E(int part);
-  float dt_1a_P(int part);
-  float dt_1a_Pi(int part);
-  float dt_1a_K(int part);
-  etc...
-  */
 };
 
 #endif
