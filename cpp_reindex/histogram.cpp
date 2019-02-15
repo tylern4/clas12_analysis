@@ -144,7 +144,6 @@ void Histogram::Write_WvsQ2(TFile *out) {
     W_vs_q2_singlePi_sec[i]->Write();
   }
   for (size_t i = 0; i < num_sectors; i++) {
-    W_vs_MM_singlePi[i]->Fit("gaus", "", "", 0.7, 1.1);
     W_vs_MM_singlePi[i]->SetOption("COLZ");
     W_vs_MM_singlePi[i]->SetYTitle("MM (GeV)");
     W_vs_MM_singlePi[i]->SetXTitle("W (GeV)");
@@ -155,6 +154,7 @@ void Histogram::Write_WvsQ2(TFile *out) {
     W_singlePi_sec[i]->Write();
   }
   for (size_t i = 0; i < num_sectors; i++) {
+    MM_neutron_sec[i]->Fit("gaus", "", "", 0.7, 1.1);
     MM_neutron_sec[i]->SetXTitle("Mass (GeV)");
     MM_neutron_sec[i]->Write();
   }
