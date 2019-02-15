@@ -55,6 +55,7 @@ void Histogram::Fill_WvsQ2(double W, double Q2, int sec) {
 
 // W and Q^2
 void Histogram::Fill_WvsQ2_singlePi(double W, double Q2, double mm, int sec) {
+  W_vs_MM_singlePi[sec - 1]->Fill(W, mm);
   W_vs_q2_singlePi->Fill(W, Q2);
   W_hist_singlePi->Fill(W);
   Q2_hist_singlePi->Fill(Q2);
@@ -143,6 +144,13 @@ void Histogram::Write_WvsQ2(TFile *out) {
     W_vs_q2_singlePi_sec[i]->Write();
   }
   for (size_t i = 0; i < num_sectors; i++) {
+    W_vs_MM_singlePi[i]->Fit("gaus", "", "", 0.7, 1.1);
+    W_vs_MM_singlePi[i]->SetOption("COLZ");
+    W_vs_MM_singlePi[i]->SetYTitle("MM (GeV)");
+    W_vs_MM_singlePi[i]->SetXTitle("W (GeV)");
+    W_vs_MM_singlePi[i]->Write();
+  }
+  for (size_t i = 0; i < num_sectors; i++) {
     W_singlePi_sec[i]->SetXTitle("W (GeV)");
     W_singlePi_sec[i]->Write();
   }
@@ -153,6 +161,7 @@ void Histogram::Write_WvsQ2(TFile *out) {
 
   auto Npip_sec = out->mkdir("Npip_sec");
   Npip_sec->cd();
+
   for (size_t i = 0; i < num_sectors; i++) {
     W_vs_q2_Npip_sec[i]->SetYTitle("Q^{2} (GeV^{2})");
     W_vs_q2_Npip_sec[i]->SetXTitle("W (GeV)");
@@ -238,6 +247,14 @@ void Histogram::makeHists_sector() {
     hname.append(std::to_string(i + 1));
     htitle.append(std::to_string(i + 1));
     MM_Npip_sec[i] = new TH1D(hname.c_str(), htitle.c_str(), bins, -2.0, 2.0);
+    hname.clear();
+    htitle.clear();
+
+    hname.append("W_vs_MM_singlePi_");
+    htitle.append("W_vs_MM_singlePi_");
+    hname.append(std::to_string(i + 1));
+    htitle.append(std::to_string(i + 1));
+    W_vs_MM_singlePi[i] = new TH2D(hname.c_str(), htitle.c_str(), bins, zero, w_max, bins, -q2_max, q2_max);
     hname.clear();
     htitle.clear();
   }

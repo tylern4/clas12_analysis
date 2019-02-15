@@ -18,13 +18,6 @@ Reaction::Reaction() {
   _pim = std::make_unique<TLorentzVector>();
   _neutron = std::make_unique<TLorentzVector>();
   _other = std::make_unique<TLorentzVector>();
-
-  _hasE = false;
-  _hasP = false;
-  _hasPip = false;
-  _hasPim = false;
-  _hasOther = false;
-  _hasNeutron = false;
 }
 
 Reaction::~Reaction() {}
@@ -33,7 +26,6 @@ void Reaction::SetElec(float px, float py, float pz) {
   _hasE = true;
   _elec->SetXYZM(px, py, pz, MASS_E);
 
-  // Can calculate W and Q2 here
   _W = physics::W_calc(*_beam, *_elec);
   _Q2 = physics::Q2_calc(*_beam, *_elec);
 }
@@ -64,9 +56,7 @@ void Reaction::SetOther(float px, float py, float pz, int pid) {
 }
 
 void Reaction::CalcMissMass() {
-  TLorentzVector mm;
-  mm = (*_beam - *_elec);
-  mm += *_target;
+  TLorentzVector mm = ((*_beam - *_elec) + *_target);
   if (SinglePip()) {
     mm -= *_pip;
     _MM = mm.M();

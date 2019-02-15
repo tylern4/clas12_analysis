@@ -34,9 +34,10 @@ void datahandeler(std::string fin, std::string fout) {
   for (int current_event = 0; current_event < num_of_events; current_event++) {
     chain->GetEntry(current_event);
     if (pid->size() == 0) continue;
+    if (charge->at(0) != -1) continue;
 
-    per = ((double)current_event / (double)num_of_events);
-    if (current_event % 1000 == 0) std::cerr << "\t\t" << std::floor(100 * per) << "%\r\r" << std::flush;
+    if (current_event % 1000 == 0)
+      std::cerr << "\t\t" << std::floor(100 * ((double)current_event / (double)num_of_events)) << "%\r\r" << std::flush;
 
     auto event = std::make_unique<Reaction>();
     event->SetElec(px->at(0), py->at(0), pz->at(0));
@@ -55,11 +56,11 @@ void datahandeler(std::string fin, std::string fout) {
       hist->Fill_deltat_pi(pid->at(part), charge->at(part), dt->dt_Pi(), p->at(part));
       hist->Fill_deltat_prot(pid->at(part), charge->at(part), dt->dt_P(), p->at(part));
 
-      if (charge->at(part) == 1 && abs(dt->dt_Pi()) < 1.0)
+      if (charge->at(part) == 1 && abs(dt->dt_Pi()) < 1.0 && pid->at(part) == PIP)
         event->SetPip(px->at(part), py->at(part), pz->at(part));
-      else if (charge->at(part) == 1 && abs(dt->dt_P()) < 1.0)
+      else if (charge->at(part) == 1 && abs(dt->dt_P()) < 1.0 && pid->at(part) == PROTON)
         event->SetProton(px->at(part), py->at(part), pz->at(part));
-      else if (charge->at(part) == -1 && abs(dt->dt_Pi()) < 1.0)
+      else if (charge->at(part) == -1 && abs(dt->dt_Pi()) < 1.0 && pid->at(part) == PIM)
         event->SetPim(px->at(part), py->at(part), pz->at(part));
       else
         event->SetOther(px->at(part), py->at(part), pz->at(part), pid->at(part));
@@ -67,7 +68,8 @@ void datahandeler(std::string fin, std::string fout) {
 
     hist->Fill_WvsQ2(event->W(), event->Q2(), ec_pcal_sec->at(0));
     if (event->SinglePip()) hist->Fill_WvsQ2_singlePi(event->W(), event->Q2(), event->MM(), ec_pcal_sec->at(0));
-    if (event->NeutronPip()) hist->Fill_WvsQ2_Npip(event->W(), event->Q2(), event->MM2(), ec_pcal_sec->at(0));
+    if (event->SinglePip() && event->MM() > 0.85 && event->MM() < 1.1)
+      hist->Fill_WvsQ2_Npip(event->W(), event->Q2(), event->MM2(), ec_pcal_sec->at(0));
   }
 
   out->cd();

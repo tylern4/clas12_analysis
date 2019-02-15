@@ -49,6 +49,7 @@ class Histogram {
   TH1D *W_singlePi_sec[num_sectors];
 
   TH2D *W_vs_q2_Npip_sec[num_sectors];
+  TH2D *W_vs_MM_singlePi[num_sectors];
   TH1D *W_Npip_sec[num_sectors];
   TH1D *MM_Npip_sec[num_sectors];
 

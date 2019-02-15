@@ -29,12 +29,15 @@ float Delta_T::_vertex_time(float sc_time, float sc_pathlength, float relatavist
 float Delta_T::_deltat(int pid) {
   _beta = 1.0 / sqrt(1.0 + (_mass_map[pid] / _momentum) * (_mass_map[pid] / _momentum));
   if (_sc_t == _sc_t && _sc_r == _sc_r) {
+    /*
     if (_ctof) {
       double _dt = _vertex - _vertex_time(_sc_t, _sc_r, _beta);
       if (_dt < -3.0) _dt += 4.08;
       return _dt;
     } else
       return _vertex - _vertex_time(_sc_t, _sc_r, _beta);
+    */
+    return _vertex - _vertex_time(_sc_t, _sc_r, _beta);
   } else {
     return std::nanf("-99");
   }

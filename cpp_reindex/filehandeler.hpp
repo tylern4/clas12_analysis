@@ -29,8 +29,6 @@ std::vector<float> *pz;
 std::vector<float> *vx;
 std::vector<float> *vy;
 std::vector<float> *vz;
-std::vector<float> *mass_pid;
-std::vector<float> *energy_pid;
 std::vector<int> *charge;
 std::vector<float> *beta;
 std::vector<float> *chi2pid;
@@ -195,8 +193,6 @@ void getBranches(TTree *myTree) {
   myTree->SetBranchAddress("vx", &vx);
   myTree->SetBranchAddress("vy", &vy);
   myTree->SetBranchAddress("vz", &vz);
-  myTree->SetBranchAddress("mass_pid", &mass_pid);
-  myTree->SetBranchAddress("energy_pid", &energy_pid);
   myTree->SetBranchAddress("charge", &charge);
   myTree->SetBranchAddress("beta", &beta);
   myTree->SetBranchAddress("chi2pid", &chi2pid);
