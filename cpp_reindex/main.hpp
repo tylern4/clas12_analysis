@@ -69,7 +69,7 @@ void datahandeler(std::string fin, std::string fout) {
     hist->Fill_WvsQ2(event->W(), event->Q2(), ec_pcal_sec->at(0));
     if (event->SinglePip()) hist->Fill_WvsQ2_singlePi(event->W(), event->Q2(), event->MM(), ec_pcal_sec->at(0));
     if (event->SinglePip() && event->MM() > 0.85 && event->MM() < 1.1)
-      hist->Fill_WvsQ2_Npip(event->W(), event->Q2(), event->MM2(), ec_pcal_sec->at(0));
+      hist->Fill_WvsQ2_Npip(event->W(), event->Q2(), event->MM(), ec_pcal_sec->at(0));
   }
 
   out->cd();
