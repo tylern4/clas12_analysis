@@ -3,7 +3,7 @@ CXX = g++
 CXXFLAGS = -O3 -march=native -fPIC -w -g $(shell root-config --cflags)
 TARGET =	    clas12_ana
 
-MAINS = histogram.cpp physics.cpp deltat.cpp reaction.cpp main.cpp
+MAINS = clas12branches.cpp main.cpp histogram.cpp reaction.cpp deltat.cpp physics.cpp
 MAIN = $(MAINS:%.cpp=%.o)
 
 .PHONY: all clean

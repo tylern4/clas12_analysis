@@ -154,7 +154,7 @@ void Histogram::Write_WvsQ2(TFile *out) {
     W_singlePi_sec[i]->Write();
   }
   for (size_t i = 0; i < num_sectors; i++) {
-    MM_neutron_sec[i]->Fit("gaus", "", "", 0.7, 1.1);
+    MM_neutron_sec[i]->Fit("gaus", "QMR+", "QMR+", 0.7, 1.1);
     MM_neutron_sec[i]->SetXTitle("Mass (GeV)");
     MM_neutron_sec[i]->Write();
   }

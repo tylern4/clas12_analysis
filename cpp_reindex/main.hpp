@@ -7,13 +7,14 @@
 #define MAIN_H_GUARD
 #include <TFile.h>
 #include <TLorentzVector.h>
+#include <chrono>
 #include <fstream>
 #include <vector>
 #include "TChain.h"
+#include "clas12branches.hpp"
 #include "colors.hpp"
 #include "constants.hpp"
 #include "deltat.hpp"
-#include "filehandeler.hpp"
 #include "histogram.hpp"
 #include "physics.hpp"
 #include "reaction.hpp"
@@ -23,53 +24,48 @@ void datahandeler(std::string fin, std::string fout) {
 
   bool electron_cuts;
   // Load chain from branch h10
-  auto chain = filehandeler::addFiles(fin);
-  filehandeler::getBranches(chain);
+  TChain *clas12 = new TChain("clas12", "clas12");
+  clas12->Add(fin.c_str());
 
-  int num_of_events = (int)chain->GetEntries();
-  double per = 0;
+  auto data = std::make_shared<Clas12Branches>(clas12);
+  auto hist = std::make_shared<Histogram>();
 
-  auto hist = std::make_unique<Histogram>();
-
-  for (int current_event = 0; current_event < num_of_events; current_event++) {
-    chain->GetEntry(current_event);
-    if (pid->size() == 0) continue;
-    if (charge->at(0) != -1) continue;
+  size_t num_of_events = data->GetEntries();
+  auto start_full = std::chrono::high_resolution_clock::now();
+  for (size_t current_event = 0; current_event < num_of_events; current_event++) {
+    clas12->GetEntry(current_event);
+    if (data->gpart() == 0) continue;
+    if (data->charge(0) != -1) continue;
 
     if (current_event % 1000 == 0)
       std::cerr << "\t\t" << std::floor(100 * ((double)current_event / (double)num_of_events)) << "%\r\r" << std::flush;
 
     auto event = std::make_unique<Reaction>();
-    event->SetElec(px->at(0), py->at(0), pz->at(0));
+    event->SetElec(data->px(0), data->py(0), data->pz(0));
 
-    if (p->at(0) != 0) hist->Fill_EC(ec_tot_energy->at(0) / p->at(0), p->at(0));
+    if (data->p(0) != 0) hist->Fill_EC(data->ec_tot_energy(0) / data->p(0), data->p(0));
 
-    auto dt = std::make_unique<Delta_T>(sc_ftof_1b_time->at(0), sc_ftof_1b_path->at(0), sc_ftof_1a_time->at(0),
-                                        sc_ftof_1a_path->at(0), sc_ftof_2_time->at(0), sc_ftof_2_path->at(0));
+    auto dt = std::make_unique<Delta_T>(data);
 
-    for (int part = 1; part < pid->size(); part++) {
-      dt->dt_calc(p->at(part), sc_ftof_1b_time->at(part), sc_ftof_1b_path->at(part), sc_ftof_1a_time->at(part),
-                  sc_ftof_1a_path->at(part), sc_ftof_2_time->at(part), sc_ftof_2_path->at(part), sc_ctof_time->at(part),
-                  sc_ctof_path->at(part));
+    for (int part = 1; part < data->gpart(); part++) {
+      hist->Fill_MomVsBeta(data->pid(part), data->charge(part), data->p(part), data->beta(part));
+      hist->Fill_deltat_pi(data->pid(part), data->charge(part), dt->dt_Pi(part), data->p(part));
+      hist->Fill_deltat_prot(data->pid(part), data->charge(part), dt->dt_P(part), data->p(part));
 
-      hist->Fill_MomVsBeta(pid->at(part), charge->at(part), p->at(part), beta->at(part));
-      hist->Fill_deltat_pi(pid->at(part), charge->at(part), dt->dt_Pi(), p->at(part));
-      hist->Fill_deltat_prot(pid->at(part), charge->at(part), dt->dt_P(), p->at(part));
-
-      if (charge->at(part) == 1 && abs(dt->dt_Pi()) < 1.0 && pid->at(part) == PIP)
-        event->SetPip(px->at(part), py->at(part), pz->at(part));
-      else if (charge->at(part) == 1 && abs(dt->dt_P()) < 1.0 && pid->at(part) == PROTON)
-        event->SetProton(px->at(part), py->at(part), pz->at(part));
-      else if (charge->at(part) == -1 && abs(dt->dt_Pi()) < 1.0 && pid->at(part) == PIM)
-        event->SetPim(px->at(part), py->at(part), pz->at(part));
+      if (data->charge(part) == 1 && abs(dt->dt_Pi(part)) < 0.5)
+        event->SetPip(data->px(part), data->py(part), data->pz(part));
+      else if (data->charge(part) == 1 && abs(dt->dt_P(part)) < 0.5)
+        event->SetProton(data->px(part), data->py(part), data->pz(part));
+      else if (data->charge(part) == -1 && abs(dt->dt_Pi(part)) < 0.5)
+        event->SetPim(data->px(part), data->py(part), data->pz(part));
       else
-        event->SetOther(px->at(part), py->at(part), pz->at(part), pid->at(part));
+        event->SetOther(data->px(part), data->py(part), data->pz(part), data->pid(part));
     }
 
-    hist->Fill_WvsQ2(event->W(), event->Q2(), ec_pcal_sec->at(0));
-    if (event->SinglePip()) hist->Fill_WvsQ2_singlePi(event->W(), event->Q2(), event->MM(), ec_pcal_sec->at(0));
+    hist->Fill_WvsQ2(event->W(), event->Q2(), data->ec_pcal_sec(0));
+    if (event->SinglePip()) hist->Fill_WvsQ2_singlePi(event->W(), event->Q2(), event->MM(), data->ec_pcal_sec(0));
     if (event->SinglePip() && event->MM() > 0.85 && event->MM() < 1.1)
-      hist->Fill_WvsQ2_Npip(event->W(), event->Q2(), event->MM(), ec_pcal_sec->at(0));
+      hist->Fill_WvsQ2_Npip(event->W(), event->Q2(), event->MM(), data->ec_pcal_sec(0));
   }
 
   out->cd();
@@ -87,6 +83,10 @@ void datahandeler(std::string fin, std::string fout) {
   hist->Write_deltat();
 
   out->Close();
-  chain->Reset();
+  clas12->Reset();
+
+  std::chrono::duration<double> elapsed_full = (std::chrono::high_resolution_clock::now() - start_full);
+  std::cout << "Elapsed time for " << num_of_events << " events: " << elapsed_full.count() << " s" << std::endl;
+  std::cout << "Events/Sec: " << (num_of_events / elapsed_full.count()) << " Hz" << std::endl;
 }
 #endif

@@ -7,6 +7,7 @@
 #define DT_H_GUARD
 #include <iostream>
 #include <map>
+#include "clas12branches.hpp"
 #include "constants.hpp"
 
 class Delta_T {
@@ -14,31 +15,37 @@ class Delta_T {
   std::map<int, double> _mass_map = {{PROTON, MASS_P}, {-PROTON, MASS_P},  {NEUTRON, MASS_N},  {PIP, MASS_PIP},
                                      {PIM, MASS_PIM},  {PI0, MASS_PI0},    {KP, MASS_KP},      {KM, MASS_KM},
                                      {PHOTON, MASS_G}, {ELECTRON, MASS_E}, {-ELECTRON, MASS_E}};
-  float _sc_t_v = std::nanf("-99");
-  float _sc_r_v = std::nanf("-99");
-  float _vertex = std::nanf("-99");
-  float _sc_t = std::nanf("-99");
-  float _sc_r = std::nanf("-99");
-  float _beta = std::nanf("-99");
-  float _momentum = std::nanf("-99");
+  float _sc_t_v = NAN;
+  float _sc_r_v = NAN;
+  float _vertex = NAN;
+  float _sc_t = NAN;
+  float _sc_r = NAN;
+  float _beta = NAN;
+  float _momentum = NAN;
 
-  bool _ctof = false;
+  float _time_1b_vert = NAN;
+  float _path_1b_vert = NAN;
+  float _time_1a_vert = NAN;
+  float _path_1a_vert = NAN;
+  float _time_2_vert = NAN;
+  float _path_2_vert = NAN;
+
+  std::shared_ptr<Clas12Branches> _data;
 
   float _vertex_time(float sc_time, float sc_pathlength, float relatavistic_beta);
   float _deltat(int num);
 
  public:
-  Delta_T(float time_1b, float path_1b, float time_1a, float path_1a, float time_2, float path_2);
+  Delta_T(std::shared_ptr<Clas12Branches> data);
   ~Delta_T();
 
-  void dt_calc(float momentum, float time_1b, float path_1b, float time_1a, float path_1a, float time_2, float path_2,
-               float time_ctof, float path_ctof);
-  float dt_E();
-  float dt_P();
-  float dt_Pi();
-  float dt_K();
-  float dt(int pid);
-  float momentum();
+  void get_det_info(int i);
+  float dt_E(int i);
+  float dt_P(int i);
+  float dt_Pi(int i);
+  float dt_K(int i);
+  float dt(int i, int pid);
+  float momentum(int i);
 };
 
 #endif
