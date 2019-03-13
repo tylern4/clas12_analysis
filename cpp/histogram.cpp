@@ -3,16 +3,19 @@
 /*  Created by Nick Tyler             */
 /*	University Of South Carolina      */
 /**************************************/
-#include "constants.hpp"
 #include "histogram.hpp"
 
 Histogram::Histogram() {
   if (getenv("CLAS12_E") != NULL) {
     if (atof(getenv("CLAS12_E")) < 3) {
       q2_max = 1.0;
-      w_max = 3.0;
+      w_max = 3.5;
       p_max = 3.0;
-    } else if (atof(getenv("CLAS12_E")) < 7) {
+    } else if (atof(getenv("CLAS12_E")) < 8) {
+      q2_max = 4.0;
+      w_max = 4.0;
+      p_max = 4.0;
+    } else if (atof(getenv("CLAS12_E")) < 9) {
       q2_max = 7.0;
       w_max = 7.0;
       p_max = 7.0;
@@ -24,32 +27,14 @@ Histogram::Histogram() {
   Q2_hist = new TH1D("Q2", "Q2", bins, zero, q2_max);
   W_vs_q2 = new TH2D("W_vs_q2", "W_vs_q2", bins, zero, w_max, bins, zero, q2_max);
 
-  MM_neutron = new TH1D("missMass", "missMass", bins, zero, p_max);
-  /*
-    W_hist_lower = new TH1D("W_lower", "W_lower", bins, zero, w_max);
-    Q2_hist_lower = new TH1D("Q2_lower", "Q2_lower", bins, zero, 0.4);
-    W_vs_q2_lower = new TH2D("W_vs_q2_lower", "W_vs_q2_lower", bins, zero, w_max, bins, zero, 0.4);
+  MM_neutron = new TH1D("missMass", "missMass", bins, zero, 4.0);
 
-    W_hist_upper = new TH1D("W_upper", "W_upper", bins, zero, w_max);
-    Q2_hist_upper = new TH1D("Q2_upper", "Q2_upper", bins, 0.4, q2_max);
-    W_vs_q2_upper = new TH2D("W_vs_q2_upper", "W_vs_q2_upper", bins, zero, w_max, bins, 0.4, q2_max);
-  */
   W_hist_singlePi = new TH1D("W_singlePi", "W_singlePi", bins, zero, w_max);
   Q2_hist_singlePi = new TH1D("Q2_singlePi", "Q2_singlePi", bins, zero, q2_max);
   W_vs_q2_singlePi = new TH2D("W_vs_q2_singlePi", "W_vs_q2_singlePi", bins, zero, w_max, bins, zero, q2_max);
-  /*
-    W_hist_lower_singlePi = new TH1D("W_lower_singlePi", "W_lower_singlePi", bins, zero, w_max);
-    Q2_hist_lower_singlePi = new TH1D("Q2_lower_singlePi", "Q2_lower_singlePi", bins, zero, 0.4);
-    W_vs_q2_lower_singlePi =
-        new TH2D("W_vs_q2_lower_singlePi", "W_vs_q2_lower_singlePi", bins, zero, w_max, bins, zero, 0.4);
 
-    W_hist_upper_singlePi = new TH1D("W_upper_singlePi", "W_upper_singlePi", bins, zero, w_max);
-    Q2_hist_upper_singlePi = new TH1D("Q2_upper_singlePi", "Q2_upper_singlePi", bins, 0.4, q2_max);
-    W_vs_q2_upper_singlePi =
-        new TH2D("W_vs_q2_upper_singlePi", "W_vs_q2_upper_singlePi", bins, zero, w_max, bins, 0.4, q2_max);
-  */
   EC_sampling_fraction = new TH2D("EC_sampling_fraction", "EC_sampling_fraction", bins, p_min, p_max, bins, zero, 1.0);
-
+  makeHists_sector();
   makeHists_deltat();
   makeHists_MomVsBeta();
 }
@@ -57,43 +42,62 @@ Histogram::Histogram() {
 Histogram::~Histogram() {}
 
 // W and Q^2
-void Histogram::Fill_WvsQ2(double W, double Q2) {
+void Histogram::Fill_WvsQ2(double W, double Q2, int sec) {
   W_vs_q2->Fill(W, Q2);
   W_hist->Fill(W);
   Q2_hist->Fill(Q2);
-  /*
-    if (Q2 <= 0.4) {
-      W_vs_q2_lower->Fill(W, Q2);
-      W_hist_lower->Fill(W);
-      Q2_hist_lower->Fill(Q2);
-    } else {
-      W_vs_q2_upper->Fill(W, Q2);
-      W_hist_upper->Fill(W);
-      Q2_hist_upper->Fill(Q2);
-    }
-  */
+
+  if (sec > 0 && sec <= 6) {
+    W_vs_q2_sec[sec - 1]->Fill(W, Q2);
+    W_sec[sec - 1]->Fill(W);
+  }
 }
 
 // W and Q^2
-void Histogram::Fill_WvsQ2_singlePi(double W, double Q2, TLorentzVector *mm) {
+void Histogram::Fill_WvsQ2_singlePi(double W, double Q2, double mm, int sec) {
+  W_vs_MM_singlePi[sec - 1]->Fill(W, mm);
   W_vs_q2_singlePi->Fill(W, Q2);
   W_hist_singlePi->Fill(W);
   Q2_hist_singlePi->Fill(Q2);
-  MM_neutron->Fill(mm->M2());
-  /*
-    if (Q2 <= 0.4) {
-      W_vs_q2_lower_singlePi->Fill(W, Q2);
-      W_hist_lower_singlePi->Fill(W);
-      Q2_hist_lower_singlePi->Fill(Q2);
-    } else {
-      W_vs_q2_upper_singlePi->Fill(W, Q2);
-      W_hist_upper_singlePi->Fill(W);
-      Q2_hist_upper_singlePi->Fill(Q2);
-    }
-  */
+  MM_neutron->Fill(mm);
+  if (sec > 0 && sec <= 6) {
+    W_vs_q2_singlePi_sec[sec - 1]->Fill(W, Q2);
+    W_singlePi_sec[sec - 1]->Fill(W);
+    MM_neutron_sec[sec - 1]->Fill(mm);
+  }
 }
 
-void Histogram::Write_WvsQ2() {
+// W and Q^2
+void Histogram::Fill_WvsQ2_Npip(double W, double Q2, double mm, int sec) {
+  if (sec > 0 && sec <= 6) {
+    W_vs_q2_Npip_sec[sec - 1]->Fill(W, Q2);
+    W_Npip_sec[sec - 1]->Fill(W);
+    MM_Npip_sec[sec - 1]->Fill(mm);
+  }
+}
+
+void Histogram::Write_WvsQ2(TFile *out) {
+  auto WvsQ2_can = std::make_unique<TCanvas>("WvsQ2_can", "W vs Q2 sectors", 1920, 1080);
+  WvsQ2_can->Divide(3, 2);
+  for (size_t i = 0; i < num_sectors; i++) {
+    W_vs_q2_sec[i]->SetYTitle("Q^{2} (GeV^{2})");
+    W_vs_q2_sec[i]->SetXTitle("W (GeV)");
+    W_vs_q2_sec[i]->SetOption("COLZ");
+    WvsQ2_can->cd(i + 1);
+    W_vs_q2_sec[i]->Draw("same");
+  }
+  WvsQ2_can->Write();
+
+  auto W_can = std::make_unique<TCanvas>("W_can", "W sectors", 1920, 1080);
+  W_can->Divide(3, 2);
+  for (size_t i = 0; i < num_sectors; i++) {
+    W_sec[i]->SetXTitle("W (GeV)");
+    W_can->cd(i + 1);
+    W_sec[i]->Fit("gaus", "QMR+", "QMR+", 0.5, 1.2);
+    W_sec[i]->Draw("same");
+  }
+  W_can->Write();
+
   W_vs_q2->SetXTitle("W (GeV)");
   W_vs_q2->SetYTitle("Q^{2} (GeV^{2})");
   W_vs_q2->SetOption("COLZ");
@@ -104,29 +108,7 @@ void Histogram::Write_WvsQ2() {
 
   Q2_hist->SetXTitle("Q^{2} (GeV^{2})");
   Q2_hist->Write();
-  /*
-    W_vs_q2_lower->SetXTitle("W (GeV)");
-    W_vs_q2_lower->SetYTitle("Q^{2} (GeV^{2})");
-    W_vs_q2_lower->SetOption("COLZ");
-    W_vs_q2_lower->Write();
 
-    W_hist_lower->SetXTitle("W (GeV)");
-    W_hist_lower->Write();
-
-    Q2_hist_lower->SetXTitle("Q^{2} (GeV^{2})");
-    Q2_hist_lower->Write();
-
-    W_vs_q2_upper->SetXTitle("W (GeV)");
-    W_vs_q2_upper->SetYTitle("Q^{2} (GeV^{2})");
-    W_vs_q2_upper->SetOption("COLZ");
-    W_vs_q2_upper->Write();
-
-    W_hist_upper->SetXTitle("W (GeV)");
-    W_hist_upper->Write();
-
-    Q2_hist_upper->SetXTitle("Q^{2} (GeV^{2})");
-    Q2_hist_upper->Write();
-  */
   W_vs_q2_singlePi->SetXTitle("W (GeV)");
   W_vs_q2_singlePi->SetYTitle("Q^{2} (GeV^{2})");
   W_vs_q2_singlePi->SetOption("COLZ");
@@ -139,29 +121,143 @@ void Histogram::Write_WvsQ2() {
   Q2_hist_singlePi->Write();
   MM_neutron->Write();
 
-  /*
-    W_vs_q2_lower_singlePi->SetXTitle("W (GeV)");
-    W_vs_q2_lower_singlePi->SetYTitle("Q^{2} (GeV^{2})");
-    W_vs_q2_lower_singlePi->SetOption("COLZ");
-    W_vs_q2_lower_singlePi->Write();
+  auto wvsq2_sec = out->mkdir("wvsq2_sec");
+  wvsq2_sec->cd();
+  for (size_t i = 0; i < num_sectors; i++) {
+    W_vs_q2_sec[i]->SetYTitle("Q^{2} (GeV^{2})");
+    W_vs_q2_sec[i]->SetXTitle("W (GeV)");
+    W_vs_q2_sec[i]->SetOption("COLZ");
+    W_vs_q2_sec[i]->Write();
+  }
+  auto w_sec = out->mkdir("w_sec");
+  w_sec->cd();
+  for (size_t i = 0; i < num_sectors; i++) {
+    W_sec[i]->SetXTitle("W (GeV)");
+    W_sec[i]->Write();
+  }
+  auto singlePi_sec = out->mkdir("singlePi_sec");
+  singlePi_sec->cd();
+  for (size_t i = 0; i < num_sectors; i++) {
+    W_vs_q2_singlePi_sec[i]->SetYTitle("Q^{2} (GeV^{2})");
+    W_vs_q2_singlePi_sec[i]->SetXTitle("W (GeV)");
+    W_vs_q2_singlePi_sec[i]->SetOption("COLZ");
+    W_vs_q2_singlePi_sec[i]->Write();
+  }
+  for (size_t i = 0; i < num_sectors; i++) {
+    W_vs_MM_singlePi[i]->SetOption("COLZ");
+    W_vs_MM_singlePi[i]->SetYTitle("MM (GeV)");
+    W_vs_MM_singlePi[i]->SetXTitle("W (GeV)");
+    W_vs_MM_singlePi[i]->Write();
+  }
+  for (size_t i = 0; i < num_sectors; i++) {
+    W_singlePi_sec[i]->SetXTitle("W (GeV)");
+    W_singlePi_sec[i]->Write();
+  }
+  for (size_t i = 0; i < num_sectors; i++) {
+    MM_neutron_sec[i]->Fit("gaus", "", "", 0.7, 1.1);
+    MM_neutron_sec[i]->SetXTitle("Mass (GeV)");
+    MM_neutron_sec[i]->Write();
+  }
 
-    W_hist_lower_singlePi->SetXTitle("W (GeV)");
-    W_hist_lower_singlePi->Write();
+  auto Npip_sec = out->mkdir("Npip_sec");
+  Npip_sec->cd();
 
-    Q2_hist_lower_singlePi->SetXTitle("Q^{2} (GeV^{2})");
-    Q2_hist_lower_singlePi->Write();
+  for (size_t i = 0; i < num_sectors; i++) {
+    W_vs_q2_Npip_sec[i]->SetYTitle("Q^{2} (GeV^{2})");
+    W_vs_q2_Npip_sec[i]->SetXTitle("W (GeV)");
+    W_vs_q2_Npip_sec[i]->SetOption("COLZ");
+    W_vs_q2_Npip_sec[i]->Write();
+  }
+  for (size_t i = 0; i < num_sectors; i++) {
+    W_Npip_sec[i]->SetXTitle("W (GeV)");
+    W_Npip_sec[i]->Write();
+  }
+  for (size_t i = 0; i < num_sectors; i++) {
+    MM_Npip_sec[i]->SetXTitle("Mass (GeV)");
+    MM_Npip_sec[i]->Write();
+  }
+}
 
-    W_vs_q2_upper_singlePi->SetXTitle("W (GeV)");
-    W_vs_q2_upper_singlePi->SetYTitle("Q^{2} (GeV^{2})");
-    W_vs_q2_upper_singlePi->SetOption("COLZ");
-    W_vs_q2_upper_singlePi->Write();
+void Histogram::makeHists_sector() {
+  for (size_t i = 0; i < num_sectors; i++) {
+    hname.clear();
+    htitle.clear();
+    hname.append("wvsq2_sec_");
+    htitle.append("W vs Q^{2} Sector: ");
+    hname.append(std::to_string(i + 1));
+    htitle.append(std::to_string(i + 1));
+    W_vs_q2_sec[i] = new TH2D(hname.c_str(), htitle.c_str(), bins, zero, w_max, bins, zero, q2_max);
+    hname.clear();
+    htitle.clear();
 
-    W_hist_upper_singlePi->SetXTitle("W (GeV)");
-    W_hist_upper_singlePi->Write();
+    hname.append("w_sec_");
+    htitle.append("W Sector: ");
+    hname.append(std::to_string(i + 1));
+    htitle.append(std::to_string(i + 1));
+    W_sec[i] = new TH1D(hname.c_str(), htitle.c_str(), bins, zero, w_max);
+    hname.clear();
+    htitle.clear();
 
-    Q2_hist_upper_singlePi->SetXTitle("Q^{2} (GeV^{2})");
-    Q2_hist_upper_singlePi->Write();
-  */
+    hname.clear();
+    htitle.clear();
+    hname.append("wvsq2_sec_singlePi_");
+    htitle.append("W vs Q^{2} W_singlePi Sector: ");
+    hname.append(std::to_string(i + 1));
+    htitle.append(std::to_string(i + 1));
+    W_vs_q2_singlePi_sec[i] = new TH2D(hname.c_str(), htitle.c_str(), bins, zero, w_max, bins, zero, q2_max);
+    hname.clear();
+    htitle.clear();
+
+    hname.append("w_sec_singlePi_");
+    htitle.append("W singlePi Sector: ");
+    hname.append(std::to_string(i + 1));
+    htitle.append(std::to_string(i + 1));
+    W_singlePi_sec[i] = new TH1D(hname.c_str(), htitle.c_str(), bins, zero, w_max);
+    hname.clear();
+    htitle.clear();
+
+    hname.clear();
+    htitle.clear();
+    hname.append("wvsq2_sec_Npip_");
+    htitle.append("W vs Q^{2} W_Npip Sector: ");
+    hname.append(std::to_string(i + 1));
+    htitle.append(std::to_string(i + 1));
+    W_vs_q2_Npip_sec[i] = new TH2D(hname.c_str(), htitle.c_str(), bins, zero, w_max, bins, zero, q2_max);
+    hname.clear();
+    htitle.clear();
+
+    hname.append("w_sec_Npip_");
+    htitle.append("W Npip Sector: ");
+    hname.append(std::to_string(i + 1));
+    htitle.append(std::to_string(i + 1));
+    W_Npip_sec[i] = new TH1D(hname.c_str(), htitle.c_str(), bins, zero, w_max);
+    hname.clear();
+    htitle.clear();
+
+    hname.append("MM_Sec_");
+    htitle.append("MM neutron Sector: ");
+    hname.append(std::to_string(i + 1));
+    htitle.append(std::to_string(i + 1));
+    MM_neutron_sec[i] = new TH1D(hname.c_str(), htitle.c_str(), bins, zero, 4.0);
+    hname.clear();
+    htitle.clear();
+
+    hname.append("MM_Npip_Sec_");
+    htitle.append("MM^{2} neutron pip Sector: ");
+    hname.append(std::to_string(i + 1));
+    htitle.append(std::to_string(i + 1));
+    MM_Npip_sec[i] = new TH1D(hname.c_str(), htitle.c_str(), bins, -2.0, 2.0);
+    hname.clear();
+    htitle.clear();
+
+    hname.append("W_vs_MM_singlePi_");
+    htitle.append("W_vs_MM_singlePi_");
+    hname.append(std::to_string(i + 1));
+    htitle.append(std::to_string(i + 1));
+    W_vs_MM_singlePi[i] = new TH2D(hname.c_str(), htitle.c_str(), bins, zero, w_max, bins, -q2_max, q2_max);
+    hname.clear();
+    htitle.clear();
+  }
 }
 
 void Histogram::makeHists_deltat() {
@@ -200,54 +296,44 @@ void Histogram::makeHists_deltat() {
   }
 }
 
-void Histogram::Fill_deltat_vertex(int pid, int charge, double P, Delta_T *dt) {
-  delta_t_vertex[0]->Fill(P, dt->Get_dt_E());
+void Histogram::Fill_deltat_vertex(int pid, int charge, float dt, float momentum) {
+  delta_t_vertex[0]->Fill(momentum, dt);
   if (pid == ELECTRON) {
-    delta_t_vertex[1]->Fill(P, dt->Get_dt_E());
+    delta_t_vertex[1]->Fill(momentum, dt);
   } else {
-    delta_t_vertex[2]->Fill(P, dt->Get_dt_E());
+    delta_t_vertex[2]->Fill(momentum, dt);
   }
 }
 
-void Histogram::Fill_deltat(int pid, int charge, double P, Delta_T *dt) {
-  double deltaT = -99;
-  int good_ID = 0;
+void Histogram::Fill_deltat_pi(int pid, int charge, float dt, float momentum) {
+  if (charge == 1) {
+    delta_t_hist[1][0][0]->Fill(momentum, dt);
+    if (pid == PIP)
+      delta_t_hist[1][0][1]->Fill(momentum, dt);
+    else
+      delta_t_hist[1][0][2]->Fill(momentum, dt);
+  } else if (charge == -1) {
+    delta_t_hist[1][1][0]->Fill(momentum, dt);
+    if (pid == -PIP)
+      delta_t_hist[1][1][1]->Fill(momentum, dt);
+    else
+      delta_t_hist[1][1][2]->Fill(momentum, dt);
+  }
+}
 
-  for (size_t p = 0; p < particle_num; p++) {
-    switch (p) {
-      case 0:
-        good_ID = ELECTRON;
-        deltaT = dt->Get_dt_E();
-        break;
-      case 1:
-        good_ID = PIP;
-        deltaT = dt->Get_dt_Pi();
-        break;
-      case 2:
-        good_ID = PROTON;
-        deltaT = dt->Get_dt_P();
-        break;
-      case 3:
-        good_ID = KP;
-        deltaT = dt->Get_dt_K();
-        break;
-    }
-
-    if (charge == -1) {
-      delta_t_hist[p][1][0]->Fill(P, deltaT);
-      if (-good_ID == pid) {
-        delta_t_hist[p][1][1]->Fill(P, deltaT);
-      } else {
-        delta_t_hist[p][1][2]->Fill(P, deltaT);
-      }
-    } else if (charge == 1) {
-      delta_t_hist[p][0][0]->Fill(P, deltaT);
-      if (good_ID == pid) {
-        delta_t_hist[p][0][1]->Fill(P, deltaT);
-      } else {
-        delta_t_hist[p][0][2]->Fill(P, deltaT);
-      }
-    }
+void Histogram::Fill_deltat_prot(int pid, int charge, float dt, float momentum) {
+  if (charge == 1) {
+    delta_t_hist[2][0][0]->Fill(momentum, dt);
+    if (pid == PROTON)
+      delta_t_hist[2][0][1]->Fill(momentum, dt);
+    else
+      delta_t_hist[2][0][2]->Fill(momentum, dt);
+  } else if (charge == -1) {
+    delta_t_hist[2][1][0]->Fill(momentum, dt);
+    if (pid == -PROTON)
+      delta_t_hist[2][1][1]->Fill(momentum, dt);
+    else
+      delta_t_hist[2][1][2]->Fill(momentum, dt);
   }
 }
 
@@ -256,7 +342,7 @@ void Histogram::Write_deltat() {
     delta_t_vertex[i]->SetXTitle("Momentum (GeV)");
     delta_t_vertex[i]->SetYTitle("#Deltat");
     delta_t_vertex[i]->SetOption("COLZ");
-    delta_t_vertex[i]->Write();
+    if (delta_t_vertex[i]->GetEntries() > 1) delta_t_vertex[i]->Write();
     delete delta_t_vertex[i];
   }
 
@@ -266,7 +352,7 @@ void Histogram::Write_deltat() {
         delta_t_hist[p][c][i]->SetXTitle("Momentum (GeV)");
         delta_t_hist[p][c][i]->SetYTitle("#Deltat");
         delta_t_hist[p][c][i]->SetOption("COLZ");
-        delta_t_hist[p][c][i]->Write();
+        if (delta_t_hist[p][c][i]->GetEntries() > 1) delta_t_hist[p][c][i]->Write();
         delete delta_t_hist[p][c][i];
       }
     }

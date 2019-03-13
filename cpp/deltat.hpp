@@ -5,28 +5,40 @@
 
 #ifndef DT_H_GUARD
 #define DT_H_GUARD
+#include <iostream>
+#include <map>
 #include "constants.hpp"
 
 class Delta_T {
  private:
-  std::vector<double> masses = {MASS_E, MASS_P, MASS_PIP, MASS_KP};
-  double vertex = 0.0;
-  double dt_E = 0.0;
-  double dt_P = 0.0;
-  double dt_Pi = 0.0;
-  double dt_K = 0.0;
+  std::map<int, double> _mass_map = {{PROTON, MASS_P}, {-PROTON, MASS_P},  {NEUTRON, MASS_N},  {PIP, MASS_PIP},
+                                     {PIM, MASS_PIM},  {PI0, MASS_PI0},    {KP, MASS_KP},      {KM, MASS_KM},
+                                     {PHOTON, MASS_G}, {ELECTRON, MASS_E}, {-ELECTRON, MASS_E}};
+  float _sc_t_v = std::nanf("-99");
+  float _sc_r_v = std::nanf("-99");
+  float _vertex = std::nanf("-99");
+  float _sc_t = std::nanf("-99");
+  float _sc_r = std::nanf("-99");
+  float _beta = std::nanf("-99");
+  float _momentum = std::nanf("-99");
 
-  double vertex_time(double sc_time, double sc_pathlength, double relatavistic_beta);
+  bool _ctof = false;
+
+  float _vertex_time(float sc_time, float sc_pathlength, float relatavistic_beta);
+  float _deltat(int num);
 
  public:
-  Delta_T(double sc_time, double sc_pathlength);
+  Delta_T(float time_1b, float path_1b, float time_1a, float path_1a, float time_2, float path_2);
   ~Delta_T();
 
-  void deltat(double momentum, double sc_t, double sc_r);
-  double Get_dt_E();
-  double Get_dt_P();
-  double Get_dt_Pi();
-  double Get_dt_K();
+  void dt_calc(float momentum, float time_1b, float path_1b, float time_1a, float path_1a, float time_2, float path_2,
+               float time_ctof, float path_ctof);
+  float dt_E();
+  float dt_P();
+  float dt_Pi();
+  float dt_K();
+  float dt(int pid);
+  float momentum();
 };
 
 #endif

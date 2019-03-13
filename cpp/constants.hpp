@@ -5,6 +5,7 @@
 
 #ifndef CONSTANTS_H_GUARD
 #define CONSTANTS_H_GUARD
+#include <map>
 #include "TMath.h"
 
 static const double CLAS12_E = 10.7;
@@ -41,6 +42,5 @@ static const double MASS_PI0 = 0.1349766;
 static const double MASS_KP = 0.493677;
 static const double MASS_KM = 0.493677;
 static const double MASS_G = 0.0;
-static const double MASS_OMEGA = 0.78265;
 
 #endif

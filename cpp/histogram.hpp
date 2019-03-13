@@ -5,7 +5,9 @@
 
 #ifndef HIST_H_GUARD
 #define HIST_H_GUARD
+#include "TCanvas.h"
 #include "TF1.h"
+#include "TFile.h"
 #include "TH1.h"
 #include "TH2.h"
 #include "TLorentzVector.h"
@@ -28,7 +30,7 @@ class Histogram {
 
   static const short particle_num = 4;  // 0-e 1-Pi 2-P 3-K
   std::string particle_name[particle_num] = {"e", "pi", "P", "K"};
-  static const short charge_num = 2;  // 0-un 1-pos 2-neg
+  static const short charge_num = 2;  // 0-pos 1-neg
   std::string charge_name[charge_num] = {"positive", "negative"};
   static const short with_id_num = 3;  // 0-without 1-with 2-anti
   std::string id_name[with_id_num] = {"withoutID", "withID", "antiID"};
@@ -39,27 +41,24 @@ class Histogram {
   TH1D *Q2_hist;
   TH2D *W_vs_q2;
 
+  static const short num_sectors = 6;
+  TH2D *W_vs_q2_sec[num_sectors];
+  TH1D *W_sec[num_sectors];
+
+  TH2D *W_vs_q2_singlePi_sec[num_sectors];
+  TH1D *W_singlePi_sec[num_sectors];
+
+  TH2D *W_vs_q2_Npip_sec[num_sectors];
+  TH2D *W_vs_MM_singlePi[num_sectors];
+  TH1D *W_Npip_sec[num_sectors];
+  TH1D *MM_Npip_sec[num_sectors];
+
   TH1D *MM_neutron;
-
-  TH1D *W_hist_lower;
-  TH1D *Q2_hist_lower;
-  TH2D *W_vs_q2_lower;
-
-  TH1D *W_hist_upper;
-  TH1D *Q2_hist_upper;
-  TH2D *W_vs_q2_upper;
+  TH1D *MM_neutron_sec[num_sectors];
 
   TH1D *W_hist_singlePi;
   TH1D *Q2_hist_singlePi;
   TH2D *W_vs_q2_singlePi;
-
-  TH1D *W_hist_lower_singlePi;
-  TH1D *Q2_hist_lower_singlePi;
-  TH2D *W_vs_q2_lower_singlePi;
-
-  TH1D *W_hist_upper_singlePi;
-  TH1D *Q2_hist_upper_singlePi;
-  TH2D *W_vs_q2_upper_singlePi;
 
   // EC Sampling Fraction
   TH2D *EC_sampling_fraction;
@@ -80,9 +79,11 @@ class Histogram {
   ~Histogram();
 
   // W and Q^2
-  void Fill_WvsQ2(double W, double Q2);
-  void Fill_WvsQ2_singlePi(double W, double Q2, TLorentzVector *mm);
-  void Write_WvsQ2();
+  void makeHists_sector();
+  void Fill_WvsQ2(double W, double Q2, int sec);
+  void Fill_WvsQ2_singlePi(double W, double Q2, double mm, int sec);
+  void Fill_WvsQ2_Npip(double W, double Q2, double mm, int sec);
+  void Write_WvsQ2(TFile *out);
 
   // P and E
   void makeHists_MomVsBeta();
@@ -93,8 +94,9 @@ class Histogram {
 
   // Delta T
   void makeHists_deltat();
-  void Fill_deltat_vertex(int pid, int charge, double P, Delta_T *dt);
-  void Fill_deltat(int pid, int charge, double P, Delta_T *dt);
+  void Fill_deltat_vertex(int pid, int charge, float dt, float momentum);
+  void Fill_deltat_pi(int pid, int charge, float dt, float momentum);
+  void Fill_deltat_prot(int pid, int charge, float dt, float momentum);
   void Write_deltat();
 
   // EC Sampling Fraction

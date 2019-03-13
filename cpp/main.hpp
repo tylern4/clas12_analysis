@@ -16,140 +16,77 @@
 #include "filehandeler.hpp"
 #include "histogram.hpp"
 #include "physics.hpp"
+#include "reaction.hpp"
 
-void datahandeler(char *fin, char *fout) {
-  double energy = CLAS12_E;
-  if (getenv("CLAS12_E") != NULL) energy = atof(getenv("CLAS12_E"));
-  TLorentzVector *e_mu = new TLorentzVector(0.0, 0.0, energy, energy);
-  TLorentzVector *MM_n = new TLorentzVector(0.0, 0.0, 0.0, MASS_P);
-  TLorentzVector *pion = new TLorentzVector(0.0, 0.0, 0.0, MASS_PIP);
+void datahandeler(std::string fin, std::string fout) {
+  auto out = std::make_unique<TFile>(fout.c_str(), "RECREATE");
 
-  TFile *out = new TFile(fout, "RECREATE");
-  double P;
   bool electron_cuts;
   // Load chain from branch h10
-  TChain *chain = filehandeler::addFiles(fin);
+  auto chain = filehandeler::addFiles(fin);
   filehandeler::getBranches(chain);
 
   int num_of_events = (int)chain->GetEntries();
-  int total = 0;
-  double tot_energy_ec = 0;
-  int sc_d = 0;
-  double W = 0;
-  double Q2 = 0;
-  double sf = 0;
-  double P_x = 0;
-  double P_y = 0;
-  double P_z = 0;
   double per = 0;
-  int index = 0;
-  int num_pip = 0;
-  TVector3 e_mu_prime_3;
-  TLorentzVector e_mu_prime;
-  bool good_e = true;
 
-  Histogram *hist = new Histogram();
+  auto hist = std::make_unique<Histogram>();
 
   for (int current_event = 0; current_event < num_of_events; current_event++) {
     chain->GetEntry(current_event);
-
     if (pid->size() == 0) continue;
+    if (charge->at(0) != -1) continue;
 
-    per = ((double)current_event / (double)num_of_events);
-    std::cerr << "\t\t" << std::floor(100 * per) << "%\r\r" << std::flush;
-    e_mu_prime_3.SetXYZ(px->at(0), py->at(0), pz->at(0));
-    e_mu_prime.SetVectM(e_mu_prime_3, MASS_E);
-    W = physics::W_calc(*e_mu, e_mu_prime);
-    Q2 = physics::Q2_calc(*e_mu, e_mu_prime);
-    hist->Fill_WvsQ2(W, Q2);
+    if (current_event % 1000 == 0)
+      std::cerr << "\t\t" << std::floor(100 * ((double)current_event / (double)num_of_events)) << "%\r\r" << std::flush;
 
-    MM_n->SetXYZT(0.0, 0.0, 0.0, MASS_P);
-    *MM_n += *e_mu;
+    auto event = std::make_unique<Reaction>();
+    event->SetElec(px->at(0), py->at(0), pz->at(0));
 
-    num_pip = 0;
-    int other = 0;
-    tot_energy_ec = 0;
-    good_e = true;
-    for (int j = 0; j < ec_pindex->size(); j++) {
-      if (ec_pindex->size() == 0) continue;
-      try {
-        index = ec_pindex->at(j);
-        if (index == 0) {
-          e_mu_prime_3.SetXYZ(px->at(index), py->at(index), pz->at(index));
-          e_mu_prime.SetVectM(e_mu_prime_3, MASS_E);
-          P = e_mu_prime.P();
-          tot_energy_ec += ec_energy->at(j);
-          good_e = true;
-        }
-      } catch (std::exception &e) {
-        total++;
-      }
+    if (p->at(0) != 0) hist->Fill_EC(ec_tot_energy->at(0) / p->at(0), p->at(0));
+
+    auto dt = std::make_unique<Delta_T>(sc_ftof_1b_time->at(0), sc_ftof_1b_path->at(0), sc_ftof_1a_time->at(0),
+                                        sc_ftof_1a_path->at(0), sc_ftof_2_time->at(0), sc_ftof_2_path->at(0));
+
+    for (int part = 1; part < pid->size(); part++) {
+      dt->dt_calc(p->at(part), sc_ftof_1b_time->at(part), sc_ftof_1b_path->at(part), sc_ftof_1a_time->at(part),
+                  sc_ftof_1a_path->at(part), sc_ftof_2_time->at(part), sc_ftof_2_path->at(part), sc_ctof_time->at(part),
+                  sc_ctof_path->at(part));
+
+      hist->Fill_MomVsBeta(pid->at(part), charge->at(part), p->at(part), beta->at(part));
+      hist->Fill_deltat_pi(pid->at(part), charge->at(part), dt->dt_Pi(), p->at(part));
+      hist->Fill_deltat_prot(pid->at(part), charge->at(part), dt->dt_P(), p->at(part));
+
+      if (charge->at(part) == 1 && abs(dt->dt_Pi()) < 1.0 && pid->at(part) == PIP)
+        event->SetPip(px->at(part), py->at(part), pz->at(part));
+      else if (charge->at(part) == 1 && abs(dt->dt_P()) < 1.0 && pid->at(part) == PROTON)
+        event->SetProton(px->at(part), py->at(part), pz->at(part));
+      else if (charge->at(part) == -1 && abs(dt->dt_Pi()) < 1.0 && pid->at(part) == PIM)
+        event->SetPim(px->at(part), py->at(part), pz->at(part));
+      else
+        event->SetOther(px->at(part), py->at(part), pz->at(part), pid->at(part));
     }
-    if (!good_e) continue;
-    sf = tot_energy_ec / e_mu_prime.P();
-    if (tot_energy_ec != 0) hist->Fill_EC(sf, e_mu_prime.P());
 
-    // good_e = true;
-    for (int j = 0; j < sc_time->size(); j++) {
-      if (sc_time->size() == 0) continue;
-      try {
-        Delta_T *dt = new Delta_T(sc_time->at(0), sc_path->at(0));
-        index = sc_pindex->at(j);
-        sc_d = sc_detector->at(j);
-        // I think 12 is FTOF
-        if (sc_d == 12) {
-          P_x = px->at(index) * px->at(index);
-          P_y = py->at(index) * py->at(index);
-          P_z = pz->at(index) * pz->at(index);
-          P = TMath::Sqrt(P_x + P_y + P_z);
-
-          dt->deltat(P, sc_time->at(j), sc_path->at(j));
-
-          if (index == 0) {
-            hist->Fill_MomVsBeta_vertex(pid->at(index), charge->at(index), P, beta->at(index));
-            hist->Fill_deltat_vertex(pid->at(index), charge->at(index), P, dt);
-          } else {
-            hist->Fill_MomVsBeta(pid->at(index), charge->at(index), P, beta->at(index));
-            hist->Fill_deltat(pid->at(index), charge->at(index), P, dt);
-          }
-        }
-
-        if (abs(dt->Get_dt_Pi()) < 0.5) {
-          num_pip++;
-          pion->SetXYZM(px->at(sc_pindex->at(j)), py->at(sc_pindex->at(j)), pz->at(sc_pindex->at(j)), MASS_PIP);
-          *MM_n -= *pion;
-        } else {
-          other++;
-        }
-        if (sc_detector->at(sc_pindex->at(j)) == 12) good_e = true;
-        delete dt;
-      } catch (std::exception &e) {
-        total++;
-      }
-    }
-    if (num_pip == 1 && other == 0) {
-      *MM_n -= e_mu_prime;
-      hist->Fill_WvsQ2_singlePi(W, Q2, MM_n);
-    }
+    hist->Fill_WvsQ2(event->W(), event->Q2(), ec_pcal_sec->at(0));
+    if (event->SinglePip()) hist->Fill_WvsQ2_singlePi(event->W(), event->Q2(), event->MM(), ec_pcal_sec->at(0));
+    if (event->SinglePip() && event->MM() > 0.85 && event->MM() < 1.1)
+      hist->Fill_WvsQ2_Npip(event->W(), event->Q2(), event->MM(), ec_pcal_sec->at(0));
   }
 
   out->cd();
   hist->Write_EC();
-  TDirectory *wvsq2 = out->mkdir("wvsq2");
+  auto wvsq2 = out->mkdir("wvsq2");
   wvsq2->cd();
-  hist->Write_WvsQ2();
+  hist->Write_WvsQ2(out.get());
 
-  TDirectory *mom_vs_beta = out->mkdir("mom_vs_beta");
+  auto mom_vs_beta = out->mkdir("mom_vs_beta");
   mom_vs_beta->cd();
   hist->Write_MomVsBeta();
 
-  TDirectory *deltat_ftof = out->mkdir("deltat_ftof");
+  auto deltat_ftof = out->mkdir("deltat_ftof");
   deltat_ftof->cd();
   hist->Write_deltat();
 
   out->Close();
   chain->Reset();
-  std::cerr << "\nErrors: " << total << "\t" << std::endl;
-  delete hist;
 }
 #endif

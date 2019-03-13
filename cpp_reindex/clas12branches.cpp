@@ -25,6 +25,7 @@ Clas12Branches::Clas12Branches(TChain *tree, bool MC) {
 Clas12Branches::~Clas12Branches() {}
 
 void Clas12Branches::getBranches() {
+  /*
   _clas12Chain->SetBranchAddress("NRUN", &_NRUN);
   _clas12Chain->SetBranchAddress("NEVENT", &_NEVENT);
   _clas12Chain->SetBranchAddress("EVNTime", &_EVNTime);
@@ -38,7 +39,7 @@ void Clas12Branches::getBranches() {
   _clas12Chain->SetBranchAddress("NPGP", &_NPGP);
   _clas12Chain->SetBranchAddress("LT", &_LT);
   _clas12Chain->SetBranchAddress("PTIME", &_PTIME);
-
+*/
   _clas12Chain->SetBranchAddress("pid", &_pid);
   _clas12Chain->SetBranchAddress("p", &_p);
   _clas12Chain->SetBranchAddress("p2", &_p2);
@@ -119,7 +120,8 @@ void Clas12Branches::getBranches() {
   _clas12Chain->SetBranchAddress("sc_ftof_1a_time", &_sc_ftof_1a_time);
   _clas12Chain->SetBranchAddress("sc_ftof_1a_path", &_sc_ftof_1a_path);
   _clas12Chain->SetBranchAddress("sc_ftof_1a_energy", &_sc_ftof_1a_energy);
-  _clas12Chain->SetBranchAddress("sc_ftof_1a_component", &_sc_ftof_1a_component);
+  _clas12Chain->SetBranchAddress("sc_ftof_1a_component",
+                                 &_sc_ftof_1a_component);
   _clas12Chain->SetBranchAddress("sc_ftof_1a_x", &_sc_ftof_1a_x);
   _clas12Chain->SetBranchAddress("sc_ftof_1a_y", &_sc_ftof_1a_y);
   _clas12Chain->SetBranchAddress("sc_ftof_1a_z", &_sc_ftof_1a_z);
@@ -130,7 +132,8 @@ void Clas12Branches::getBranches() {
   _clas12Chain->SetBranchAddress("sc_ftof_1b_time", &_sc_ftof_1b_time);
   _clas12Chain->SetBranchAddress("sc_ftof_1b_path", &_sc_ftof_1b_path);
   _clas12Chain->SetBranchAddress("sc_ftof_1b_energy", &_sc_ftof_1b_energy);
-  _clas12Chain->SetBranchAddress("sc_ftof_1b_component", &_sc_ftof_1b_component);
+  _clas12Chain->SetBranchAddress("sc_ftof_1b_component",
+                                 &_sc_ftof_1b_component);
   _clas12Chain->SetBranchAddress("sc_ftof_1b_x", &_sc_ftof_1b_x);
   _clas12Chain->SetBranchAddress("sc_ftof_1b_y", &_sc_ftof_1b_y);
   _clas12Chain->SetBranchAddress("sc_ftof_1b_z", &_sc_ftof_1b_z);
@@ -187,633 +190,780 @@ void Clas12Branches::getBranches() {
   _clas12Chain->SetBranchAddress("ft_hodo_dy", &_ft_hodo_dy);
   _clas12Chain->SetBranchAddress("ft_hodo_radius", &_ft_hodo_radius);
 
-  auto cachesize = 128000000U;                // 128 MBytes
-  _clas12Chain->SetCacheSize(cachesize);      //<<<
-  _clas12Chain->AddBranchToCache("*", true);  //<<< add all branches to the cache
+  auto cachesize = 256000000U;               // 128 MBytes
+  _clas12Chain->SetCacheSize(cachesize);     //<<<
+  _clas12Chain->AddBranchToCache("*", true); //<<< add all branches to the cache
 }
 
 int Clas12Branches::gpart() { return _pid->size(); }
 
 int Clas12Branches::pid(int i) {
-  if (i > _pid->size()) return -9999;
+  if (i > _pid->size())
+    return -9999;
   return _pid->at(i);
 }
 
 int Clas12Branches::charge(int i) {
-  if (i > _pid->size()) return -9999;
+  if (i > _pid->size())
+    return -9999;
   return _charge->at(i);
 }
 
 int Clas12Branches::status(int i) {
-  if (i > _pid->size()) return -9999;
+  if (i > _pid->size())
+    return -9999;
   return _status->at(i);
 }
 
 int Clas12Branches::ec_pcal_sec(int i) {
-  if (i > _pid->size()) return -9999;
+  if (i > _pid->size())
+    return -9999;
   return _ec_pcal_sec->at(i);
 }
 
 int Clas12Branches::ec_ecin_sec(int i) {
-  if (i > _pid->size()) return -9999;
+  if (i > _pid->size())
+    return -9999;
   return _ec_ecin_sec->at(i);
 }
 
 int Clas12Branches::ec_ecout_sec(int i) {
-  if (i > _pid->size()) return -9999;
+  if (i > _pid->size())
+    return -9999;
   return _ec_ecout_sec->at(i);
 }
 
 int Clas12Branches::dc_sec(int i) {
-  if (i > _pid->size()) return -9999;
+  if (i > _pid->size())
+    return -9999;
   return _dc_sec->at(i);
 }
 
 int Clas12Branches::cc_ltcc_sec(int i) {
-  if (i > _pid->size()) return -9999;
+  if (i > _pid->size())
+    return -9999;
   return _cc_ltcc_sec->at(i);
 }
 
 int Clas12Branches::cc_htcc_sec(int i) {
-  if (i > _pid->size()) return -9999;
+  if (i > _pid->size())
+    return -9999;
   return _cc_htcc_sec->at(i);
 }
 
 int Clas12Branches::cc_rich_sec(int i) {
-  if (i > _pid->size()) return -9999;
+  if (i > _pid->size())
+    return -9999;
   return _cc_rich_sec->at(i);
 }
 
 int Clas12Branches::sc_ftof_1a_sec(int i) {
-  if (i > _pid->size()) return -9999;
+  if (i > _pid->size())
+    return -9999;
   return _sc_ftof_1a_sec->at(i);
 }
 
 int Clas12Branches::sc_ftof_1a_component(int i) {
-  if (i > _pid->size()) return -9999;
+  if (i > _pid->size())
+    return -9999;
   return _sc_ftof_1a_component->at(i);
 }
 
 int Clas12Branches::sc_ftof_1b_sec(int i) {
-  if (i > _pid->size()) return -9999;
+  if (i > _pid->size())
+    return -9999;
   return _sc_ftof_1b_sec->at(i);
 }
 
 int Clas12Branches::sc_ftof_1b_component(int i) {
-  if (i > _pid->size()) return -9999;
+  if (i > _pid->size())
+    return -9999;
   return _sc_ftof_1b_component->at(i);
 }
 
 int Clas12Branches::sc_ftof_2_sec(int i) {
-  if (i > _pid->size()) return -9999;
+  if (i > _pid->size())
+    return -9999;
   return _sc_ftof_2_sec->at(i);
 }
 
 int Clas12Branches::sc_ftof_2_component(int i) {
-  if (i > _pid->size()) return -9999;
+  if (i > _pid->size())
+    return -9999;
   return _sc_ftof_2_component->at(i);
 }
 
 int Clas12Branches::sc_ctof_component(int i) {
-  if (i > _pid->size()) return -9999;
+  if (i > _pid->size())
+    return -9999;
   return _sc_ctof_component->at(i);
 }
 
 int Clas12Branches::sc_cnd_component(int i) {
-  if (i > _pid->size()) return -9999;
+  if (i > _pid->size())
+    return -9999;
   return _sc_cnd_component->at(i);
 }
 
 float Clas12Branches::p(int i) {
-  if (i > _pid->size()) return NAN;
+  if (i > _pid->size())
+    return NAN;
   return _p->at(i);
 }
 float Clas12Branches::p2(int i) {
-  if (i > _pid->size()) return NAN;
+  if (i > _pid->size())
+    return NAN;
   return _p2->at(i);
 }
 float Clas12Branches::px(int i) {
-  if (i > _pid->size()) return NAN;
+  if (i > _pid->size())
+    return NAN;
   return _px->at(i);
 }
 float Clas12Branches::py(int i) {
-  if (i > _pid->size()) return NAN;
+  if (i > _pid->size())
+    return NAN;
   return _py->at(i);
 }
 float Clas12Branches::pz(int i) {
-  if (i > _pid->size()) return NAN;
+  if (i > _pid->size())
+    return NAN;
   return _pz->at(i);
 }
 float Clas12Branches::vx(int i) {
-  if (i > _pid->size()) return NAN;
+  if (i > _pid->size())
+    return NAN;
   return _vx->at(i);
 }
 float Clas12Branches::vy(int i) {
-  if (i > _pid->size()) return NAN;
+  if (i > _pid->size())
+    return NAN;
   return _vy->at(i);
 }
 float Clas12Branches::vz(int i) {
-  if (i > _pid->size()) return NAN;
+  if (i > _pid->size())
+    return NAN;
   return _vz->at(i);
 }
 
 float Clas12Branches::beta(int i) {
-  if (i > _pid->size()) return NAN;
+  if (i > _pid->size())
+    return NAN;
   return _beta->at(i);
 }
 float Clas12Branches::chi2pid(int i) {
-  if (i > _pid->size()) return NAN;
+  if (i > _pid->size())
+    return NAN;
   return _chi2pid->at(i);
 }
 
 float Clas12Branches::ec_tot_energy(int i) {
-  if (i > _pid->size()) return NAN;
+  if (i > _pid->size())
+    return NAN;
   return _ec_tot_energy->at(i);
 }
 float Clas12Branches::ec_pcal_energy(int i) {
-  if (i > _pid->size()) return NAN;
+  if (i > _pid->size())
+    return NAN;
   return _ec_pcal_energy->at(i);
 }
 
 float Clas12Branches::ec_pcal_time(int i) {
-  if (i > _pid->size()) return NAN;
+  if (i > _pid->size())
+    return NAN;
   return _ec_pcal_time->at(i);
 }
 float Clas12Branches::ec_pcal_path(int i) {
-  if (i > _pid->size()) return NAN;
+  if (i > _pid->size())
+    return NAN;
   return _ec_pcal_path->at(i);
 }
 float Clas12Branches::ec_pcal_x(int i) {
-  if (i > _pid->size()) return NAN;
+  if (i > _pid->size())
+    return NAN;
   return _ec_pcal_x->at(i);
 }
 float Clas12Branches::ec_pcal_y(int i) {
-  if (i > _pid->size()) return NAN;
+  if (i > _pid->size())
+    return NAN;
   return _ec_pcal_y->at(i);
 }
 float Clas12Branches::ec_pcal_z(int i) {
-  if (i > _pid->size()) return NAN;
+  if (i > _pid->size())
+    return NAN;
   return _ec_pcal_z->at(i);
 }
 float Clas12Branches::ec_pcal_lu(int i) {
-  if (i > _pid->size()) return NAN;
+  if (i > _pid->size())
+    return NAN;
   return _ec_pcal_lu->at(i);
 }
 float Clas12Branches::ec_pcal_lv(int i) {
-  if (i > _pid->size()) return NAN;
+  if (i > _pid->size())
+    return NAN;
   return _ec_pcal_lv->at(i);
 }
 float Clas12Branches::ec_pcal_lw(int i) {
-  if (i > _pid->size()) return NAN;
+  if (i > _pid->size())
+    return NAN;
   return _ec_pcal_lw->at(i);
 }
 float Clas12Branches::ec_ecin_energy(int i) {
-  if (i > _pid->size()) return NAN;
+  if (i > _pid->size())
+    return NAN;
   return _ec_ecin_energy->at(i);
 }
 
 float Clas12Branches::ec_ecin_time(int i) {
-  if (i > _pid->size()) return NAN;
+  if (i > _pid->size())
+    return NAN;
   return _ec_ecin_time->at(i);
 }
 float Clas12Branches::ec_ecin_path(int i) {
-  if (i > _pid->size()) return NAN;
+  if (i > _pid->size())
+    return NAN;
   return _ec_ecin_path->at(i);
 }
 float Clas12Branches::ec_ecin_x(int i) {
-  if (i > _pid->size()) return NAN;
+  if (i > _pid->size())
+    return NAN;
   return _ec_ecin_x->at(i);
 }
 float Clas12Branches::ec_ecin_y(int i) {
-  if (i > _pid->size()) return NAN;
+  if (i > _pid->size())
+    return NAN;
   return _ec_ecin_y->at(i);
 }
 float Clas12Branches::ec_ecin_z(int i) {
-  if (i > _pid->size()) return NAN;
+  if (i > _pid->size())
+    return NAN;
   return _ec_ecin_z->at(i);
 }
 float Clas12Branches::ec_ecin_lu(int i) {
-  if (i > _pid->size()) return NAN;
+  if (i > _pid->size())
+    return NAN;
   return _ec_ecin_lu->at(i);
 }
 float Clas12Branches::ec_ecin_lv(int i) {
-  if (i > _pid->size()) return NAN;
+  if (i > _pid->size())
+    return NAN;
   return _ec_ecin_lv->at(i);
 }
 float Clas12Branches::ec_ecin_lw(int i) {
-  if (i > _pid->size()) return NAN;
+  if (i > _pid->size())
+    return NAN;
   return _ec_ecin_lw->at(i);
 }
 float Clas12Branches::ec_ecout_energy(int i) {
-  if (i > _pid->size()) return NAN;
+  if (i > _pid->size())
+    return NAN;
   return _ec_ecout_energy->at(i);
 }
 
 float Clas12Branches::ec_ecout_time(int i) {
-  if (i > _pid->size()) return NAN;
+  if (i > _pid->size())
+    return NAN;
   return _ec_ecout_time->at(i);
 }
 float Clas12Branches::ec_ecout_path(int i) {
-  if (i > _pid->size()) return NAN;
+  if (i > _pid->size())
+    return NAN;
   return _ec_ecout_path->at(i);
 }
 float Clas12Branches::ec_ecout_x(int i) {
-  if (i > _pid->size()) return NAN;
+  if (i > _pid->size())
+    return NAN;
   return _ec_ecout_x->at(i);
 }
 float Clas12Branches::ec_ecout_y(int i) {
-  if (i > _pid->size()) return NAN;
+  if (i > _pid->size())
+    return NAN;
   return _ec_ecout_y->at(i);
 }
 float Clas12Branches::ec_ecout_z(int i) {
-  if (i > _pid->size()) return NAN;
+  if (i > _pid->size())
+    return NAN;
   return _ec_ecout_z->at(i);
 }
 float Clas12Branches::ec_ecout_lu(int i) {
-  if (i > _pid->size()) return NAN;
+  if (i > _pid->size())
+    return NAN;
   return _ec_ecout_lu->at(i);
 }
 float Clas12Branches::ec_ecout_lv(int i) {
-  if (i > _pid->size()) return NAN;
+  if (i > _pid->size())
+    return NAN;
   return _ec_ecout_lv->at(i);
 }
 float Clas12Branches::ec_ecout_lw(int i) {
-  if (i > _pid->size()) return NAN;
+  if (i > _pid->size())
+    return NAN;
   return _ec_ecout_lw->at(i);
 }
 
 float Clas12Branches::dc_px(int i) {
-  if (i > _pid->size()) return NAN;
+  if (i > _pid->size())
+    return NAN;
   return _dc_px->at(i);
 }
 float Clas12Branches::dc_py(int i) {
-  if (i > _pid->size()) return NAN;
+  if (i > _pid->size())
+    return NAN;
   return _dc_py->at(i);
 }
 float Clas12Branches::dc_pz(int i) {
-  if (i > _pid->size()) return NAN;
+  if (i > _pid->size())
+    return NAN;
   return _dc_pz->at(i);
 }
 float Clas12Branches::dc_vx(int i) {
-  if (i > _pid->size()) return NAN;
+  if (i > _pid->size())
+    return NAN;
   return _dc_vx->at(i);
 }
 float Clas12Branches::dc_vy(int i) {
-  if (i > _pid->size()) return NAN;
+  if (i > _pid->size())
+    return NAN;
   return _dc_vy->at(i);
 }
 float Clas12Branches::dc_vz(int i) {
-  if (i > _pid->size()) return NAN;
+  if (i > _pid->size())
+    return NAN;
   return _dc_vz->at(i);
 }
 float Clas12Branches::cvt_px(int i) {
-  if (i > _pid->size()) return NAN;
+  if (i > _pid->size())
+    return NAN;
   return _cvt_px->at(i);
 }
 float Clas12Branches::cvt_py(int i) {
-  if (i > _pid->size()) return NAN;
+  if (i > _pid->size())
+    return NAN;
   return _cvt_py->at(i);
 }
 float Clas12Branches::cvt_pz(int i) {
-  if (i > _pid->size()) return NAN;
+  if (i > _pid->size())
+    return NAN;
   return _cvt_pz->at(i);
 }
 float Clas12Branches::cvt_vx(int i) {
-  if (i > _pid->size()) return NAN;
+  if (i > _pid->size())
+    return NAN;
   return _cvt_vx->at(i);
 }
 float Clas12Branches::cvt_vy(int i) {
-  if (i > _pid->size()) return NAN;
+  if (i > _pid->size())
+    return NAN;
   return _cvt_vy->at(i);
 }
 float Clas12Branches::cvt_vz(int i) {
-  if (i > _pid->size()) return NAN;
+  if (i > _pid->size())
+    return NAN;
   return _cvt_vz->at(i);
 }
 float Clas12Branches::cc_nphe_tot(int i) {
-  if (i > _pid->size()) return NAN;
+  if (i > _pid->size())
+    return NAN;
   return _cc_nphe_tot->at(i);
 }
 
 float Clas12Branches::cc_ltcc_nphe(int i) {
-  if (i > _pid->size()) return NAN;
+  if (i > _pid->size())
+    return NAN;
   return _cc_ltcc_nphe->at(i);
 }
 float Clas12Branches::cc_ltcc_time(int i) {
-  if (i > _pid->size()) return NAN;
+  if (i > _pid->size())
+    return NAN;
   return _cc_ltcc_time->at(i);
 }
 float Clas12Branches::cc_ltcc_path(int i) {
-  if (i > _pid->size()) return NAN;
+  if (i > _pid->size())
+    return NAN;
   return _cc_ltcc_path->at(i);
 }
 float Clas12Branches::cc_ltcc_theta(int i) {
-  if (i > _pid->size()) return NAN;
+  if (i > _pid->size())
+    return NAN;
   return _cc_ltcc_theta->at(i);
 }
 float Clas12Branches::cc_ltcc_phi(int i) {
-  if (i > _pid->size()) return NAN;
+  if (i > _pid->size())
+    return NAN;
   return _cc_ltcc_phi->at(i);
 }
 
 float Clas12Branches::cc_htcc_nphe(int i) {
-  if (i > _pid->size()) return NAN;
+  if (i > _pid->size())
+    return NAN;
   return _cc_htcc_nphe->at(i);
 }
 float Clas12Branches::cc_htcc_time(int i) {
-  if (i > _pid->size()) return NAN;
+  if (i > _pid->size())
+    return NAN;
   return _cc_htcc_time->at(i);
 }
 float Clas12Branches::cc_htcc_path(int i) {
-  if (i > _pid->size()) return NAN;
+  if (i > _pid->size())
+    return NAN;
   return _cc_htcc_path->at(i);
 }
 float Clas12Branches::cc_htcc_theta(int i) {
-  if (i > _pid->size()) return NAN;
+  if (i > _pid->size())
+    return NAN;
   return _cc_htcc_theta->at(i);
 }
 float Clas12Branches::cc_htcc_phi(int i) {
-  if (i > _pid->size()) return NAN;
+  if (i > _pid->size())
+    return NAN;
   return _cc_htcc_phi->at(i);
 }
 
 float Clas12Branches::cc_rich_nphe(int i) {
-  if (i > _pid->size()) return NAN;
+  if (i > _pid->size())
+    return NAN;
   return _cc_rich_nphe->at(i);
 }
 float Clas12Branches::cc_rich_time(int i) {
-  if (i > _pid->size()) return NAN;
+  if (i > _pid->size())
+    return NAN;
   return _cc_rich_time->at(i);
 }
 float Clas12Branches::cc_rich_path(int i) {
-  if (i > _pid->size()) return NAN;
+  if (i > _pid->size())
+    return NAN;
   return _cc_rich_path->at(i);
 }
 float Clas12Branches::cc_rich_theta(int i) {
-  if (i > _pid->size()) return NAN;
+  if (i > _pid->size())
+    return NAN;
   return _cc_rich_theta->at(i);
 }
 float Clas12Branches::cc_rich_phi(int i) {
-  if (i > _pid->size()) return NAN;
+  if (i > _pid->size())
+    return NAN;
   return _cc_rich_phi->at(i);
 }
 
 float Clas12Branches::sc_ftof_1a_time(int i) {
-  if (i > _pid->size()) return NAN;
+  if (i > _pid->size())
+    return NAN;
   return _sc_ftof_1a_time->at(i);
 }
 float Clas12Branches::sc_ftof_1a_path(int i) {
-  if (i > _pid->size()) return NAN;
+  if (i > _pid->size())
+    return NAN;
   return _sc_ftof_1a_path->at(i);
 }
 float Clas12Branches::sc_ftof_1a_energy(int i) {
-  if (i > _pid->size()) return NAN;
+  if (i > _pid->size())
+    return NAN;
   return _sc_ftof_1a_energy->at(i);
 }
 
 float Clas12Branches::sc_ftof_1a_x(int i) {
-  if (i > _pid->size()) return NAN;
+  if (i > _pid->size())
+    return NAN;
   return _sc_ftof_1a_x->at(i);
 }
 float Clas12Branches::sc_ftof_1a_y(int i) {
-  if (i > _pid->size()) return NAN;
+  if (i > _pid->size())
+    return NAN;
   return _sc_ftof_1a_y->at(i);
 }
 float Clas12Branches::sc_ftof_1a_z(int i) {
-  if (i > _pid->size()) return NAN;
+  if (i > _pid->size())
+    return NAN;
   return _sc_ftof_1a_z->at(i);
 }
 float Clas12Branches::sc_ftof_1a_hx(int i) {
-  if (i > _pid->size()) return NAN;
+  if (i > _pid->size())
+    return NAN;
   return _sc_ftof_1a_hx->at(i);
 }
 float Clas12Branches::sc_ftof_1a_hy(int i) {
-  if (i > _pid->size()) return NAN;
+  if (i > _pid->size())
+    return NAN;
   return _sc_ftof_1a_hy->at(i);
 }
 float Clas12Branches::sc_ftof_1a_hz(int i) {
-  if (i > _pid->size()) return NAN;
+  if (i > _pid->size())
+    return NAN;
   return _sc_ftof_1a_hz->at(i);
 }
 
 float Clas12Branches::sc_ftof_1b_time(int i) {
-  if (i > _pid->size()) return NAN;
+  if (i > _pid->size())
+    return NAN;
   return _sc_ftof_1b_time->at(i);
 }
 float Clas12Branches::sc_ftof_1b_path(int i) {
-  if (i > _pid->size()) return NAN;
+  if (i > _pid->size())
+    return NAN;
   return _sc_ftof_1b_path->at(i);
 }
 float Clas12Branches::sc_ftof_1b_energy(int i) {
-  if (i > _pid->size()) return NAN;
+  if (i > _pid->size())
+    return NAN;
   return _sc_ftof_1b_energy->at(i);
 }
 
 float Clas12Branches::sc_ftof_1b_x(int i) {
-  if (i > _pid->size()) return NAN;
+  if (i > _pid->size())
+    return NAN;
   return _sc_ftof_1b_x->at(i);
 }
 float Clas12Branches::sc_ftof_1b_y(int i) {
-  if (i > _pid->size()) return NAN;
+  if (i > _pid->size())
+    return NAN;
   return _sc_ftof_1b_y->at(i);
 }
 float Clas12Branches::sc_ftof_1b_z(int i) {
-  if (i > _pid->size()) return NAN;
+  if (i > _pid->size())
+    return NAN;
   return _sc_ftof_1b_z->at(i);
 }
 float Clas12Branches::sc_ftof_1b_hx(int i) {
-  if (i > _pid->size()) return NAN;
+  if (i > _pid->size())
+    return NAN;
   return _sc_ftof_1b_hx->at(i);
 }
 float Clas12Branches::sc_ftof_1b_hy(int i) {
-  if (i > _pid->size()) return NAN;
+  if (i > _pid->size())
+    return NAN;
   return _sc_ftof_1b_hy->at(i);
 }
 float Clas12Branches::sc_ftof_1b_hz(int i) {
-  if (i > _pid->size()) return NAN;
+  if (i > _pid->size())
+    return NAN;
   return _sc_ftof_1b_hz->at(i);
 }
 
 float Clas12Branches::sc_ftof_2_time(int i) {
-  if (i > _pid->size()) return NAN;
+  if (i > _pid->size())
+    return NAN;
   return _sc_ftof_2_time->at(i);
 }
 float Clas12Branches::sc_ftof_2_path(int i) {
-  if (i > _pid->size()) return NAN;
+  if (i > _pid->size())
+    return NAN;
   return _sc_ftof_2_path->at(i);
 }
 float Clas12Branches::sc_ftof_2_energy(int i) {
-  if (i > _pid->size()) return NAN;
+  if (i > _pid->size())
+    return NAN;
   return _sc_ftof_2_energy->at(i);
 }
 
 float Clas12Branches::sc_ftof_2_x(int i) {
-  if (i > _pid->size()) return NAN;
+  if (i > _pid->size())
+    return NAN;
   return _sc_ftof_2_x->at(i);
 }
 float Clas12Branches::sc_ftof_2_y(int i) {
-  if (i > _pid->size()) return NAN;
+  if (i > _pid->size())
+    return NAN;
   return _sc_ftof_2_y->at(i);
 }
 float Clas12Branches::sc_ftof_2_z(int i) {
-  if (i > _pid->size()) return NAN;
+  if (i > _pid->size())
+    return NAN;
   return _sc_ftof_2_z->at(i);
 }
 float Clas12Branches::sc_ftof_2_hx(int i) {
-  if (i > _pid->size()) return NAN;
+  if (i > _pid->size())
+    return NAN;
   return _sc_ftof_2_hx->at(i);
 }
 float Clas12Branches::sc_ftof_2_hy(int i) {
-  if (i > _pid->size()) return NAN;
+  if (i > _pid->size())
+    return NAN;
   return _sc_ftof_2_hy->at(i);
 }
 float Clas12Branches::sc_ftof_2_hz(int i) {
-  if (i > _pid->size()) return NAN;
+  if (i > _pid->size())
+    return NAN;
   return _sc_ftof_2_hz->at(i);
 }
 float Clas12Branches::sc_ctof_time(int i) {
-  if (i > _pid->size()) return NAN;
+  if (i > _pid->size())
+    return NAN;
   return _sc_ctof_time->at(i);
 }
 float Clas12Branches::sc_ctof_path(int i) {
-  if (i > _pid->size()) return NAN;
+  if (i > _pid->size())
+    return NAN;
   return _sc_ctof_path->at(i);
 }
 float Clas12Branches::sc_ctof_energy(int i) {
-  if (i > _pid->size()) return NAN;
+  if (i > _pid->size())
+    return NAN;
   return _sc_ctof_energy->at(i);
 }
 
 float Clas12Branches::sc_ctof_x(int i) {
-  if (i > _pid->size()) return NAN;
+  if (i > _pid->size())
+    return NAN;
   return _sc_ctof_x->at(i);
 }
 float Clas12Branches::sc_ctof_y(int i) {
-  if (i > _pid->size()) return NAN;
+  if (i > _pid->size())
+    return NAN;
   return _sc_ctof_y->at(i);
 }
 float Clas12Branches::sc_ctof_z(int i) {
-  if (i > _pid->size()) return NAN;
+  if (i > _pid->size())
+    return NAN;
   return _sc_ctof_z->at(i);
 }
 float Clas12Branches::sc_ctof_hx(int i) {
-  if (i > _pid->size()) return NAN;
+  if (i > _pid->size())
+    return NAN;
   return _sc_ctof_hx->at(i);
 }
 float Clas12Branches::sc_ctof_hy(int i) {
-  if (i > _pid->size()) return NAN;
+  if (i > _pid->size())
+    return NAN;
   return _sc_ctof_hy->at(i);
 }
 float Clas12Branches::sc_ctof_hz(int i) {
-  if (i > _pid->size()) return NAN;
+  if (i > _pid->size())
+    return NAN;
   return _sc_ctof_hz->at(i);
 }
 float Clas12Branches::sc_cnd_time(int i) {
-  if (i > _pid->size()) return NAN;
+  if (i > _pid->size())
+    return NAN;
   return _sc_cnd_time->at(i);
 }
 float Clas12Branches::sc_cnd_path(int i) {
-  if (i > _pid->size()) return NAN;
+  if (i > _pid->size())
+    return NAN;
   return _sc_cnd_path->at(i);
 }
 float Clas12Branches::sc_cnd_energy(int i) {
-  if (i > _pid->size()) return NAN;
+  if (i > _pid->size())
+    return NAN;
   return _sc_cnd_energy->at(i);
 }
 
 float Clas12Branches::sc_cnd_x(int i) {
-  if (i > _pid->size()) return NAN;
+  if (i > _pid->size())
+    return NAN;
   return _sc_cnd_x->at(i);
 }
 float Clas12Branches::sc_cnd_y(int i) {
-  if (i > _pid->size()) return NAN;
+  if (i > _pid->size())
+    return NAN;
   return _sc_cnd_y->at(i);
 }
 float Clas12Branches::sc_cnd_z(int i) {
-  if (i > _pid->size()) return NAN;
+  if (i > _pid->size())
+    return NAN;
   return _sc_cnd_z->at(i);
 }
 float Clas12Branches::sc_cnd_hx(int i) {
-  if (i > _pid->size()) return NAN;
+  if (i > _pid->size())
+    return NAN;
   return _sc_cnd_hx->at(i);
 }
 float Clas12Branches::sc_cnd_hy(int i) {
-  if (i > _pid->size()) return NAN;
+  if (i > _pid->size())
+    return NAN;
   return _sc_cnd_hy->at(i);
 }
 float Clas12Branches::sc_cnd_hz(int i) {
-  if (i > _pid->size()) return NAN;
+  if (i > _pid->size())
+    return NAN;
   return _sc_cnd_hz->at(i);
 }
 float Clas12Branches::ft_cal_energy(int i) {
-  if (i > _pid->size()) return NAN;
+  if (i > _pid->size())
+    return NAN;
   return _ft_cal_energy->at(i);
 }
 float Clas12Branches::ft_cal_time(int i) {
-  if (i > _pid->size()) return NAN;
+  if (i > _pid->size())
+    return NAN;
   return _ft_cal_time->at(i);
 }
 float Clas12Branches::ft_cal_path(int i) {
-  if (i > _pid->size()) return NAN;
+  if (i > _pid->size())
+    return NAN;
   return _ft_cal_path->at(i);
 }
 float Clas12Branches::ft_cal_x(int i) {
-  if (i > _pid->size()) return NAN;
+  if (i > _pid->size())
+    return NAN;
   return _ft_cal_x->at(i);
 }
 float Clas12Branches::ft_cal_y(int i) {
-  if (i > _pid->size()) return NAN;
+  if (i > _pid->size())
+    return NAN;
   return _ft_cal_y->at(i);
 }
 float Clas12Branches::ft_cal_z(int i) {
-  if (i > _pid->size()) return NAN;
+  if (i > _pid->size())
+    return NAN;
   return _ft_cal_z->at(i);
 }
 float Clas12Branches::ft_cal_dx(int i) {
-  if (i > _pid->size()) return NAN;
+  if (i > _pid->size())
+    return NAN;
   return _ft_cal_dx->at(i);
 }
 float Clas12Branches::ft_cal_dy(int i) {
-  if (i > _pid->size()) return NAN;
+  if (i > _pid->size())
+    return NAN;
   return _ft_cal_dy->at(i);
 }
 float Clas12Branches::ft_cal_radius(int i) {
-  if (i > _pid->size()) return NAN;
+  if (i > _pid->size())
+    return NAN;
   return _ft_cal_radius->at(i);
 }
 float Clas12Branches::ft_hodo_energy(int i) {
-  if (i > _pid->size()) return NAN;
+  if (i > _pid->size())
+    return NAN;
   return _ft_hodo_energy->at(i);
 }
 float Clas12Branches::ft_hodo_time(int i) {
-  if (i > _pid->size()) return NAN;
+  if (i > _pid->size())
+    return NAN;
   return _ft_hodo_time->at(i);
 }
 float Clas12Branches::ft_hodo_path(int i) {
-  if (i > _pid->size()) return NAN;
+  if (i > _pid->size())
+    return NAN;
   return _ft_hodo_path->at(i);
 }
 float Clas12Branches::ft_hodo_x(int i) {
-  if (i > _pid->size()) return NAN;
+  if (i > _pid->size())
+    return NAN;
   return _ft_hodo_x->at(i);
 }
 float Clas12Branches::ft_hodo_y(int i) {
-  if (i > _pid->size()) return NAN;
+  if (i > _pid->size())
+    return NAN;
   return _ft_hodo_y->at(i);
 }
 float Clas12Branches::ft_hodo_z(int i) {
-  if (i > _pid->size()) return NAN;
+  if (i > _pid->size())
+    return NAN;
   return _ft_hodo_z->at(i);
 }
 float Clas12Branches::ft_hodo_dx(int i) {
-  if (i > _pid->size()) return NAN;
+  if (i > _pid->size())
+    return NAN;
   return _ft_hodo_dx->at(i);
 }
 float Clas12Branches::ft_hodo_dy(int i) {
-  if (i > _pid->size()) return NAN;
+  if (i > _pid->size())
+    return NAN;
   return _ft_hodo_dy->at(i);
 }
 float Clas12Branches::ft_hodo_radius(int i) {
-  if (i > _pid->size()) return NAN;
+  if (i > _pid->size())
+    return NAN;
   return _ft_hodo_radius->at(i);
 }
