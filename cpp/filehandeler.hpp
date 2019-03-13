@@ -8,18 +8,20 @@
 #include <vector>
 #include "TChain.h"
 
-std::vector<int> *run;
-std::vector<int> *event;
-std::vector<float> *torus;
-std::vector<float> *solenoid;
-std::vector<int> *crate;
-std::vector<int> *slot;
-std::vector<int> *channel;
-std::vector<int> *helicity;
-std::vector<int> *quartet;
-std::vector<int> *value;
-std::vector<float> *STTime;
-std::vector<float> *RFTime;
+int NRUN;
+int NEVENT;
+float EVNTime;
+int TYPE;
+int TRG;
+float BCG;
+float STTime;
+float RFTime;
+int Helic;
+int EvCAT;
+int NPGP;
+double LT;
+float PTIME;
+
 std::vector<int> *pid;
 std::vector<float> *p;
 std::vector<float> *p2;
@@ -172,18 +174,19 @@ namespace filehandeler {
 void getBranches(TTree *myTree) {
   myTree->SetBranchStatus("*", 0);
 
-  myTree->SetBranchAddress("run", &run);
-  myTree->SetBranchAddress("event", &event);
-  myTree->SetBranchAddress("torus", &torus);
-  myTree->SetBranchAddress("solenoid", &solenoid);
-  myTree->SetBranchAddress("crate", &crate);
-  myTree->SetBranchAddress("slot", &slot);
-  myTree->SetBranchAddress("channel", &channel);
-  myTree->SetBranchAddress("helicity", &helicity);
-  myTree->SetBranchAddress("quartet", &quartet);
-  myTree->SetBranchAddress("value", &value);
+  myTree->SetBranchAddress("NRUN", &NRUN);
+  myTree->SetBranchAddress("NEVENT", &NEVENT);
+  myTree->SetBranchAddress("EVNTime", &EVNTime);
+  myTree->SetBranchAddress("TYPE", &TYPE);
+  myTree->SetBranchAddress("TRG", &TRG);
+  myTree->SetBranchAddress("BCG", &BCG);
   myTree->SetBranchAddress("STTime", &STTime);
   myTree->SetBranchAddress("RFTime", &RFTime);
+  myTree->SetBranchAddress("Helic", &Helic);
+  myTree->SetBranchAddress("EvCAT", &EvCAT);
+  myTree->SetBranchAddress("NPGP", &NPGP);
+  myTree->SetBranchAddress("LT", &LT);
+  myTree->SetBranchAddress("PTIME", &PTIME);
   myTree->SetBranchAddress("pid", &pid);
   myTree->SetBranchAddress("p", &p);
   myTree->SetBranchAddress("p2", &p2);

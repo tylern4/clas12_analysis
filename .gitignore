@@ -35,19 +35,12 @@ test/test
 cpp/test
 *.pyc
 *.pdf
-
 *.dvi
-
 *.log
-
 *.aux
-
 *.pyg
-
 *.pytxcode
-
 *.gz
-
 cpp/clas12_ana
 cpp_hipo/clas12_ana
 cpp_hipo/hipo/clas12_ana
@@ -55,3 +48,5 @@ cpp_hipo/hipo/clas12_ana
 *.ipynb
 *.csv
 cpp_reindex/clas12_ana
+cmake-build-debug
+.idea
