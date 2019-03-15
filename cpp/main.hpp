@@ -35,6 +35,7 @@ void datahandeler(std::string fin, std::string fout) {
     chain->GetEntry(current_event);
     if (pid->size() == 0) continue;
     if (charge->at(0) != -1) continue;
+    int det = status->at(0) / 1000;
 
     if (current_event % 1000 == 0)
       std::cerr << "\t\t" << std::floor(100 * ((double)current_event / (double)num_of_events)) << "%\r\r" << std::flush;
@@ -67,6 +68,7 @@ void datahandeler(std::string fin, std::string fout) {
     }
 
     hist->Fill_WvsQ2(event->W(), event->Q2(), ec_pcal_sec->at(0));
+    hist->Fill_WvsQ2_det(event->W(), event->Q2(), det);
     if (event->SinglePip()) hist->Fill_WvsQ2_singlePi(event->W(), event->Q2(), event->MM(), ec_pcal_sec->at(0));
     if (event->SinglePip() && event->MM() > 0.85 && event->MM() < 1.1)
       hist->Fill_WvsQ2_Npip(event->W(), event->Q2(), event->MM(), ec_pcal_sec->at(0));

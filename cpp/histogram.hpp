@@ -44,6 +44,7 @@ class Histogram {
   static const short num_sectors = 6;
   TH2D *W_vs_q2_sec[num_sectors];
   TH1D *W_sec[num_sectors];
+  TH1D *W_det[3];
 
   TH2D *W_vs_q2_singlePi_sec[num_sectors];
   TH1D *W_singlePi_sec[num_sectors];
@@ -81,6 +82,7 @@ class Histogram {
   // W and Q^2
   void makeHists_sector();
   void Fill_WvsQ2(double W, double Q2, int sec);
+  void Fill_WvsQ2_det(double W, double Q2, int det);
   void Fill_WvsQ2_singlePi(double W, double Q2, double mm, int sec);
   void Fill_WvsQ2_Npip(double W, double Q2, double mm, int sec);
   void Write_WvsQ2(TFile *out);

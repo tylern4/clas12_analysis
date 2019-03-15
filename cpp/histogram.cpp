@@ -53,6 +53,12 @@ void Histogram::Fill_WvsQ2(double W, double Q2, int sec) {
   }
 }
 
+void Histogram::Fill_WvsQ2_det(double W, double Q2, int det) {
+  if (det == 1) W_det[0]->Fill(W);
+  if (det == 2) W_det[1]->Fill(W);
+  if (det == 4) W_det[2]->Fill(W);
+}
+
 // W and Q^2
 void Histogram::Fill_WvsQ2_singlePi(double W, double Q2, double mm, int sec) {
   W_vs_MM_singlePi[sec - 1]->Fill(W, mm);
@@ -77,6 +83,10 @@ void Histogram::Fill_WvsQ2_Npip(double W, double Q2, double mm, int sec) {
 }
 
 void Histogram::Write_WvsQ2(TFile *out) {
+  for (size_t i = 0; i < 3; i++) {
+    W_det[i]->SetXTitle("W (GeV)");
+    W_det[i]->Write();
+  }
   auto WvsQ2_can = std::make_unique<TCanvas>("WvsQ2_can", "W vs Q2 sectors", 1920, 1080);
   WvsQ2_can->Divide(3, 2);
   for (size_t i = 0; i < num_sectors; i++) {
@@ -179,6 +189,16 @@ void Histogram::Write_WvsQ2(TFile *out) {
 }
 
 void Histogram::makeHists_sector() {
+  for (size_t i = 0; i < 3; i++) {
+    hname.append("W_det_");
+    htitle.append("W detector: ");
+    hname.append(std::to_string(i + 1));
+    htitle.append(std::to_string(i + 1));
+    W_det[i] = new TH1D(hname.c_str(), htitle.c_str(), bins, zero, w_max);
+    hname.clear();
+    htitle.clear();
+  }
+
   for (size_t i = 0; i < num_sectors; i++) {
     hname.clear();
     htitle.clear();
