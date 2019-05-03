@@ -15,6 +15,7 @@ class Reaction {
  private:
   std::unique_ptr<TLorentzVector> _beam;
   std::unique_ptr<TLorentzVector> _elec;
+  std::unique_ptr<TLorentzVector> _gamma;
   std::unique_ptr<TLorentzVector> _target;
   std::unique_ptr<TLorentzVector> _prot;
   std::unique_ptr<TLorentzVector> _pip;
@@ -29,9 +30,15 @@ class Reaction {
   bool _hasOther = false;
   bool _hasNeutron = false;
 
-  int num_pos = 0;
-  int num_neg = 0;
-  int num_neutral = 0;
+  bool _boosted = false;
+
+  short _numProt = 0;
+  short _numPip = 0;
+  short _numPim = 0;
+  short _numPos = 0;
+  short _numNeg = 0;
+  short _numNeutral = 0;
+  short _numOther = 0;
 
   float _MM = std::nan("-99");
   float _MM2 = std::nan("-99");
@@ -59,10 +66,11 @@ class Reaction {
   float W();
   float Q2();
 
-  bool twoPionEvent();
-  bool ProtonPimEvent();
-  bool SinglePip();
-  bool NeutronPip();
+  bool TwoPion() { return ((_numPip == 1 && _numPim == 1) && (_hasE && !_hasP && _hasPip && _hasPim)); }
+  bool ProtonPim() { return ((_numProt == 1 && _numPim == 1) && (_hasE && _hasP && !_hasPip && _hasPim)); }
+  bool SinglePip() { return ((_numPip == 1) && (_hasE && !_hasP && _hasPip && !_hasPim)); }
+  bool SingleP() { return ((_numProt == 1) && (_hasE && _hasP && !_hasPip && !_hasPim)); }
+  bool NeutronPip() { return ((_numPip == 1 && _numNeutral == 1) && (_hasE && !_hasP && _hasPip && !_hasPim)); }
 };
 
 #endif
