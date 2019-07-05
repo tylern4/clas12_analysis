@@ -474,7 +474,7 @@ float Branches12::py(int i) {
   if (i >= _pid->size())
     return NAN;
   else
-    return _px->at(i);
+    return _py->at(i);
 }
 float Branches12::pz(int i) {
   if (i >= _pid->size())
@@ -848,6 +848,76 @@ int Branches12::sc_ctof_component(int i) {
 }
 
 /*
+_tree->SetBranchAddress("ec_tot_energy", &_ec_tot_energy);
+_tree->SetBranchAddress("ec_pcal_energy", &_ec_pcal_energy);
+int Branches12::ec_pcal_se(int i){};
+_tree->SetBranchAddress("ec_pcal_time", &_ec_pcal_time);
+_tree->SetBranchAddress("ec_pcal_path", &_ec_pcal_path);
+_tree->SetBranchAddress("ec_pcal_x", &_ec_pcal_x);
+_tree->SetBranchAddress("ec_pcal_y", &_ec_pcal_y);
+_tree->SetBranchAddress("ec_pcal_z", &_ec_pcal_z);
+_tree->SetBranchAddress("ec_pcal_hx", &_ec_pcal_hx);
+_tree->SetBranchAddress("ec_pcal_hy", &_ec_pcal_hy);
+_tree->SetBranchAddress("ec_pcal_hz", &_ec_pcal_hz);
+_tree->SetBranchAddress("ec_pcal_lu", &_ec_pcal_lu);
+_tree->SetBranchAddress("ec_pcal_lv", &_ec_pcal_lv);
+_tree->SetBranchAddress("ec_pcal_lw", &_ec_pcal_lw);
+_tree->SetBranchAddress("ec_pcal_du", &_ec_pcal_du);
+_tree->SetBranchAddress("ec_pcal_dv", &_ec_pcal_dv);
+_tree->SetBranchAddress("ec_pcal_dw", &_ec_pcal_dw);
+_tree->SetBranchAddress("ec_pcal_m2u", &_ec_pcal_m2u);
+_tree->SetBranchAddress("ec_pcal_m2v", &_ec_pcal_m2v);
+_tree->SetBranchAddress("ec_pcal_m2w", &_ec_pcal_m2w);
+_tree->SetBranchAddress("ec_pcal_m3u", &_ec_pcal_m3u);
+_tree->SetBranchAddress("ec_pcal_m3v", &_ec_pcal_m3v);
+_tree->SetBranchAddress("ec_pcal_m3w", &_ec_pcal_m3w);
+_tree->SetBranchAddress("ec_ecin_energy", &_ec_ecin_energy);
+int Branches12::ec_ecin_se(int i){};
+_tree->SetBranchAddress("ec_ecin_time", &_ec_ecin_time);
+_tree->SetBranchAddress("ec_ecin_path", &_ec_ecin_path);
+_tree->SetBranchAddress("ec_ecin_x", &_ec_ecin_x);
+_tree->SetBranchAddress("ec_ecin_y", &_ec_ecin_y);
+_tree->SetBranchAddress("ec_ecin_z", &_ec_ecin_z);
+_tree->SetBranchAddress("ec_ecin_hx", &_ec_ecin_hx);
+_tree->SetBranchAddress("ec_ecin_hy", &_ec_ecin_hy);
+_tree->SetBranchAddress("ec_ecin_hz", &_ec_ecin_hz);
+_tree->SetBranchAddress("ec_ecin_lu", &_ec_ecin_lu);
+_tree->SetBranchAddress("ec_ecin_lv", &_ec_ecin_lv);
+_tree->SetBranchAddress("ec_ecin_lw", &_ec_ecin_lw);
+_tree->SetBranchAddress("ec_ecin_du", &_ec_ecin_du);
+_tree->SetBranchAddress("ec_ecin_dv", &_ec_ecin_dv);
+_tree->SetBranchAddress("ec_ecin_dw", &_ec_ecin_dw);
+_tree->SetBranchAddress("ec_ecin_m2u", &_ec_ecin_m2u);
+_tree->SetBranchAddress("ec_ecin_m2v", &_ec_ecin_m2v);
+_tree->SetBranchAddress("ec_ecin_m2w", &_ec_ecin_m2w);
+_tree->SetBranchAddress("ec_ecin_m3u", &_ec_ecin_m3u);
+_tree->SetBranchAddress("ec_ecin_m3v", &_ec_ecin_m3v);
+_tree->SetBranchAddress("ec_ecin_m3w", &_ec_ecin_m3w);
+_tree->SetBranchAddress("ec_ecout_energy", &_ec_ecout_energy);
+int Branches12::ec_ecout_sec(int i){};
+_tree->SetBranchAddress("ec_ecout_time", &_ec_ecout_time);
+_tree->SetBranchAddress("ec_ecout_path", &_ec_ecout_path);
+_tree->SetBranchAddress("ec_ecout_x", &_ec_ecout_x);
+_tree->SetBranchAddress("ec_ecout_y", &_ec_ecout_y);
+_tree->SetBranchAddress("ec_ecout_z", &_ec_ecout_z);
+_tree->SetBranchAddress("ec_ecout_hx", &_ec_ecout_hx);
+_tree->SetBranchAddress("ec_ecout_hy", &_ec_ecout_hy);
+_tree->SetBranchAddress("ec_ecout_hz", &_ec_ecout_hz);
+_tree->SetBranchAddress("ec_ecout_lu", &_ec_ecout_lu);
+_tree->SetBranchAddress("ec_ecout_lv", &_ec_ecout_lv);
+_tree->SetBranchAddress("ec_ecout_lw", &_ec_ecout_lw);
+_tree->SetBranchAddress("ec_ecout_du", &_ec_ecout_du);
+_tree->SetBranchAddress("ec_ecout_dv", &_ec_ecout_dv);
+_tree->SetBranchAddress("ec_ecout_dw", &_ec_ecout_dw);
+_tree->SetBranchAddress("ec_ecout_m2u", &_ec_ecout_m2u);
+_tree->SetBranchAddress("ec_ecout_m2v", &_ec_ecout_m2v);
+_tree->SetBranchAddress("ec_ecout_m2w", &_ec_ecout_m2w);
+_tree->SetBranchAddress("ec_ecout_m3u", &_ec_ecout_m3u);
+_tree->SetBranchAddress("ec_ecout_m3v", &_ec_ecout_m3v);
+_tree->SetBranchAddress("ec_ecout_m3w", &_ec_ecout_m3w);
+*/
+
+/*
 _tree->SetBranchAddress("cvt_px", &_cvt_px);
 _tree->SetBranchAddress("cvt_py", &_cvt_py);
 _tree->SetBranchAddress("cvt_pz", &_cvt_pz);
@@ -955,49 +1025,7 @@ _tree->SetBranchAddress("cc_rich_phi", &_cc_rich_phi);
 _tree->SetBranchAddress("cc_rich_x", &_cc_rich_x);
 _tree->SetBranchAddress("cc_rich_y", &_cc_rich_y);
 _tree->SetBranchAddress("cc_rich_z", &_cc_rich_z);
-_tree->SetBranchAddress("sc_ftof_1a_sec", &_sc_ftof_1a_sec);
-_tree->SetBranchAddress("sc_ftof_1a_time", &_sc_ftof_1a_time);
-_tree->SetBranchAddress("sc_ftof_1a_path", &_sc_ftof_1a_path);
-_tree->SetBranchAddress("sc_ftof_1a_energy", &_sc_ftof_1a_energy);
-_tree->SetBranchAddress("sc_ftof_1a_component", &_sc_ftof_1a_component);
-_tree->SetBranchAddress("sc_ftof_1a_x", &_sc_ftof_1a_x);
-_tree->SetBranchAddress("sc_ftof_1a_y", &_sc_ftof_1a_y);
-_tree->SetBranchAddress("sc_ftof_1a_z", &_sc_ftof_1a_z);
-_tree->SetBranchAddress("sc_ftof_1a_hx", &_sc_ftof_1a_hx);
-_tree->SetBranchAddress("sc_ftof_1a_hy", &_sc_ftof_1a_hy);
-_tree->SetBranchAddress("sc_ftof_1a_hz", &_sc_ftof_1a_hz);
-_tree->SetBranchAddress("sc_ftof_1b_sec", &_sc_ftof_1b_sec);
-_tree->SetBranchAddress("sc_ftof_1b_time", &_sc_ftof_1b_time);
-_tree->SetBranchAddress("sc_ftof_1b_path", &_sc_ftof_1b_path);
-_tree->SetBranchAddress("sc_ftof_1b_energy", &_sc_ftof_1b_energy);
-_tree->SetBranchAddress("sc_ftof_1b_component", &_sc_ftof_1b_component);
-_tree->SetBranchAddress("sc_ftof_1b_x", &_sc_ftof_1b_x);
-_tree->SetBranchAddress("sc_ftof_1b_y", &_sc_ftof_1b_y);
-_tree->SetBranchAddress("sc_ftof_1b_z", &_sc_ftof_1b_z);
-_tree->SetBranchAddress("sc_ftof_1b_hx", &_sc_ftof_1b_hx);
-_tree->SetBranchAddress("sc_ftof_1b_hy", &_sc_ftof_1b_hy);
-_tree->SetBranchAddress("sc_ftof_1b_hz", &_sc_ftof_1b_hz);
-_tree->SetBranchAddress("sc_ftof_2_sec", &_sc_ftof_2_sec);
-_tree->SetBranchAddress("sc_ftof_2_time", &_sc_ftof_2_time);
-_tree->SetBranchAddress("sc_ftof_2_path", &_sc_ftof_2_path);
-_tree->SetBranchAddress("sc_ftof_2_energy", &_sc_ftof_2_energy);
-_tree->SetBranchAddress("sc_ftof_2_component", &_sc_ftof_2_component);
-_tree->SetBranchAddress("sc_ftof_2_x", &_sc_ftof_2_x);
-_tree->SetBranchAddress("sc_ftof_2_y", &_sc_ftof_2_y);
-_tree->SetBranchAddress("sc_ftof_2_z", &_sc_ftof_2_z);
-_tree->SetBranchAddress("sc_ftof_2_hx", &_sc_ftof_2_hx);
-_tree->SetBranchAddress("sc_ftof_2_hy", &_sc_ftof_2_hy);
-_tree->SetBranchAddress("sc_ftof_2_hz", &_sc_ftof_2_hz);
-_tree->SetBranchAddress("sc_ctof_time", &_sc_ctof_time);
-_tree->SetBranchAddress("sc_ctof_path", &_sc_ctof_path);
-_tree->SetBranchAddress("sc_ctof_energy", &_sc_ctof_energy);
-_tree->SetBranchAddress("sc_ctof_component", &_sc_ctof_component);
-_tree->SetBranchAddress("sc_ctof_x", &_sc_ctof_x);
-_tree->SetBranchAddress("sc_ctof_y", &_sc_ctof_y);
-_tree->SetBranchAddress("sc_ctof_z", &_sc_ctof_z);
-_tree->SetBranchAddress("sc_ctof_hx", &_sc_ctof_hx);
-_tree->SetBranchAddress("sc_ctof_hy", &_sc_ctof_hy);
-_tree->SetBranchAddress("sc_ctof_hz", &_sc_ctof_hz);
+
 _tree->SetBranchAddress("sc_cnd_time", &_sc_cnd_time);
 _tree->SetBranchAddress("sc_cnd_path", &_sc_cnd_path);
 _tree->SetBranchAddress("sc_cnd_energy", &_sc_cnd_energy);

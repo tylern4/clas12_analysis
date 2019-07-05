@@ -8,7 +8,8 @@
 Reaction::Reaction(std::shared_ptr<Branches12> data) {
   _data = data;
   _beam = std::make_unique<TLorentzVector>();
-  if (getenv("BEAM_E") != NULL) _beam_energy = atof(getenv("BEAM_E"));
+  if (getenv("CLAS12_E") != NULL) _beam_energy = atof(getenv("CLAS12_E"));
+
   _beam->SetPxPyPzE(0.0, 0.0, sqrt(_beam_energy * _beam_energy - MASS_E * MASS_E), _beam_energy);
 
   _gamma = std::make_unique<TLorentzVector>();

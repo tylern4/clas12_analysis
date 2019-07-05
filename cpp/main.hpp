@@ -50,9 +50,10 @@ size_t run(std::shared_ptr<TChain> _chain, std::shared_ptr<Histogram> _hists, in
     if (thread_id == 0 && current_event % 1000 == 0)
       std::cout << "\t" << (100 * current_event / num_of_events) << " %\r" << std::flush;
 
-    if (data->gpart() <= 1) continue;
+    if (data->gpart() < 1) continue;
     bool elec = true;
     elec &= (data->charge(0) == NEGATIVE);
+    elec &= (data->pid(0) == 11);
     if (!elec) continue;
 
     // If we pass electron cuts the event is processed

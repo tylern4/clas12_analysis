@@ -15,7 +15,6 @@ static const float INV_SQRT_2PI = TMath::Sqrt(2 * TMath::Pi());
 static const double D2R = PI / 180.0;
 static const int POSITIVE = 1;
 static const int NEGATIVE = -1;
-static const double E1D_E0 = 4.81726;  // GeV
 
 static const double c_special_units = 29.9792458;
 // misc. constants
