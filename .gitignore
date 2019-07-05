@@ -50,3 +50,5 @@ cpp_hipo/hipo/clas12_ana
 cpp_reindex/clas12_ana
 cmake-build-debug
 .idea
+.vscode
+build

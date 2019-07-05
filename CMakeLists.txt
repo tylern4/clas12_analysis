@@ -20,6 +20,10 @@ add_executable(clas12_analysis
         cpp/main.cpp
         cpp/main.hpp
         cpp/physics.cpp
-        cpp/physics.hpp)
+        cpp/physics.hpp
+        cpp/Branches.cpp
+        cpp/Branches.hpp
+        cpp/reaction.cpp
+        cpp/reaction.hpp)
 
 target_link_libraries(clas12_analysis ${ROOT_LIBRARIES})

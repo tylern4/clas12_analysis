@@ -11,11 +11,18 @@
 #include "TH1.h"
 #include "TH2.h"
 #include "TLorentzVector.h"
+#include "colors.hpp"
 #include "constants.hpp"
 #include "deltat.hpp"
 
+using TH2D_ptr = std::shared_ptr<TH2D>;
+using TH1D_ptr = std::shared_ptr<TH1D>;
+
 class Histogram {
- private:
+ protected:
+  std::shared_ptr<TFile> RootOutputFile;
+  TCanvas* def;
+
   int bins = 500;
   double p_min = 0.0;
   double p_max = 10.0;
@@ -25,8 +32,6 @@ class Histogram {
   double w_max = 5.0;
 
   double zero = 0.0;
-  std::string hname;
-  std::string htitle;
 
   static const short particle_num = 4;  // 0-e 1-Pi 2-P 3-K
   std::string particle_name[particle_num] = {"e", "pi", "P", "K"};
@@ -36,47 +41,45 @@ class Histogram {
   std::string id_name[with_id_num] = {"withoutID", "withID", "antiID"};
 
   // Kinematics
-  TH1D *momentum;
-  TH1D *W_hist;
-  TH1D *Q2_hist;
-  TH2D *W_vs_q2;
+  TH1D_ptr momentum;
+  TH1D_ptr W_hist;
+  TH1D_ptr Q2_hist;
+  TH2D_ptr W_vs_q2;
 
   static const short num_sectors = 6;
-  TH2D *W_vs_q2_sec[num_sectors];
-  TH1D *W_sec[num_sectors];
-  TH1D *W_det[3];
+  TH2D_ptr W_vs_q2_sec[num_sectors];
+  TH1D_ptr W_sec[num_sectors];
+  TH1D_ptr W_det[3];
 
-  TH2D *W_vs_q2_singlePi_sec[num_sectors];
-  TH1D *W_singlePi_sec[num_sectors];
+  TH2D_ptr W_vs_q2_singlePi_sec[num_sectors];
+  TH1D_ptr W_singlePi_sec[num_sectors];
 
-  TH2D *W_vs_q2_Npip_sec[num_sectors];
-  TH2D *W_vs_MM_singlePi[num_sectors];
-  TH1D *W_Npip_sec[num_sectors];
-  TH1D *MM_Npip_sec[num_sectors];
+  TH2D_ptr W_vs_q2_Npip_sec[num_sectors];
+  TH2D_ptr W_vs_MM_singlePi[num_sectors];
+  TH1D_ptr W_Npip_sec[num_sectors];
+  TH1D_ptr MM_Npip_sec[num_sectors];
 
-  TH1D *MM_neutron;
-  TH1D *MM_neutron_sec[num_sectors];
+  TH1D_ptr MM_neutron;
+  TH1D_ptr MM_neutron_sec[num_sectors];
 
-  TH1D *W_hist_singlePi;
-  TH1D *Q2_hist_singlePi;
-  TH2D *W_vs_q2_singlePi;
+  TH1D_ptr W_hist_singlePi;
+  TH1D_ptr Q2_hist_singlePi;
+  TH2D_ptr W_vs_q2_singlePi;
 
   // EC Sampling Fraction
-  TH2D *EC_sampling_fraction;
+  TH2D_ptr EC_sampling_fraction;
   // EC Sampling Fraction
 
   // Mom vs Beta
-  TH2D *momvsbeta_hist[particle_num][charge_num][with_id_num];
-  TH2D *momvsbeta_vertex[with_id_num];
+  TH2D_ptr momvsbeta_hist[particle_num][charge_num][with_id_num];
   // Mom vs Beta
 
   // Delta T
-  TH2D *delta_t_hist[particle_num][charge_num][with_id_num];
-  TH2D *delta_t_vertex[with_id_num];
+  TH2D_ptr delta_t_hist[particle_num][charge_num][with_id_num][2];
   // Delta T
 
  public:
-  Histogram();
+  Histogram(const std::string& output_file);
   ~Histogram();
 
   // W and Q^2
@@ -85,25 +88,25 @@ class Histogram {
   void Fill_WvsQ2_det(double W, double Q2, int det);
   void Fill_WvsQ2_singlePi(double W, double Q2, double mm, int sec);
   void Fill_WvsQ2_Npip(double W, double Q2, double mm, int sec);
-  void Write_WvsQ2(TFile *out);
+  void Write_WvsQ2();
 
   // P and E
   void makeHists_MomVsBeta();
-  void Fill_momentum(double P);
-  void Fill_MomVsBeta_vertex(int pid, int charge, double P, double beta);
   void Fill_MomVsBeta(int pid, int charge, double P, double beta);
   void Write_MomVsBeta();
 
   // Delta T
   void makeHists_deltat();
-  void Fill_deltat_vertex(int pid, int charge, float dt, float momentum);
-  void Fill_deltat_pi(int pid, int charge, float dt, float momentum);
-  void Fill_deltat_prot(int pid, int charge, float dt, float momentum);
+  void Fill_deltat_pi(int pid, int charge, float dt, float momentum, bool fc);
+  void Fill_deltat_prot(int pid, int charge, float dt, float momentum, bool fc);
   void Write_deltat();
 
   // EC Sampling Fraction
   void Fill_EC(double etot, double momentum);
   void Write_EC();
+
+  //
+  void Write();
 };
 
 #endif

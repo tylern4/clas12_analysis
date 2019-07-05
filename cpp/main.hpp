@@ -1,94 +1,94 @@
-/************************************************************************/
-/*  Created by Nick Tyler*/
-/*	University Of South Carolina*/
-/************************************************************************/
+/**************************************/
+/*																		*/
+/*  Created by Nick Tyler             */
+/*	University Of South Carolina      */
+/**************************************/
 
 #ifndef MAIN_H_GUARD
 #define MAIN_H_GUARD
-#include <TFile.h>
-#include <TLorentzVector.h>
-#include <fstream>
-#include <vector>
-#include "TChain.h"
+
+#include <iostream>
+#include "TFile.h"
+#include "TH1.h"
+#include "branches.hpp"
 #include "colors.hpp"
-#include "constants.hpp"
-#include "deltat.hpp"
-#include "filehandeler.hpp"
 #include "histogram.hpp"
-#include "physics.hpp"
 #include "reaction.hpp"
 
-void datahandeler(std::string fin, std::string fout) {
-  auto out = std::make_unique<TFile>(fout.c_str(), "RECREATE");
+size_t run(std::shared_ptr<TChain> _chain, std::shared_ptr<Histogram> _hists, int thread_id);
+size_t run_files(std::vector<std::string> inputs, std::shared_ptr<Histogram> hists, int thread_id);
 
-  bool electron_cuts;
-  // Load chain from branch h10
-  auto chain = filehandeler::addFiles(fin);
-  filehandeler::getBranches(chain);
+size_t run_files(std::vector<std::string> inputs, std::shared_ptr<Histogram> hists, int thread_id) {
+  // Called once for each thread
+  // Make a new chain to process for this thread
+  auto chain = std::make_shared<TChain>("clas12");
+  // Add every file to the chain
+  for (auto in : inputs) chain->Add(in.c_str());
 
-  int num_of_events = (int)chain->GetEntries();
-  double per = 0;
+  // Run the function over each thread
+  return run(chain, hists, thread_id);
+}
 
-  auto hist = std::make_unique<Histogram>();
+size_t run(std::shared_ptr<TChain> _chain, std::shared_ptr<Histogram> _hists, int thread_id) {
+  // Get the number of events in this thread
+  size_t num_of_events = (int)_chain->GetEntries();
 
-  for (int current_event = 0; current_event < num_of_events; current_event++) {
-    chain->GetEntry(current_event);
-    if (pid->size() == 0) continue;
-    if (charge->at(0) != -1) continue;
-    int det = status->at(0) / 1000;
+  // Print some information for each thread
+  std::cout << "=============== " << RED << "Thread " << thread_id << DEF << " =============== " << BLUE
+            << num_of_events << " Events " << DEF << "===============\n";
 
-    if (current_event % 1000 == 0)
-      std::cerr << "\t\t" << std::floor(100 * ((double)current_event / (double)num_of_events)) << "%\r\r" << std::flush;
+  // Make a data object which all the branches can be accessed from
+  auto data = std::make_shared<Branches12>(_chain);
 
-    auto event = std::make_unique<Reaction>();
-    event->SetElec(px->at(0), py->at(0), pz->at(0));
+  // Total number of events "Processed"
+  size_t total = 0;
+  // For each event
+  for (size_t current_event = 0; current_event < num_of_events; current_event++) {
+    // Get current event
+    _chain->GetEntry(current_event);
+    // If we are the 0th thread print the progress of the thread every 1000 events
+    if (thread_id == 0 && current_event % 1000 == 0)
+      std::cout << "\t" << (100 * current_event / num_of_events) << " %\r" << std::flush;
 
-    if (p->at(0) != 0) hist->Fill_EC(ec_tot_energy->at(0) / p->at(0), p->at(0));
+    if (data->gpart() <= 1) continue;
+    bool elec = true;
+    elec &= (data->charge(0) == NEGATIVE);
+    if (!elec) continue;
 
-    auto dt = std::make_unique<Delta_T>(sc_ftof_1b_time->at(0), sc_ftof_1b_path->at(0), sc_ftof_1a_time->at(0),
-                                        sc_ftof_1a_path->at(0), sc_ftof_2_time->at(0), sc_ftof_2_path->at(0));
+    // If we pass electron cuts the event is processed
+    total++;
 
-    for (int part = 1; part < pid->size(); part++) {
-      dt->dt_calc(p->at(part), sc_ftof_1b_time->at(part), sc_ftof_1b_path->at(part), sc_ftof_1a_time->at(part),
-                  sc_ftof_1a_path->at(part), sc_ftof_2_time->at(part), sc_ftof_2_path->at(part), sc_ctof_time->at(part),
-                  sc_ctof_path->at(part));
+    // Make a reaction class from the data given
+    auto event = std::make_unique<Reaction>(data);
+    auto dt = std::make_unique<Delta_T>(data);
 
-      hist->Fill_MomVsBeta(pid->at(part), charge->at(part), p->at(part), beta->at(part));
-      hist->Fill_deltat_pi(pid->at(part), charge->at(part), dt->dt_Pi(), p->at(part));
-      hist->Fill_deltat_prot(pid->at(part), charge->at(part), dt->dt_P(), p->at(part));
+    //// Fill_EC(data->, data->p(0));
 
-      if (charge->at(part) == 1 && abs(dt->dt_Pi()) < 1.0 && pid->at(part) == PIP)
-        event->SetPip(px->at(part), py->at(part), pz->at(part));
-      else if (charge->at(part) == 1 && abs(dt->dt_P()) < 1.0 && pid->at(part) == PROTON)
-        event->SetProton(px->at(part), py->at(part), pz->at(part));
-      else if (charge->at(part) == -1 && abs(dt->dt_Pi()) < 1.0 && pid->at(part) == PIM)
-        event->SetPim(px->at(part), py->at(part), pz->at(part));
-      else
-        event->SetOther(px->at(part), py->at(part), pz->at(part), pid->at(part));
+    // For each particle in the event
+    for (int part = 1; part < data->gpart(); part++) {
+      dt->dt_calc(part);
+      _hists->Fill_MomVsBeta(data->pid(part), data->charge(part), data->p(part), data->beta(part));
+      _hists->Fill_deltat_pi(data->pid(part), data->charge(part), dt->dt_Pi(), dt->momentum(), dt->ctof());
+      _hists->Fill_deltat_prot(data->pid(part), data->charge(part), dt->dt_P(), dt->momentum(), dt->ctof());
+
+      // Check particle ID's and fill the reaction class
+      if (data->pid(part) == PIP) {
+        event->SetPip(part);
+      } else if (data->pid(part) == PROTON) {
+        event->SetProton(part);
+      } else if (data->pid(part) == PIM) {
+        event->SetPim(part);
+      } else {
+        event->SetOther(part);
+      }
     }
-
-    hist->Fill_WvsQ2(event->W(), event->Q2(), ec_pcal_sec->at(0));
-    hist->Fill_WvsQ2_det(event->W(), event->Q2(), det);
-    if (event->SinglePip()) hist->Fill_WvsQ2_singlePi(event->W(), event->Q2(), event->MM(), ec_pcal_sec->at(0));
-    if (event->SinglePip() && event->MM() > 0.85 && event->MM() < 1.1)
-      hist->Fill_WvsQ2_Npip(event->W(), event->Q2(), event->MM(), ec_pcal_sec->at(0));
+    // Check the reaction class what kind of even it is and fill the appropriate histograms
+    _hists->Fill_WvsQ2(event->W(), event->Q2(), data->dc_sec(0));
+    if (event->SinglePip()) _hists->Fill_WvsQ2_singlePi(event->W(), event->Q2(), event->MM(), data->dc_sec(0));
+    if (event->NeutronPip()) _hists->Fill_WvsQ2_Npip(event->W(), event->Q2(), event->MM(), data->dc_sec(0));
   }
 
-  out->cd();
-  hist->Write_EC();
-  auto wvsq2 = out->mkdir("wvsq2");
-  wvsq2->cd();
-  hist->Write_WvsQ2(out.get());
-
-  auto mom_vs_beta = out->mkdir("mom_vs_beta");
-  mom_vs_beta->cd();
-  hist->Write_MomVsBeta();
-
-  auto deltat_ftof = out->mkdir("deltat_ftof");
-  deltat_ftof->cd();
-  hist->Write_deltat();
-
-  out->Close();
-  chain->Reset();
+  // Return the total number of events
+  return total;
 }
 #endif

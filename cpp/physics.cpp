@@ -22,11 +22,6 @@ double W_calc(TLorentzVector e_mu, TLorentzVector e_mu_prime) {
   return (p_mu + q_mu).Mag();
 }
 
-double xb_calc(double Q2, double E_prime) {
-  double gamma = CLAS12_E - E_prime;
-  double xb = (Q2 / (2 * MASS_P * gamma));
-  return xb;
-}
 // overload with 4 vectors
 double xb_calc(TLorentzVector e_mu, TLorentzVector e_mu_prime) {
   double Q2 = Q2_calc(e_mu, e_mu_prime);

@@ -1,33 +1,58 @@
-/************************************************************************/
-/*  Created by Nick Tyler*/
-/*	University Of South Carolina*/
-/************************************************************************/
-
-// Only My Includes. All others in main.h
 #include "main.hpp"
-
-using namespace std;
+#include <future>
+#include <thread>
 
 int main(int argc, char **argv) {
-  if (argc == 2) {
-    std::string infilename = argv[1];
-    datahandeler(infilename, "out.root");
-    // datahandeler2(infilename);
-  } else if (argc == 3) {
-    std::string infilename = argv[1];
-    std::string outfilename = argv[2];
-    // std::cerr << RED << "Running SinglePi: \n";
-    // SinglePi(infilename, outfilename);
-    datahandeler(infilename, outfilename);
-    // datahandeler2(infilename);
-    std::cerr << RESET << std::endl;
+  // Need this to make sure root doesn't break
+  ROOT::EnableThreadSafety();
+
+  // Start timer
+  auto start = std::chrono::high_resolution_clock::now();
+  int NUM_THREADS = 2;
+  if (getenv("NUM_THREADS") != NULL) {
+    NUM_THREADS = atoi(getenv("NUM_THREADS"));
+  }
+  // Make a vector of vectors of strings the size of the number of threads
+  std::vector<std::vector<std::string>> infilenames(NUM_THREADS);
+  // Get the output file name
+  std::string outfilename;
+
+  if (argc >= 2) {
+    // First argument is the output file
+    outfilename = argv[1];
+    // All other files are split evently by the under of threads
+    for (int i = 2; i < argc; i++) infilenames[i % NUM_THREADS].push_back(argv[i]);
   } else {
-    std::cerr << RED << "Error: \n";
-    std::cerr << BOLDRED << "\tNeed input file and output file\n";
-    std::cerr << RESET << "Usage:\n\t";
-    std::cerr << BOLDWHITE << argv[0] << " infile.root outfile.root\n\n";
-    std::cerr << RESET << std::endl;
+    return 1;
   }
 
+  // Make a set of threads (Futures are special threads which return a value)
+  std::future<size_t> threads[NUM_THREADS];
+
+  // Define events to be used to get Hz later
+  size_t events = 0;
+
+  // Make your histograms object as a shared pointer that all the threads will have
+  auto hists = std::make_shared<Histogram>(outfilename);
+
+  // For each thread
+  for (size_t i = 0; i < NUM_THREADS; i++) {
+    // Set the thread to run a task A-Syncroisly
+    // The function we run is the first argument (run_files)
+    // The functions areruments are all the remaining arguments
+    threads[i] = std::async(run_files, infilenames.at(i), hists, i);
+  }
+
+  // For each thread
+  for (size_t i = 0; i < NUM_THREADS; i++) {
+    // Get the information from the thread in this case how many events each thread actually computed
+    events += threads[i].get();
+  }
+
+  // Timer and Hz calculator functions that print at the end
+  std::cout.imbue(std::locale(""));  // Puts commas in
+  std::chrono::duration<double> elapsed_full = (std::chrono::high_resolution_clock::now() - start);
+  std::cout << RED << elapsed_full.count() << " sec" << DEF << std::endl;
+  std::cout << BOLDYELLOW << events / elapsed_full.count() << " Hz" << DEF << std::endl;
   return 0;
 }

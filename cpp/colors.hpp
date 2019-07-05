@@ -1,7 +1,8 @@
-#ifndef COLORS_H_GUARD
-#define COLORS_H_GUARD
+#ifndef COLOR_H_GUARD
+#define COLOR_H_GUARD
 
 #define RESET "\033[0m"
+#define DEF "\033[0m"
 #define BLACK "\033[30m"              /* Black */
 #define RED "\033[31m"                /* Red */
 #define GREEN "\033[32m"              /* Green */

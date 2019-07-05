@@ -7,12 +7,20 @@
 #define REACTION_H_GUARD
 
 #include <iostream>
+#include <map>
 #include "TLorentzVector.h"
+#include "branches.hpp"
 #include "constants.hpp"
 #include "physics.hpp"
 
 class Reaction {
  private:
+  std::shared_ptr<Branches12> _data;
+
+  std::map<int, double> _mass_map = {{PROTON, MASS_P}, {-PROTON, MASS_P},  {NEUTRON, MASS_N},  {PIP, MASS_PIP},
+                                     {PIM, MASS_PIM},  {PI0, MASS_PI0},    {KP, MASS_KP},      {KM, MASS_KM},
+                                     {PHOTON, MASS_G}, {ELECTRON, MASS_E}, {-ELECTRON, MASS_E}};
+  double _beam_energy = E1D_E0;
   std::unique_ptr<TLorentzVector> _beam;
   std::unique_ptr<TLorentzVector> _elec;
   std::unique_ptr<TLorentzVector> _gamma;
@@ -20,8 +28,8 @@ class Reaction {
   std::unique_ptr<TLorentzVector> _prot;
   std::unique_ptr<TLorentzVector> _pip;
   std::unique_ptr<TLorentzVector> _pim;
-  std::unique_ptr<TLorentzVector> _neutron;
   std::unique_ptr<TLorentzVector> _other;
+  std::unique_ptr<TLorentzVector> _neutron;
 
   bool _hasE = false;
   bool _hasP = false;
@@ -29,8 +37,6 @@ class Reaction {
   bool _hasPim = false;
   bool _hasOther = false;
   bool _hasNeutron = false;
-
-  bool _boosted = false;
 
   short _numProt = 0;
   short _numPip = 0;
@@ -40,37 +46,51 @@ class Reaction {
   short _numNeutral = 0;
   short _numOther = 0;
 
-  float _MM = std::nan("-99");
-  float _MM2 = std::nan("-99");
+  float _MM = std::nanf("-99");
+  float _MM2 = std::nanf("-99");
 
-  float _W = std::nan("-99");
-  float _Q2 = std::nan("-99");
+  float _W = std::nanf("-99");
+  float _Q2 = std::nanf("-99");
 
-  std::map<int, double> _mass_map = {{PROTON, MASS_P}, {-PROTON, MASS_P},  {NEUTRON, MASS_N},  {PIP, MASS_PIP},
-                                     {PIM, MASS_PIM},  {PI0, MASS_PI0},    {KP, MASS_KP},      {KM, MASS_KM},
-                                     {PHOTON, MASS_G}, {ELECTRON, MASS_E}, {-ELECTRON, MASS_E}};
+  void SetElec();
 
  public:
-  Reaction();
+  Reaction(std::shared_ptr<Branches12> data);
   ~Reaction();
 
-  void SetElec(float px, float py, float pz);
-  void SetProton(float px, float py, float pz);
-  void SetPip(float px, float py, float pz);
-  void SetPim(float px, float py, float pz);
-  void SetOther(float px, float py, float pz, int pid);
-  void CalcMissMass();
+  void SetProton(int i);
+  void SetPip(int i);
+  void SetPim(int i);
+  void SetOther(int i);
+  void SetNeutron(int i);
 
+  void CalcMissMass();
   float MM();
   float MM2();
-  float W();
-  float Q2();
 
-  bool TwoPion() { return ((_numPip == 1 && _numPim == 1) && (_hasE && !_hasP && _hasPip && _hasPim)); }
-  bool ProtonPim() { return ((_numProt == 1 && _numPim == 1) && (_hasE && _hasP && !_hasPip && _hasPim)); }
-  bool SinglePip() { return ((_numPip == 1) && (_hasE && !_hasP && _hasPip && !_hasPim)); }
-  bool SingleP() { return ((_numProt == 1) && (_hasE && _hasP && !_hasPip && !_hasPim)); }
-  bool NeutronPip() { return ((_numPip == 1 && _numNeutral == 1) && (_hasE && !_hasP && _hasPip && !_hasPim)); }
+  inline float W() { return _W; }
+  inline float Q2() { return _Q2; }
+
+  inline bool TwoPion() {
+    return ((_numPip == 1 && _numPim == 1) && (_hasE && !_hasP && _hasPip && _hasPim && !_hasNeutron && !_hasOther));
+  }
+  inline bool ProtonPim() {
+    return ((_numProt == 1 && _numPim == 1) && (_hasE && _hasP && !_hasPip && _hasPim && !_hasNeutron && !_hasOther));
+  }
+  inline bool SinglePip() {
+    return ((_numPip == 1) && (_hasE && !_hasP && _hasPip && !_hasPim && !_hasNeutron && !_hasOther));
+  }
+  inline bool SingleP() {
+    return ((_numProt == 1) && (_hasE && _hasP && !_hasPip && !_hasPim && !_hasNeutron && !_hasOther));
+  }
+  inline bool NeutronPip() {
+    return ((_numPip == 1 && _numNeutral == 1) &&
+            (_hasE && !_hasP && _hasPip && !_hasPim && _hasNeutron && !_hasOther));
+  }
+
+  inline TLorentzVector e_mu() { return *_beam; }
+  inline TLorentzVector e_mu_prime() { return *_elec; }
+  inline TLorentzVector gamma() { return *_gamma; }
 };
 
 #endif
