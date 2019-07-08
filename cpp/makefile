@@ -1,9 +1,9 @@
 ROOTLIBS	= $(shell root-config --libs)
 CXX = g++
 CXXFLAGS = -O3 -march=native $(shell root-config --cflags)
-TARGET =	    clas12_ana
+TARGET =	    clas12_analysis
 
-MAINS = histogram.cpp physics.cpp deltat.cpp reaction.cpp main.cpp
+MAINS = histogram.cpp physics.cpp deltat.cpp reaction.cpp branches.cpp main.cpp
 MAIN = $(MAINS:%.cpp=%.o)
 
 .PHONY: all clean

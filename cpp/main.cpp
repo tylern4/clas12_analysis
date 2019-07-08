@@ -6,12 +6,10 @@ int main(int argc, char **argv) {
   // Need this to make sure root doesn't break
   ROOT::EnableThreadSafety();
 
-  // Start timer
-  auto start = std::chrono::high_resolution_clock::now();
   int NUM_THREADS = 2;
-  if (getenv("NUM_THREADS") != NULL) {
-    NUM_THREADS = atoi(getenv("NUM_THREADS"));
-  }
+  if (getenv("NUM_THREADS") != NULL) NUM_THREADS = atoi(getenv("NUM_THREADS"));
+  if (NUM_THREADS >= argc - 2) NUM_THREADS = 1;
+
   // Make a vector of vectors of strings the size of the number of threads
   std::vector<std::vector<std::string>> infilenames(NUM_THREADS);
   // Get the output file name
@@ -35,6 +33,8 @@ int main(int argc, char **argv) {
   // Make your histograms object as a shared pointer that all the threads will have
   auto hists = std::make_shared<Histogram>(outfilename);
 
+  // Start timer
+  auto start = std::chrono::high_resolution_clock::now();
   // For each thread
   for (size_t i = 0; i < NUM_THREADS; i++) {
     // Set the thread to run a task A-Syncroisly

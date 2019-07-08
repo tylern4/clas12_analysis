@@ -59,8 +59,8 @@ void Histogram::Write() {
   Write_MomVsBeta();
 
   std::cerr << BOLDBLUE << "Write_deltat()" << DEF << std::endl;
-  TDirectory* Write_deltat_folder = RootOutputFile->mkdir("Delta_t");
-  Write_deltat_folder->cd();
+  // TDirectory* Write_deltat_folder = RootOutputFile->mkdir("Delta_t");
+  // Write_deltat_folder->cd();
   Write_deltat();
 
   std::cerr << BOLDBLUE << "Done Writing!!!" << DEF << std::endl;
@@ -189,7 +189,7 @@ void Histogram::Write_WvsQ2() {
     W_singlePi_sec[i]->Write();
   }
   for (short i = 0; i < num_sectors; i++) {
-    MM_neutron_sec[i]->Fit("gaus", "", "", 0.7, 1.1);
+    MM_neutron_sec[i]->Fit("gaus", "QMR+", "QMR+", 0.7, 1.1);
     MM_neutron_sec[i]->SetXTitle("Mass (GeV)");
     MM_neutron_sec[i]->Write();
   }
@@ -254,18 +254,21 @@ void Histogram::makeHists_deltat() {
   for (short p = 0; p < particle_num; p++) {
     for (short c = 0; c < charge_num; c++) {
       for (short i = 0; i < with_id_num; i++) {
-        for (short fc = 0; fc < 2; fc++) {
-          if (fc == 0)
-            tof = "ftof";
-          else
-            tof = "ctof";
-          delta_t_hist[p][c][i][fc] =
-              std::make_shared<TH2D>(Form("delta_t_%s_%s_%s_%s", tof.c_str(), particle_name[p].c_str(),
-                                          charge_name[c].c_str(), id_name[i].c_str()),
-                                     Form("#Deltat %s %s %s %s", tof.c_str(), particle_name[p].c_str(),
-                                          charge_name[c].c_str(), id_name[i].c_str()),
-                                     bins, p_min, p_max, bins, Dt_min, Dt_max);
-        }
+        tof = "ftof";
+        delta_t_hist[p][c][i][0] =
+            std::make_shared<TH2D>(Form("delta_t_%s_%s_%s_%s", tof.c_str(), particle_name[p].c_str(),
+                                        charge_name[c].c_str(), id_name[i].c_str()),
+                                   Form("#Deltat %s %s %s %s", tof.c_str(), particle_name[p].c_str(),
+                                        charge_name[c].c_str(), id_name[i].c_str()),
+                                   bins, p_min, p_max, bins, Dt_min, Dt_max);
+
+        tof = "ctof";
+        delta_t_hist[p][c][i][1] =
+            std::make_shared<TH2D>(Form("delta_t_%s_%s_%s_%s", tof.c_str(), particle_name[p].c_str(),
+                                        charge_name[c].c_str(), id_name[i].c_str()),
+                                   Form("#Deltat %s %s %s %s", tof.c_str(), particle_name[p].c_str(),
+                                        charge_name[c].c_str(), id_name[i].c_str()),
+                                   bins, 0, 3.0, bins, -6.0, 6.0);
       }
     }
   }
@@ -304,15 +307,27 @@ void Histogram::Fill_deltat_prot(int pid, int charge, float dt, float momentum, 
 }
 
 void Histogram::Write_deltat() {
+  TDirectory* ftof_folder = RootOutputFile->mkdir("ftof");
+  ftof_folder->cd();
   for (short p = 0; p < particle_num; p++) {
     for (short c = 0; c < charge_num; c++) {
       for (short i = 0; i < with_id_num; i++) {
-        for (short fc = 0; fc < 2; fc++) {
-          delta_t_hist[p][c][i][fc]->SetXTitle("Momentum (GeV)");
-          delta_t_hist[p][c][i][fc]->SetYTitle("#Deltat");
-          delta_t_hist[p][c][i][fc]->SetOption("COLZ");
-          if (delta_t_hist[p][c][i][fc]->GetEntries() > 1) delta_t_hist[p][c][i][fc]->Write();
-        }
+        delta_t_hist[p][c][i][0]->SetXTitle("Momentum (GeV)");
+        delta_t_hist[p][c][i][0]->SetYTitle("#Deltat");
+        delta_t_hist[p][c][i][0]->SetOption("COLZ");
+        if (delta_t_hist[p][c][i][0]->GetEntries() > 1) delta_t_hist[p][c][i][0]->Write();
+      }
+    }
+  }
+  TDirectory* ctof_folder = RootOutputFile->mkdir("ctof");
+  ctof_folder->cd();
+  for (short p = 0; p < particle_num; p++) {
+    for (short c = 0; c < charge_num; c++) {
+      for (short i = 0; i < with_id_num; i++) {
+        delta_t_hist[p][c][i][1]->SetXTitle("Momentum (GeV)");
+        delta_t_hist[p][c][i][1]->SetYTitle("#Deltat");
+        delta_t_hist[p][c][i][1]->SetOption("COLZ");
+        if (delta_t_hist[p][c][i][1]->GetEntries() > 1) delta_t_hist[p][c][i][1]->Write();
       }
     }
   }
