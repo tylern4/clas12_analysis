@@ -25,6 +25,27 @@ void Branches12::init() {
   _beta = 0;
   _chi2pid = 0;
   _status = 0;
+
+  _mc_run = 0;
+  _mc_event = 0;
+  _mc_type = 0;
+  _mc_helicity = 0;
+  _mc_weight = 0;
+
+  _mc_npart = 0;
+  _mc_ebeam = 0;
+  _mc_weight = 0;
+
+  _MC_pid = 0;
+  _MC_helicity = 0;
+  _MC_px = 0;
+  _MC_py = 0;
+  _MC_pz = 0;
+  _MC_vx = 0;
+  _MC_vy = 0;
+  _MC_vz = 0;
+  _MC_vt = 0;
+
   _dc_sec = 0;
   _dc_px = 0;
   _dc_py = 0;
@@ -249,6 +270,9 @@ void Branches12::init() {
   _tree->SetBranchAddress("beta", &_beta);
   _tree->SetBranchAddress("chi2pid", &_chi2pid);
   _tree->SetBranchAddress("status", &_status);
+
+  _tree->SetBranchAddress("mc_weight", &_mc_weight);
+
   _tree->SetBranchAddress("dc_sec", &_dc_sec);
   _tree->SetBranchAddress("dc_px", &_dc_px);
   _tree->SetBranchAddress("dc_py", &_dc_py);
@@ -846,6 +870,8 @@ int Branches12::sc_ctof_component(int i) {
   else
     return _sc_ctof_component->at(i);
 }
+
+float Branches12::mc_weight() { return _mc_weight; }
 
 /*
 _tree->SetBranchAddress("ec_tot_energy", &_ec_tot_energy);

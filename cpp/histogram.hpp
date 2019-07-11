@@ -84,7 +84,8 @@ class Histogram {
 
   // W and Q^2
   void makeHists_sector();
-  void Fill_WvsQ2(double W, double Q2, int sec);
+  // void Fill_WvsQ2(double W, double Q2, int sec);
+  void Fill_WvsQ2(double W, double Q2, int sec, float weight);
   void Fill_WvsQ2_det(double W, double Q2, int det);
   void Fill_WvsQ2_singlePi(double W, double Q2, double mm, int sec);
   void Fill_WvsQ2_Npip(double W, double Q2, double mm, int sec);

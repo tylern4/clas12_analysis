@@ -84,7 +84,7 @@ size_t run(std::shared_ptr<TChain> _chain, std::shared_ptr<Histogram> _hists, in
       }
     }
     // Check the reaction class what kind of even it is and fill the appropriate histograms
-    _hists->Fill_WvsQ2(event->W(), event->Q2(), data->dc_sec(0));
+    _hists->Fill_WvsQ2(event->W(), event->Q2(), data->dc_sec(0), data->mc_weight());
     _hists->Fill_WvsQ2_det(event->W(), event->Q2(), abs(data->status(0) / 1000));
     if (event->SinglePip()) _hists->Fill_WvsQ2_singlePi(event->W(), event->Q2(), event->MM(), data->dc_sec(0));
     if (event->NeutronPip()) _hists->Fill_WvsQ2_Npip(event->W(), event->Q2(), event->MM(), data->dc_sec(0));
