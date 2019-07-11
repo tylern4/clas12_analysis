@@ -2,13 +2,13 @@
 #include <future>
 #include <thread>
 
-int main(int argc, char **argv) {
+int main(int argc, char** argv) {
   // Need this to make sure root doesn't break
   ROOT::EnableThreadSafety();
 
   int NUM_THREADS = 2;
   if (getenv("NUM_THREADS") != NULL) NUM_THREADS = atoi(getenv("NUM_THREADS"));
-  if (NUM_THREADS >= argc - 2) NUM_THREADS = 1;
+  if (NUM_THREADS > argc - NUM_THREADS) NUM_THREADS = 1;
 
   // Make a vector of vectors of strings the size of the number of threads
   std::vector<std::vector<std::string>> infilenames(NUM_THREADS);

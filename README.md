@@ -1,14 +1,12 @@
 # clas12_analysis
 
-Quick test to show hipo2root is working and output a few histograms to a root file.
+Quick test to show dst2root is working and output a few histograms to a root file.
 
 Prerequisites:
 * [cern root](https://root.cern.ch/)
-* pyroot
 
 ### cpp
 A c++ example can be found in the cpp folder.
-
 
 To build:
 
@@ -18,27 +16,9 @@ make clean && make
 
 To run:
 ```bash
-./test /path/to/root/input.root /path/to/output.root
+CLAS12_E=7.5 NUM_THREADS=4 ./clas12_analysis output.root /path/to/input/*.root
 ```
 
-To run over multiple files:
-```bash
-./test '/path/to/root/input/*.root' /path/to/output.root
-```
+If it breaks, reduce the number of threads for the number of files. In general each thread should have 2 or more files and the number of threads should be less than or equal to the number of cores you are using.
 
-### python
-A python example can be found in the python folder.
-
-To run:
-```
-./main.py '/path/to/root/input/*.root'
-```
-
-<!---
-### Java
-
-Java is dumb, don't use it. If you must use java, there's no easy way, so copy and paste the example.java file into an eclipse environment with the working [coatjava](https://github.com/JeffersonLab/clas12-offline-software.git) libraries. I think I'm using version 5.0 (Sorry I mean 5a.0.x because there's an a? Version numbers usually have letters right?) but the naming scheme and version numbers are so messed up I don't know what any of it means.
-
-If it doesn't work don't complain to me..... :information_desk_person:
---->
-
+So for 16 files on a 4 core computer use NUM_THREADS=4 and each thread will process 4 files. For 4 files on a 4 core computer use NUM_THREADS=1 or NUM_THREADS=2 so each thread will have 4 or 2 files respecfully.
