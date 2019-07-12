@@ -68,13 +68,13 @@ void Histogram::Write() {
 
 // W and Q^2
 void Histogram::Fill_WvsQ2(double W, double Q2, int sec, float weight) {
-  W_vs_q2->Fill(W, Q2);
-  W_hist->Fill(W);
+  W_vs_q2->Fill(W, Q2, weight);
+  W_hist->Fill(W, weight);
   Q2_hist->Fill(Q2);
 
   if (sec > 0 && sec <= 6) {
     W_vs_q2_sec[sec - 1]->Fill(W, Q2, weight);
-    W_sec[sec - 1]->Fill(W);
+    W_sec[sec - 1]->Fill(W, weight);
   }
 }
 
