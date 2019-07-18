@@ -6,16 +6,11 @@
 #ifndef DT_H_GUARD
 #define DT_H_GUARD
 #include <iostream>
-#include <unordered_map>
 #include "branches.hpp"
-#include "constants.hpp"
 
 class Delta_T {
  private:
   std::shared_ptr<Branches12> _data;
-  std::unordered_map<int, double> _mass_map = {
-      {PROTON, MASS_P}, {-PROTON, MASS_P}, {NEUTRON, MASS_N}, {PIP, MASS_PIP},    {PIM, MASS_PIM},    {PI0, MASS_PI0},
-      {KP, MASS_KP},    {KM, MASS_KM},     {PHOTON, MASS_G},  {ELECTRON, MASS_E}, {-ELECTRON, MASS_E}};
   float _sc_t_v = NAN;
   float _sc_r_v = NAN;
   float _vertex = NAN;

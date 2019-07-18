@@ -7,6 +7,7 @@
 #ifndef CONSTANTS_H_GUARD
 #define CONSTANTS_H_GUARD
 #include "TMath.h"
+#include <unordered_map>
 
 static const int MAX_PARTS = 100;
 static const int N_SIGMA = 3;
@@ -45,5 +46,10 @@ static const double MASS_KP = 0.493677;
 static const double MASS_KM = 0.493677;
 static const double MASS_G = 0.0;
 static const double MASS_OMEGA = 0.78265;
+
+
+static std::unordered_map<int, double> mass = {{PROTON, MASS_P}, {-PROTON, MASS_P},  {NEUTRON, MASS_N},  {PIP, MASS_PIP},
+                                             {PIM, MASS_PIM},  {PI0, MASS_PI0},    {KP, MASS_KP},      {KM, MASS_KM},
+                                             {PHOTON, MASS_G}, {ELECTRON, MASS_E}, {-ELECTRON, MASS_E}};
 
 #endif

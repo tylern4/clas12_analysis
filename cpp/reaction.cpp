@@ -67,7 +67,7 @@ void Reaction::SetOther(int i) {
   else {
     _numOther++;
     _hasOther = true;
-    _other->SetXYZM(_data->px(i), _data->py(i), _data->pz(i), _mass_map[_data->pid(i)]);
+    _other->SetXYZM(_data->px(i), _data->py(i), _data->pz(i), mass[_data->pid(i)]);
   }
 }
 

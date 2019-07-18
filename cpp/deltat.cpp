@@ -27,7 +27,7 @@ float Delta_T::_vertex_time(float sc_time, float sc_pathlength, float relatavist
 }
 
 float Delta_T::_deltat(int pid) {
-  _beta = 1.0 / sqrt(1.0 + (_mass_map[pid] / _momentum) * (_mass_map[pid] / _momentum));
+  _beta = 1.0 / sqrt(1.0 + (mass[pid] / _momentum) * (mass[pid] / _momentum));
   if (_sc_t == _sc_t && _sc_r == _sc_r) {
     return _vertex - _vertex_time(_sc_t, _sc_r, _beta);
   } else {
