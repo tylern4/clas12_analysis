@@ -266,6 +266,8 @@ class Branches12 {
   Branches12(std::shared_ptr<TChain> tree);
   Branches12(std::shared_ptr<TChain> tree, bool mc);
   ~Branches12(){};
+  bool mc();
+  void mc_branches();
   void init();
   void initMC();
   int gpart();

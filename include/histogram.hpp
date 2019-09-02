@@ -22,7 +22,7 @@ using TH1D_ptr = std::shared_ptr<TH1D>;
 class Histogram {
  protected:
   std::shared_ptr<TFile> RootOutputFile;
-  TCanvas* def;
+  std::shared_ptr<TCanvas> def;
 
   int bins = 500;
   double p_min = 0.0;

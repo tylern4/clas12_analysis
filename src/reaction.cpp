@@ -107,6 +107,7 @@ float Reaction::MM2() {
 
 MCReaction::MCReaction(std::shared_ptr<Branches12> data) {
   _data = data;
+  if (!_data->mc()) _data->mc_branches();
   _beam = std::make_unique<TLorentzVector>();
   if (getenv("CLAS12_E") != NULL) _beam_energy = atof(getenv("CLAS12_E"));
 

@@ -27,6 +27,8 @@ class Reaction {
   std::unique_ptr<TLorentzVector> _other;
   std::unique_ptr<TLorentzVector> _neutron;
 
+  bool _mc = false;
+
   bool _hasE = false;
   bool _hasP = false;
   bool _hasPip = false;
@@ -57,6 +59,7 @@ class Reaction {
   Reaction(std::shared_ptr<Branches12> data);
   ~Reaction();
 
+  inline bool mc() { return _mc; }
   void SetProton(int i);
   void SetPip(int i);
   void SetPim(int i);

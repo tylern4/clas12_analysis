@@ -18,6 +18,13 @@ Branches12::Branches12(std::shared_ptr<TChain> tree, bool mc) {
   if (_is_mc) Branches12::initMC();
 }
 
+bool Branches12::mc() { return _is_mc; }
+
+void Branches12::mc_branches() {
+  _is_mc = true;
+  Branches12::initMC();
+}
+
 void Branches12::init() {
   _pid = 0;
   _p = 0;
