@@ -8,9 +8,9 @@ import numpy as np
 
 from physics import *
 from delta_t import delta_t, vertex_time
-print("Hi")
+
 clas12 = uproot.open(sys.argv[1])['clas12']
-print("Hi")
+
 # Initialize empty array
 mom = np.array([])
 W = []
@@ -22,7 +22,7 @@ beta_pos = []
 
 p_dt = []
 deltat_proton = []
-print("Hi")
+
 pid, beta, px, py, pz, charge = tree.arrays(
     ["REC_Particle_pid", "REC_Particle_beta",
      "REC_Particle_px", "REC_Particle_py",
@@ -31,7 +31,6 @@ pid, beta, px, py, pz, charge = tree.arrays(
 # For every event that was loaded in
 for pid_event, beta_event, px_event, py_event, pz_event, charge_event in zip(pid, beta, px, py, pz, charge):
     if(len(pid_event) > 0):
-        print("Hi")
         for pidi, pxi, pyi, pzi, bi, qi in zip(pid_event, px_event, py_event, pz_event, beta_event, charge_event):
             #np.append(bi, beta)
 
