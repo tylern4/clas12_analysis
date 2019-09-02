@@ -104,3 +104,21 @@ float Reaction::MM2() {
   if (_MM2 != _MM2) CalcMissMass();
   return _MM2;
 }
+
+MCReaction::MCReaction(std::shared_ptr<Branches12> data) {
+  _data = data;
+  _beam = std::make_unique<TLorentzVector>();
+  if (getenv("CLAS12_E") != NULL) _beam_energy = atof(getenv("CLAS12_E"));
+
+  _beam->SetPxPyPzE(0.0, 0.0, sqrt(_beam_energy * _beam_energy - MASS_E * MASS_E), _beam_energy);
+
+  _gamma = std::make_unique<TLorentzVector>();
+  _target = std::make_unique<TLorentzVector>(0.0, 0.0, 0.0, MASS_P);
+  _elec = std::make_unique<TLorentzVector>();
+  this->SetElec();
+  _prot = std::make_unique<TLorentzVector>();
+  _pip = std::make_unique<TLorentzVector>();
+  _pim = std::make_unique<TLorentzVector>();
+  _other = std::make_unique<TLorentzVector>();
+  _neutron = std::make_unique<TLorentzVector>();
+}

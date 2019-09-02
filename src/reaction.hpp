@@ -12,11 +12,8 @@
 #include "constants.hpp"
 #include "physics.hpp"
 
-
-
-
 class Reaction {
- private:
+ protected:
   std::shared_ptr<Branches12> _data;
 
   double _beam_energy = 7.5;
@@ -45,6 +42,8 @@ class Reaction {
   short _numNeutral = 0;
   short _numOther = 0;
 
+  short _sector = -1;
+
   float _MM = std::nanf("-99");
   float _MM2 = std::nanf("-99");
 
@@ -54,6 +53,7 @@ class Reaction {
   void SetElec();
 
  public:
+  Reaction(){};
   Reaction(std::shared_ptr<Branches12> data);
   ~Reaction();
 
@@ -69,6 +69,8 @@ class Reaction {
 
   inline float W() { return _W; }
   inline float Q2() { return _Q2; }
+  inline short sec() { return _data->dc_sec(0); }
+  inline int det() { return abs(_data->status(0) / 1000); }
 
   inline bool TwoPion() {
     return ((_numPip == 1 && _numPim == 1) && (_hasE && !_hasP && _hasPip && _hasPim && !_hasNeutron && !_hasOther));
@@ -90,6 +92,15 @@ class Reaction {
   inline TLorentzVector e_mu() { return *_beam; }
   inline TLorentzVector e_mu_prime() { return *_elec; }
   inline TLorentzVector gamma() { return *_gamma; }
+};
+
+class MCReaction : public Reaction {
+ private:
+  float _weight = NAN;
+
+ public:
+  MCReaction(std::shared_ptr<Branches12> data);
+  inline float weight() { return _data->mc_weight(); }
 };
 
 #endif

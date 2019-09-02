@@ -7,23 +7,21 @@ list(APPEND CMAKE_PREFIX_PATH $ENV{ROOTSYS})
 find_package(ROOT REQUIRED COMPONENTS RIO Net) #RooFit RooFitCore RooStats RootAuth
 include(${ROOT_USE_FILE})
 
-include_directories(cpp)
+include_directories(src)
 
-add_executable(clas12_analysis
-        cpp/colors.hpp
-        cpp/constants.hpp
-        cpp/deltat.cpp
-        cpp/deltat.hpp
-        cpp/filehandeler.hpp
-        cpp/histogram.cpp
-        cpp/histogram.hpp
-        cpp/main.cpp
-        cpp/main.hpp
-        cpp/physics.cpp
-        cpp/physics.hpp
-        cpp/Branches.cpp
-        cpp/Branches.hpp
-        cpp/reaction.cpp
-        cpp/reaction.hpp)
+file(GLOB clas12lib_SRC
+    "src/*.cpp"
+)
+add_library(clas12lib STATIC ${clas12lib_SRC})
 
-target_link_libraries(clas12_analysis ${ROOT_LIBRARIES})
+
+file(GLOB clas12_EXE
+    "exe/*.cpp"
+)
+
+foreach(exe_file IN LISTS clas12_EXE)
+    get_filename_component(exe_name ${exe_file} NAME_WE)
+    add_executable(${exe_name} ${exe_file})
+    target_link_libraries(${exe_name} clas12lib ${ROOT_LIBRARIES})
+endforeach()
+

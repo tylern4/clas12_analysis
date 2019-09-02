@@ -1,4 +1,4 @@
-#include "main.hpp"
+#include "clas12_mc.hpp"
 #include <future>
 #include <thread>
 

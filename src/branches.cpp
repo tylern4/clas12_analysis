@@ -11,6 +11,13 @@ Branches12::Branches12(std::shared_ptr<TChain> tree) {
   Branches12::init();
 }
 
+Branches12::Branches12(std::shared_ptr<TChain> tree, bool mc) {
+  _tree = tree;
+  _is_mc = mc;
+  Branches12::init();
+  if (_is_mc) Branches12::initMC();
+}
+
 void Branches12::init() {
   _pid = 0;
   _p = 0;
@@ -25,6 +32,7 @@ void Branches12::init() {
   _beta = 0;
   _chi2pid = 0;
   _status = 0;
+
   _dc_sec = 0;
   _dc_px = 0;
   _dc_py = 0;
@@ -249,6 +257,7 @@ void Branches12::init() {
   _tree->SetBranchAddress("beta", &_beta);
   _tree->SetBranchAddress("chi2pid", &_chi2pid);
   _tree->SetBranchAddress("status", &_status);
+
   _tree->SetBranchAddress("dc_sec", &_dc_sec);
   _tree->SetBranchAddress("dc_px", &_dc_px);
   _tree->SetBranchAddress("dc_py", &_dc_py);
@@ -443,6 +452,30 @@ void Branches12::init() {
   _tree->SetBranchAddress("ft_hodo_dx", &_ft_hodo_dx);
   _tree->SetBranchAddress("ft_hodo_dy", &_ft_hodo_dy);
   _tree->SetBranchAddress("ft_hodo_radius", &_ft_hodo_radius);
+}
+
+void Branches12::initMC() {
+  _mc_run = 0;
+  _mc_event = 0;
+  _mc_type = 0;
+  _mc_helicity = 0;
+  _mc_weight = 0;
+
+  _mc_npart = 0;
+  _mc_ebeam = 0;
+  _mc_weight = 0;
+
+  _MC_pid = 0;
+  _MC_helicity = 0;
+  _MC_px = 0;
+  _MC_py = 0;
+  _MC_pz = 0;
+  _MC_vx = 0;
+  _MC_vy = 0;
+  _MC_vz = 0;
+  _MC_vt = 0;
+
+  _tree->SetBranchAddress("mc_weight", &_mc_weight);
 }
 
 int Branches12::gpart() { return _pid->size(); }
@@ -846,6 +879,8 @@ int Branches12::sc_ctof_component(int i) {
   else
     return _sc_ctof_component->at(i);
 }
+
+float Branches12::mc_weight() { return _mc_weight; }
 
 /*
 _tree->SetBranchAddress("ec_tot_energy", &_ec_tot_energy);

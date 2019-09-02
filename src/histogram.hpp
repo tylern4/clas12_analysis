@@ -14,6 +14,7 @@
 #include "colors.hpp"
 #include "constants.hpp"
 #include "deltat.hpp"
+#include "reaction.hpp"
 
 using TH2D_ptr = std::shared_ptr<TH2D>;
 using TH1D_ptr = std::shared_ptr<TH1D>;
@@ -84,6 +85,8 @@ class Histogram {
 
   // W and Q^2
   void makeHists_sector();
+  void Fill_WvsQ2(std::shared_ptr<Reaction> _e);
+  void Fill_WvsQ2(std::shared_ptr<MCReaction> _e);
   void Fill_WvsQ2(double W, double Q2, int sec);
   void Fill_WvsQ2_det(double W, double Q2, int det);
   void Fill_WvsQ2_singlePi(double W, double Q2, double mm, int sec);

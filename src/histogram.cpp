@@ -66,6 +66,38 @@ void Histogram::Write() {
   std::cerr << BOLDBLUE << "Done Writing!!!" << DEF << std::endl;
 }
 
+void Histogram::Fill_WvsQ2(std::shared_ptr<Reaction> _e) {
+  W_vs_q2->Fill(_e->W(), _e->Q2());
+  W_hist->Fill(_e->W());
+  Q2_hist->Fill(_e->Q2());
+
+  short sec = _e->sec();
+  if (sec > 0 && sec <= 6) {
+    W_vs_q2_sec[sec - 1]->Fill(_e->W(), _e->Q2());
+    W_sec[sec - 1]->Fill(_e->W());
+  }
+  short det = _e->det();
+  if (det == 1) W_det[0]->Fill(_e->W());
+  if (det == 2) W_det[1]->Fill(_e->W());
+  if (det == 4) W_det[2]->Fill(_e->W());
+}
+void Histogram::Fill_WvsQ2(std::shared_ptr<MCReaction> _e) {
+  W_vs_q2->Fill(_e->W(), _e->Q2(), _e->weight());
+  W_hist->Fill(_e->W(), _e->weight());
+  Q2_hist->Fill(_e->Q2(), _e->weight());
+
+  short sec = _e->sec();
+  if (sec > 0 && sec <= 6) {
+    W_vs_q2_sec[sec - 1]->Fill(_e->W(), _e->Q2(), _e->weight());
+    W_sec[sec - 1]->Fill(_e->W(), _e->weight());
+  }
+
+  short det = _e->det();
+  if (det == 1) W_det[0]->Fill(_e->W(), _e->weight());
+  if (det == 2) W_det[1]->Fill(_e->W(), _e->weight());
+  if (det == 4) W_det[2]->Fill(_e->W(), _e->weight());
+}
+
 // W and Q^2
 void Histogram::Fill_WvsQ2(double W, double Q2, int sec) {
   W_vs_q2->Fill(W, Q2);
