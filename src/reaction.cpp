@@ -5,10 +5,10 @@
 /**************************************/
 #include "reaction.hpp"
 
-Reaction::Reaction(std::shared_ptr<Branches12> data) {
+Reaction::Reaction(std::shared_ptr<Branches12> data, float beam_energy) {
   _data = data;
   _beam = std::make_unique<TLorentzVector>();
-  if (getenv("CLAS12_E") != NULL) _beam_energy = atof(getenv("CLAS12_E"));
+  _beam_energy = beam_energy;  // atof(getenv("CLAS12_E"));
 
   _beam->SetPxPyPzE(0.0, 0.0, sqrt(_beam_energy * _beam_energy - MASS_E * MASS_E), _beam_energy);
 
@@ -105,11 +105,11 @@ float Reaction::MM2() {
   return _MM2;
 }
 
-MCReaction::MCReaction(std::shared_ptr<Branches12> data) {
+MCReaction::MCReaction(std::shared_ptr<Branches12> data, float beam_enrgy) {
   _data = data;
   if (!_data->mc()) _data->mc_branches();
   _beam = std::make_unique<TLorentzVector>();
-  if (getenv("CLAS12_E") != NULL) _beam_energy = atof(getenv("CLAS12_E"));
+  _beam_energy = beam_enrgy;
 
   _beam->SetPxPyPzE(0.0, 0.0, sqrt(_beam_energy * _beam_energy - MASS_E * MASS_E), _beam_energy);
 

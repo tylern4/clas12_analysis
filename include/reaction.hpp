@@ -56,7 +56,7 @@ class Reaction {
 
  public:
   Reaction(){};
-  Reaction(std::shared_ptr<Branches12> data);
+  Reaction(std::shared_ptr<Branches12> data, float beam_energy);
   ~Reaction();
 
   inline bool mc() { return _mc; }
@@ -81,16 +81,11 @@ class Reaction {
   inline bool ProtonPim() {
     return ((_numProt == 1 && _numPim == 1) && (_hasE && _hasP && !_hasPip && _hasPim && !_hasNeutron && !_hasOther));
   }
-  inline bool SinglePip() {
-    return ((_numPip == 1) && (_hasE && !_hasP && _hasPip && !_hasPim && !_hasNeutron && !_hasOther));
-  }
+  inline bool SinglePip() { return ((_numPip == 1) && (_hasE && !_hasP && _hasPip && !_hasPim && !_hasOther)); }
   inline bool SingleP() {
     return ((_numProt == 1) && (_hasE && _hasP && !_hasPip && !_hasPim && !_hasNeutron && !_hasOther));
   }
-  inline bool NeutronPip() {
-    return ((_numPip == 1 && _numNeutral == 1) &&
-            (_hasE && !_hasP && _hasPip && !_hasPim && _hasNeutron && !_hasOther));
-  }
+  inline bool NeutronPip() { return (Reaction::SinglePip() && Reaction::MM() >= 0.8 && Reaction::MM() <= 1.1); }
 
   inline TLorentzVector e_mu() { return *_beam; }
   inline TLorentzVector e_mu_prime() { return *_elec; }
@@ -102,7 +97,7 @@ class MCReaction : public Reaction {
   float _weight = NAN;
 
  public:
-  MCReaction(std::shared_ptr<Branches12> data);
+  MCReaction(std::shared_ptr<Branches12> data, float beam_energy);
   inline float weight() { return _data->mc_weight(); }
 };
 

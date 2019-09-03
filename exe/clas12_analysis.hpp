@@ -32,6 +32,8 @@ size_t run_files(std::vector<std::string> inputs, std::shared_ptr<Histogram> his
 size_t run(std::shared_ptr<TChain> _chain, std::shared_ptr<Histogram> _hists, int thread_id) {
   // Get the number of events in this thread
   size_t num_of_events = (int)_chain->GetEntries();
+  float beam_energy = NAN;
+  if (getenv("CLAS12_E") != NULL) beam_energy = atof(getenv("CLAS12_E"));
 
   // Print some information for each thread
   std::cout << "=============== " << RED << "Thread " << thread_id << DEF << " =============== " << BLUE
@@ -60,10 +62,8 @@ size_t run(std::shared_ptr<TChain> _chain, std::shared_ptr<Histogram> _hists, in
     total++;
 
     // Make a reaction class from the data given
-    auto event = std::make_shared<Reaction>(data);
-    auto dt = std::make_unique<Delta_T>(data);
-
-    //// Fill_EC(data->, data->p(0));
+    auto event = std::make_shared<Reaction>(data, beam_energy);
+    auto dt = std::make_shared<Delta_T>(data);
 
     // For each particle in the event
     for (int part = 1; part < data->gpart(); part++) {
