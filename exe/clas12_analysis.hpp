@@ -60,7 +60,7 @@ size_t run(std::shared_ptr<TChain> _chain, std::shared_ptr<Histogram> _hists, in
     total++;
 
     // Make a reaction class from the data given
-    auto event = std::make_unique<Reaction>(data);
+    auto event = std::make_shared<Reaction>(data);
     auto dt = std::make_unique<Delta_T>(data);
 
     //// Fill_EC(data->, data->p(0));
@@ -73,21 +73,20 @@ size_t run(std::shared_ptr<TChain> _chain, std::shared_ptr<Histogram> _hists, in
       _hists->Fill_deltat_prot(data->pid(part), data->charge(part), dt->dt_P(), dt->momentum(), dt->ctof());
 
       // Check particle ID's and fill the reaction class
-      if (data->pid(part) == PIP) {
+      if (abs(dt->dt_Pi()) < 0.5 && data->charge(part) == POSITIVE) {
         event->SetPip(part);
-      } else if (data->pid(part) == PROTON) {
+      } else if (abs(dt->dt_P()) < 0.5 && data->charge(part) == POSITIVE) {
         event->SetProton(part);
-      } else if (data->pid(part) == PIM) {
+      } else if (abs(dt->dt_Pi()) < 0.5 && data->charge(part) == NEGATIVE) {
         event->SetPim(part);
       } else {
         event->SetOther(part);
       }
     }
     // Check the reaction class what kind of even it is and fill the appropriate histograms
-    _hists->Fill_WvsQ2(event->W(), event->Q2(), data->dc_sec(0));
-    _hists->Fill_WvsQ2_det(event->W(), event->Q2(), abs(data->status(0) / 1000));
-    if (event->SinglePip()) _hists->Fill_WvsQ2_singlePi(event->W(), event->Q2(), event->MM(), data->dc_sec(0));
-    if (event->NeutronPip()) _hists->Fill_WvsQ2_Npip(event->W(), event->Q2(), event->MM(), data->dc_sec(0));
+    _hists->Fill_WvsQ2(event);
+    if (event->SinglePip()) _hists->Fill_WvsQ2_singlePi(event);
+    if (event->NeutronPip()) _hists->Fill_WvsQ2_Npip(event);
   }
 
   // Return the total number of events

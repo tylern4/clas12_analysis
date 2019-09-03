@@ -99,43 +99,27 @@ void Histogram::Fill_WvsQ2(std::shared_ptr<MCReaction> _e) {
 }
 
 // W and Q^2
-void Histogram::Fill_WvsQ2(double W, double Q2, int sec) {
-  W_vs_q2->Fill(W, Q2);
-  W_hist->Fill(W);
-  Q2_hist->Fill(Q2);
-
+void Histogram::Fill_WvsQ2_singlePi(std::shared_ptr<Reaction> _e) {
+  short sec = _e->sec();
+  W_vs_q2_singlePi->Fill(_e->W(), _e->Q2());
+  W_hist_singlePi->Fill(_e->W());
+  Q2_hist_singlePi->Fill(_e->Q2());
+  MM_neutron->Fill(_e->MM());
   if (sec > 0 && sec <= 6) {
-    W_vs_q2_sec[sec - 1]->Fill(W, Q2);
-    W_sec[sec - 1]->Fill(W);
-  }
-}
-
-void Histogram::Fill_WvsQ2_det(double W, double Q2, int det) {
-  if (det == 1) W_det[0]->Fill(W);
-  if (det == 2) W_det[1]->Fill(W);
-  if (det == 4) W_det[2]->Fill(W);
-}
-
-// W and Q^2
-void Histogram::Fill_WvsQ2_singlePi(double W, double Q2, double mm, int sec) {
-  W_vs_MM_singlePi[sec - 1]->Fill(W, mm);
-  W_vs_q2_singlePi->Fill(W, Q2);
-  W_hist_singlePi->Fill(W);
-  Q2_hist_singlePi->Fill(Q2);
-  MM_neutron->Fill(mm);
-  if (sec > 0 && sec <= 6) {
-    W_vs_q2_singlePi_sec[sec - 1]->Fill(W, Q2);
-    W_singlePi_sec[sec - 1]->Fill(W);
-    MM_neutron_sec[sec - 1]->Fill(mm);
+    W_vs_MM_singlePi[sec - 1]->Fill(_e->W(), _e->MM());
+    W_vs_q2_singlePi_sec[sec - 1]->Fill(_e->W(), _e->Q2());
+    W_singlePi_sec[sec - 1]->Fill(_e->W());
+    MM_neutron_sec[sec - 1]->Fill(_e->MM());
   }
 }
 
 // W and Q^2
-void Histogram::Fill_WvsQ2_Npip(double W, double Q2, double mm, int sec) {
+void Histogram::Fill_WvsQ2_Npip(std::shared_ptr<Reaction> _e) {
+  short sec = _e->sec();
   if (sec > 0 && sec <= 6) {
-    W_vs_q2_Npip_sec[sec - 1]->Fill(W, Q2);
-    W_Npip_sec[sec - 1]->Fill(W);
-    MM_Npip_sec[sec - 1]->Fill(mm);
+    W_vs_q2_Npip_sec[sec - 1]->Fill(_e->W(), _e->Q2());
+    W_Npip_sec[sec - 1]->Fill(_e->W());
+    MM_Npip_sec[sec - 1]->Fill(_e->MM());
   }
 }
 

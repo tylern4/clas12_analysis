@@ -87,10 +87,8 @@ class Histogram {
   void makeHists_sector();
   void Fill_WvsQ2(std::shared_ptr<Reaction> _e);
   void Fill_WvsQ2(std::shared_ptr<MCReaction> _e);
-  void Fill_WvsQ2(double W, double Q2, int sec);
-  void Fill_WvsQ2_det(double W, double Q2, int det);
-  void Fill_WvsQ2_singlePi(double W, double Q2, double mm, int sec);
-  void Fill_WvsQ2_Npip(double W, double Q2, double mm, int sec);
+  void Fill_WvsQ2_singlePi(std::shared_ptr<Reaction> _e);
+  void Fill_WvsQ2_Npip(std::shared_ptr<Reaction> _e);
   void Write_WvsQ2();
 
   // P and E
