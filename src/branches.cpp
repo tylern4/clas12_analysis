@@ -443,22 +443,31 @@ void Branches12::initMC() {
   _mc_type = 0;
   _mc_helicity = 0;
   _mc_weight = 0;
-
   _mc_npart = 0;
-  _mc_ebeam = 0;
-  _mc_weight = 0;
+  _mc_pid = 0;
+  _mc_helicity = 0;
+  _mc_px = 0;
+  _mc_py = 0;
+  _mc_pz = 0;
+  _mc_vx = 0;
+  _mc_vy = 0;
+  _mc_vz = 0;
+  _mc_vt = 0;
 
-  _MC_pid = 0;
-  _MC_helicity = 0;
-  _MC_px = 0;
-  _MC_py = 0;
-  _MC_pz = 0;
-  _MC_vx = 0;
-  _MC_vy = 0;
-  _MC_vz = 0;
-  _MC_vt = 0;
-
-  _tree->SetBranchAddress("mc_weight", &_mc_weight);
+  _tree->SetBranchAddress("_mc_run", &_mc_run);
+  _tree->SetBranchAddress("_mc_event", &_mc_event);
+  _tree->SetBranchAddress("_mc_type", &_mc_type);
+  _tree->SetBranchAddress("_mc_helicity", &_mc_helicity);
+  _tree->SetBranchAddress("_mc_weight", &_mc_weight);
+  _tree->SetBranchAddress("_mc_npart", &_mc_npart);
+  _tree->SetBranchAddress("_mc_pid", &_mc_pid);
+  _tree->SetBranchAddress("_mc_px", &_mc_px);
+  _tree->SetBranchAddress("_mc_py", &_mc_py);
+  _tree->SetBranchAddress("_mc_pz", &_mc_pz);
+  _tree->SetBranchAddress("_mc_vx", &_mc_vx);
+  _tree->SetBranchAddress("_mc_vy", &_mc_vy);
+  _tree->SetBranchAddress("_mc_vz", &_mc_vz);
+  _tree->SetBranchAddress("_mc_vt", &_mc_vt);
 }
 
 int Branches12::gpart() { return _pid->size(); }
@@ -827,7 +836,21 @@ int Branches12::sc_ctof_component(int i) {
     return _sc_ctof_component->at(i);
 }
 
+int Branches12::mc_run() { return _mc_run; }
+int Branches12::mc_event() { return _mc_event; }
+int Branches12::mc_type() { return _mc_type; }
+int Branches12::mc_helicity() { return _mc_helicity; }
 float Branches12::mc_weight() { return _mc_weight; }
+int Branches12::mc_npart() { return _mc_npart; }
+// float Branches12::mc_ebeam() { return _mc_ebeam; }
+float Branches12::mc_pid(int i) { return _mc_pid->at(i); }
+float Branches12::mc_px(int i) { return _mc_px->at(i); }
+float Branches12::mc_py(int i) { return _mc_py->at(i); }
+float Branches12::mc_pz(int i) { return _mc_pz->at(i); }
+float Branches12::mc_vx(int i) { return _mc_vx->at(i); }
+float Branches12::mc_vy(int i) { return _mc_vy->at(i); }
+float Branches12::mc_vz(int i) { return _mc_vz->at(i); }
+float Branches12::mc_vt(int i) { return _mc_vt->at(i); }
 
 /*
 _tree->SetBranchAddress("ec_tot_energy", &_ec_tot_energy);

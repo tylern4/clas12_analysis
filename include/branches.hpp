@@ -35,24 +35,20 @@ class Branches12 {
 
   bool _is_mc;
   int _mc_run;
+  int _mc_npart;
   int _mc_event;
   int _mc_type;
   float _mc_helicity;
-  float _mc_wegiht;
-
-  int _mc_npart;
-  float _mc_ebeam;
   float _mc_weight;
 
-  v_int _MC_pid;
-  v_float _MC_helicity;
-  v_float _MC_px;
-  v_float _MC_py;
-  v_float _MC_pz;
-  v_float _MC_vx;
-  v_float _MC_vy;
-  v_float _MC_vz;
-  v_float _MC_vt;
+  v_int _mc_pid;
+  v_float _mc_px;
+  v_float _mc_py;
+  v_float _mc_pz;
+  v_float _mc_vx;
+  v_float _mc_vy;
+  v_float _mc_vz;
+  v_float _mc_vt;
 
   v_int _pid;
   v_float _p;
@@ -251,6 +247,7 @@ class Branches12 {
   v_float _ft_hodo_radius;
 
  public:
+  Branches12(){};
   Branches12(std::shared_ptr<TChain> tree);
   Branches12(std::shared_ptr<TChain> tree, bool mc);
   ~Branches12(){};
@@ -321,7 +318,22 @@ class Branches12 {
   float sc_ctof_path(int i);
   float sc_ctof_energy(int i);
   int sc_ctof_component(int i);
+
+  int mc_run();
+  int mc_event();
+  int mc_type();
+  int mc_helicity();
   float mc_weight();
+  int mc_npart();
+  float mc_ebeam();
+  float mc_pid(int i);
+  float mc_px(int i);
+  float mc_py(int i);
+  float mc_pz(int i);
+  float mc_vx(int i);
+  float mc_vy(int i);
+  float mc_vz(int i);
+  float mc_vt(int i);
 
   /*
     int _mc_run;
