@@ -41,12 +41,6 @@ void Branches12::init() {
   _status = 0;
 
   _dc_sec = 0;
-  _dc_px = 0;
-  _dc_py = 0;
-  _dc_pz = 0;
-  _dc_vx = 0;
-  _dc_vy = 0;
-  _dc_vz = 0;
   _dc_r1_x = 0;
   _dc_r1_y = 0;
   _dc_r1_z = 0;
@@ -56,12 +50,6 @@ void Branches12::init() {
   _dc_r3_x = 0;
   _dc_r3_y = 0;
   _dc_r3_z = 0;
-  _cvt_px = 0;
-  _cvt_py = 0;
-  _cvt_pz = 0;
-  _cvt_vx = 0;
-  _cvt_vy = 0;
-  _cvt_vz = 0;
   _cvt_x = 0;
   _cvt_y = 0;
   _cvt_z = 0;
@@ -266,12 +254,6 @@ void Branches12::init() {
   _tree->SetBranchAddress("status", &_status);
 
   _tree->SetBranchAddress("dc_sec", &_dc_sec);
-  _tree->SetBranchAddress("dc_px", &_dc_px);
-  _tree->SetBranchAddress("dc_py", &_dc_py);
-  _tree->SetBranchAddress("dc_pz", &_dc_pz);
-  _tree->SetBranchAddress("dc_vx", &_dc_vx);
-  _tree->SetBranchAddress("dc_vy", &_dc_vy);
-  _tree->SetBranchAddress("dc_vz", &_dc_vz);
   _tree->SetBranchAddress("dc_r1_x", &_dc_r1_x);
   _tree->SetBranchAddress("dc_r1_y", &_dc_r1_y);
   _tree->SetBranchAddress("dc_r1_z", &_dc_r1_z);
@@ -281,12 +263,6 @@ void Branches12::init() {
   _tree->SetBranchAddress("dc_r3_x", &_dc_r3_x);
   _tree->SetBranchAddress("dc_r3_y", &_dc_r3_y);
   _tree->SetBranchAddress("dc_r3_z", &_dc_r3_z);
-  _tree->SetBranchAddress("cvt_px", &_cvt_px);
-  _tree->SetBranchAddress("cvt_py", &_cvt_py);
-  _tree->SetBranchAddress("cvt_pz", &_cvt_pz);
-  _tree->SetBranchAddress("cvt_vx", &_cvt_vx);
-  _tree->SetBranchAddress("cvt_vy", &_cvt_vy);
-  _tree->SetBranchAddress("cvt_vz", &_cvt_vz);
   _tree->SetBranchAddress("cvt_x", &_cvt_x);
   _tree->SetBranchAddress("cvt_y", &_cvt_y);
   _tree->SetBranchAddress("cvt_z", &_cvt_z);
@@ -572,42 +548,6 @@ int Branches12::dc_sec(int i) {
     return -9999;
   else
     return _dc_sec->at(i);
-}
-float Branches12::dc_px(int i) {
-  if (i >= _dc_sec->size())
-    return NAN;
-  else
-    return _dc_px->at(i);
-}
-float Branches12::dc_py(int i) {
-  if (i >= _dc_sec->size())
-    return NAN;
-  else
-    return _dc_py->at(i);
-}
-float Branches12::dc_pz(int i) {
-  if (i >= _dc_sec->size())
-    return NAN;
-  else
-    return _dc_pz->at(i);
-}
-float Branches12::dc_vx(int i) {
-  if (i >= _dc_sec->size())
-    return NAN;
-  else
-    return _dc_vx->at(i);
-}
-float Branches12::dc_vy(int i) {
-  if (i >= _dc_sec->size())
-    return NAN;
-  else
-    return _dc_vy->at(i);
-}
-float Branches12::dc_vz(int i) {
-  if (i >= _dc_sec->size())
-    return NAN;
-  else
-    return _dc_vz->at(i);
 }
 float Branches12::dc_r1_x(int i) {
   if (i >= _dc_sec->size())

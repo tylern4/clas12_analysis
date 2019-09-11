@@ -68,12 +68,6 @@ class Branches12 {
   v_float _chi2pid;
   v_int _status;
   v_int _dc_sec;
-  v_float _dc_px;
-  v_float _dc_py;
-  v_float _dc_pz;
-  v_float _dc_vx;
-  v_float _dc_vy;
-  v_float _dc_vz;
   v_float _dc_r1_x;
   v_float _dc_r1_y;
   v_float _dc_r1_z;
@@ -83,12 +77,6 @@ class Branches12 {
   v_float _dc_r3_x;
   v_float _dc_r3_y;
   v_float _dc_r3_z;
-  v_float _cvt_px;
-  v_float _cvt_py;
-  v_float _cvt_pz;
-  v_float _cvt_vx;
-  v_float _cvt_vy;
-  v_float _cvt_vz;
   v_float _cvt_x;
   v_float _cvt_y;
   v_float _cvt_z;
@@ -286,12 +274,6 @@ class Branches12 {
   int status(int i);
   // DC
   int dc_sec(int i);
-  float dc_px(int i);
-  float dc_py(int i);
-  float dc_pz(int i);
-  float dc_vx(int i);
-  float dc_vy(int i);
-  float dc_vz(int i);
   float dc_r1_x(int i);
   float dc_r1_y(int i);
   float dc_r1_z(int i);

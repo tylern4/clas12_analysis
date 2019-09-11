@@ -6,8 +6,10 @@ import matplotlib.pyplot as plt
 import sys
 import numpy as np
 
+from reaction import *
 from physics import *
 from delta_t import delta_t, vertex_time
+
 
 clas12 = uproot.open(sys.argv[1])['clas12']
 
@@ -23,7 +25,7 @@ beta_pos = []
 p_dt = []
 deltat_proton = []
 
-pid, beta, px, py, pz, charge = tree.arrays(
+pid, beta, px, py, pz, charge = clas12.arrays(
     ["REC_Particle_pid", "REC_Particle_beta",
      "REC_Particle_px", "REC_Particle_py",
      "REC_Particle_pz", "REC_Particle_charge"], outputtype=tuple)

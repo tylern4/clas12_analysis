@@ -46,11 +46,11 @@ class Reaction {
 
   short _sector = -1;
 
-  float _MM = std::nanf("-99");
-  float _MM2 = std::nanf("-99");
+  float _MM = NAN;
+  float _MM2 = NAN;
 
-  float _W = std::nanf("-99");
-  float _Q2 = std::nanf("-99");
+  float _W = NAN;
+  float _Q2 = NAN;
 
   void SetElec();
 
