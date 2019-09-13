@@ -68,9 +68,9 @@ size_t run(std::shared_ptr<TChain> _chain, std::shared_ptr<Histogram> _hists, in
     // For each particle in the event
     for (int part = 1; part < data->gpart(); part++) {
       dt->dt_calc(part);
-      _hists->Fill_MomVsBeta(data->mc_pid(part), data->charge(part), data->p(part), data->beta(part));
-      _hists->Fill_deltat_pi(data->mc_pid(part), data->charge(part), dt->dt_Pi(), dt->momentum(), dt->ctof());
-      _hists->Fill_deltat_prot(data->mc_pid(part), data->charge(part), dt->dt_P(), dt->momentum(), dt->ctof());
+      _hists->Fill_MomVsBeta(data->pid(part), data->charge(part), data->p(part), data->beta(part));
+      _hists->Fill_deltat_pi(data->pid(part), data->charge(part), dt->dt_Pi(), dt->momentum(), dt->ctof());
+      _hists->Fill_deltat_prot(data->pid(part), data->charge(part), dt->dt_P(), dt->momentum(), dt->ctof());
 
       // Check particle ID's and fill the reaction class
       if (abs(dt->dt_Pi()) < 0.5 && data->charge(part) == POSITIVE) {
