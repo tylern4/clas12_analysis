@@ -114,12 +114,26 @@ MCReaction::MCReaction(std::shared_ptr<Branches12> data, float beam_enrgy) {
   _beam->SetPxPyPzE(0.0, 0.0, sqrt(_beam_energy * _beam_energy - MASS_E * MASS_E), _beam_energy);
 
   _gamma = std::make_unique<TLorentzVector>();
+  _gamma_mc = std::make_unique<TLorentzVector>();
   _target = std::make_unique<TLorentzVector>(0.0, 0.0, 0.0, MASS_P);
   _elec = std::make_unique<TLorentzVector>();
+  _elec_mc = std::make_unique<TLorentzVector>();
   this->SetElec();
+  this->SetMCElec();
   _prot = std::make_unique<TLorentzVector>();
   _pip = std::make_unique<TLorentzVector>();
   _pim = std::make_unique<TLorentzVector>();
   _other = std::make_unique<TLorentzVector>();
   _neutron = std::make_unique<TLorentzVector>();
+}
+
+void MCReaction::SetMCElec() {
+  _hasE = true;
+  _elec_mc->SetXYZM(_data->mc_px(0), _data->mc_py(0), _data->mc_pz(0), MASS_E);
+
+  *_gamma_mc += *_beam - *_elec_mc;
+
+  // Can calculate W and Q2 here
+  _W_mc = physics::W_calc(*_beam, *_elec_mc);
+  _Q2_mc = physics::Q2_calc(*_beam, *_elec_mc);
 }

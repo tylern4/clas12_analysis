@@ -64,25 +64,39 @@ size_t run(std::shared_ptr<TChain> _chain, std::shared_ptr<Histogram> _hists, in
     // Make a reaction class from the data given
     auto event = std::make_shared<MCReaction>(data, beam_energy);
     auto dt = std::make_shared<Delta_T>(data);
+    /*
+        // For each particle in the event
+        for (int part = 1; part < data->gpart(); part++) {
+          dt->dt_calc(part);
+          _hists->Fill_MomVsBeta(data->pid(part), data->charge(part), data->p(part), data->beta(part));
+          _hists->Fill_deltat_pi(data->pid(part), data->charge(part), dt->dt_Pi(), dt->momentum(), dt->ctof());
+          _hists->Fill_deltat_prot(data->pid(part), data->charge(part), dt->dt_P(), dt->momentum(), dt->ctof());
 
-    // For each particle in the event
-    for (int part = 1; part < data->gpart(); part++) {
-      dt->dt_calc(part);
-      _hists->Fill_MomVsBeta(data->pid(part), data->charge(part), data->p(part), data->beta(part));
-      _hists->Fill_deltat_pi(data->pid(part), data->charge(part), dt->dt_Pi(), dt->momentum(), dt->ctof());
-      _hists->Fill_deltat_prot(data->pid(part), data->charge(part), dt->dt_P(), dt->momentum(), dt->ctof());
-
+          // Check particle ID's and fill the reaction class
+          if (abs(dt->dt_Pi()) < 0.5 && data->charge(part) == POSITIVE) {
+            event->SetPip(part);
+          } else if (abs(dt->dt_P()) < 0.5 && data->charge(part) == POSITIVE) {
+            event->SetProton(part);
+          } else if (abs(dt->dt_Pi()) < 0.5 && data->charge(part) == NEGATIVE) {
+            event->SetPim(part);
+          } else {
+            event->SetOther(part);
+          }
+        }
+    */
+    for (int part = 1; part < data->mc_npart(); part++) {
       // Check particle ID's and fill the reaction class
-      if (abs(dt->dt_Pi()) < 0.5 && data->charge(part) == POSITIVE) {
+      if (data->mc_pid(part) == PIP) {
         event->SetPip(part);
-      } else if (abs(dt->dt_P()) < 0.5 && data->charge(part) == POSITIVE) {
+      } else if (data->mc_pid(part) == PROTON) {
         event->SetProton(part);
-      } else if (abs(dt->dt_Pi()) < 0.5 && data->charge(part) == NEGATIVE) {
+      } else if (data->mc_pid(part) == PIM) {
         event->SetPim(part);
       } else {
         event->SetOther(part);
       }
     }
+
     // Check the reaction class what kind of even it is and fill the appropriate histograms
     _hists->Fill_WvsQ2(event);
     if (event->SinglePip()) _hists->Fill_WvsQ2_singlePi(event);
@@ -90,6 +104,6 @@ size_t run(std::shared_ptr<TChain> _chain, std::shared_ptr<Histogram> _hists, in
   }
 
   // Return the total number of events
-  return total;
+  return num_of_events;
 }
 #endif

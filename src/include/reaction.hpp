@@ -95,10 +95,18 @@ class Reaction {
 class MCReaction : public Reaction {
  private:
   float _weight = NAN;
+  float _W_mc = NAN;
+  float _Q2_mc = NAN;
+
+  std::unique_ptr<TLorentzVector> _elec_mc;
+  std::unique_ptr<TLorentzVector> _gamma_mc;
 
  public:
   MCReaction(std::shared_ptr<Branches12> data, float beam_energy);
+  void SetMCElec();
   inline float weight() { return _data->mc_weight(); }
+  inline float W() { return _W_mc; }
+  inline float Q2() { return _Q2_mc; }
 };
 
 #endif

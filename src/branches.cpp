@@ -841,90 +841,457 @@ float Branches12::mc_weight() { return _mc_weight; }
 int Branches12::mc_npart() { return _mc_npart; }
 
 int Branches12::mc_pid(int i) {
-  try {
+  if (i >= _mc_npart)
+    return -9999;
+  else
     return _mc_pid->at(i);
-  } catch (const std::exception& e) {
-    std::cerr << "Error getting mc_pid at: " << i << std::endl;
-  }
-  return -9999;
 }
-float Branches12::mc_px(int i) { return _mc_px->at(i); }
-float Branches12::mc_py(int i) { return _mc_py->at(i); }
-float Branches12::mc_pz(int i) { return _mc_pz->at(i); }
-float Branches12::mc_vx(int i) { return _mc_vx->at(i); }
-float Branches12::mc_vy(int i) { return _mc_vy->at(i); }
-float Branches12::mc_vz(int i) { return _mc_vz->at(i); }
-float Branches12::mc_vt(int i) { return _mc_vt->at(i); }
+float Branches12::mc_px(int i) {
+  if (i >= _mc_npart)
+    return NAN;
+  else
+    return _mc_px->at(i);
+}
+float Branches12::mc_py(int i) {
+  if (i >= _mc_npart)
+    return NAN;
+  else
+    return _mc_py->at(i);
+}
+float Branches12::mc_pz(int i) {
+  if (i >= _mc_npart)
+    return NAN;
+  else
+    return _mc_pz->at(i);
+}
+float Branches12::mc_vx(int i) {
+  if (i >= _mc_npart)
+    return NAN;
+  else
+    return _mc_vx->at(i);
+}
+float Branches12::mc_vy(int i) {
+  if (i >= _mc_npart)
+    return NAN;
+  else
+    return _mc_vy->at(i);
+}
+float Branches12::mc_vz(int i) {
+  if (i >= _mc_npart)
+    return NAN;
+  else
+    return _mc_vz->at(i);
+}
+float Branches12::mc_vt(int i) {
+  if (i >= _mc_npart)
+    return NAN;
+  else
+    return _mc_vt->at(i);
+}
 
-float Branches12::ec_tot_energy(int i) { return _ec_tot_energy->at(i); }
-float Branches12::ec_pcal_energy(int i) { return _ec_pcal_energy->at(i); }
-int Branches12::ec_pcal_sec(int i) { return _ec_pcal_sec->at(i); };
+float Branches12::ec_tot_energy(int i) {
+  if (i >= _ec_ecin_sec->size())
+    return NAN;
+  else
+    return _ec_tot_energy->at(i);
+}
+float Branches12::ec_pcal_energy(int i) {
+  if (i >= _ec_ecin_sec->size())
+    return NAN;
+  else
+    return _ec_pcal_energy->at(i);
+}
+int Branches12::ec_pcal_sec(int i) {
+  if (i >= _ec_ecin_sec->size())
+    return -9999;
+  else
+    return _ec_pcal_sec->at(i);
+};
+float Branches12::ec_pcal_time(int i) {
+  if (i >= _ec_ecin_sec->size())
+    return NAN;
+  else
+    return _ec_pcal_time->at(i);
+}
+float Branches12::ec_pcal_path(int i) {
+  if (i >= _ec_ecin_sec->size())
+    return NAN;
+  else
+    return _ec_pcal_path->at(i);
+}
+float Branches12::ec_pcal_x(int i) {
+  if (i >= _ec_ecin_sec->size())
+    return NAN;
+  else
+    return _ec_pcal_x->at(i);
+}
+float Branches12::ec_pcal_y(int i) {
+  if (i >= _ec_ecin_sec->size())
+    return NAN;
+  else
+    return _ec_pcal_y->at(i);
+}
+float Branches12::ec_pcal_z(int i) {
+  if (i >= _ec_ecin_sec->size())
+    return NAN;
+  else
+    return _ec_pcal_z->at(i);
+}
+float Branches12::ec_pcal_hx(int i) {
+  if (i >= _ec_ecin_sec->size())
+    return NAN;
+  else
+    return _ec_pcal_hx->at(i);
+}
+float Branches12::ec_pcal_hy(int i) {
+  if (i >= _ec_ecin_sec->size())
+    return NAN;
+  else
+    return _ec_pcal_hy->at(i);
+}
+float Branches12::ec_pcal_hz(int i) {
+  if (i >= _ec_ecin_sec->size())
+    return NAN;
+  else
+    return _ec_pcal_hz->at(i);
+}
+float Branches12::ec_pcal_lu(int i) {
+  if (i >= _ec_ecin_sec->size())
+    return NAN;
+  else
+    return _ec_pcal_lu->at(i);
+}
+float Branches12::ec_pcal_lv(int i) {
+  if (i >= _ec_ecin_sec->size())
+    return NAN;
+  else
+    return _ec_pcal_lv->at(i);
+}
+float Branches12::ec_pcal_lw(int i) {
+  if (i >= _ec_ecin_sec->size())
+    return NAN;
+  else
+    return _ec_pcal_lw->at(i);
+}
+float Branches12::ec_pcal_du(int i) {
+  if (i >= _ec_ecin_sec->size())
+    return NAN;
+  else
+    return _ec_pcal_du->at(i);
+}
+float Branches12::ec_pcal_dv(int i) {
+  if (i >= _ec_ecin_sec->size())
+    return NAN;
+  else
+    return _ec_pcal_dv->at(i);
+}
+float Branches12::ec_pcal_dw(int i) {
+  if (i >= _ec_ecin_sec->size())
+    return NAN;
+  else
+    return _ec_pcal_dw->at(i);
+}
+float Branches12::ec_pcal_m2u(int i) {
+  if (i >= _ec_ecin_sec->size())
+    return NAN;
+  else
+    return _ec_pcal_m2u->at(i);
+}
+float Branches12::ec_pcal_m2v(int i) {
+  if (i >= _ec_ecin_sec->size())
+    return NAN;
+  else
+    return _ec_pcal_m2v->at(i);
+}
+float Branches12::ec_pcal_m2w(int i) {
+  if (i >= _ec_ecin_sec->size())
+    return NAN;
+  else
+    return _ec_pcal_m2w->at(i);
+}
+float Branches12::ec_pcal_m3u(int i) {
+  if (i >= _ec_ecin_sec->size())
+    return NAN;
+  else
+    return _ec_pcal_m3u->at(i);
+}
+float Branches12::ec_pcal_m3v(int i) {
+  if (i >= _ec_ecin_sec->size())
+    return NAN;
+  else
+    return _ec_pcal_m3v->at(i);
+}
+float Branches12::ec_pcal_m3w(int i) {
+  if (i >= _ec_ecin_sec->size())
+    return NAN;
+  else
+    return _ec_pcal_m3w->at(i);
+}
 
-float Branches12::ec_pcal_time(int i) { return _ec_pcal_time->at(i); }
-float Branches12::ec_pcal_path(int i) { return _ec_pcal_path->at(i); }
-float Branches12::ec_pcal_x(int i) { return _ec_pcal_x->at(i); }
-float Branches12::ec_pcal_y(int i) { return _ec_pcal_y->at(i); }
-float Branches12::ec_pcal_z(int i) { return _ec_pcal_z->at(i); }
-float Branches12::ec_pcal_hx(int i) { return _ec_pcal_hx->at(i); }
-float Branches12::ec_pcal_hy(int i) { return _ec_pcal_hy->at(i); }
-float Branches12::ec_pcal_hz(int i) { return _ec_pcal_hz->at(i); }
-float Branches12::ec_pcal_lu(int i) { return _ec_pcal_lu->at(i); }
-float Branches12::ec_pcal_lv(int i) { return _ec_pcal_lv->at(i); }
-float Branches12::ec_pcal_lw(int i) { return _ec_pcal_lw->at(i); }
-float Branches12::ec_pcal_du(int i) { return _ec_pcal_du->at(i); }
-float Branches12::ec_pcal_dv(int i) { return _ec_pcal_dv->at(i); }
-float Branches12::ec_pcal_dw(int i) { return _ec_pcal_dw->at(i); }
-float Branches12::ec_pcal_m2u(int i) { return _ec_pcal_m2u->at(i); }
-float Branches12::ec_pcal_m2v(int i) { return _ec_pcal_m2v->at(i); }
-float Branches12::ec_pcal_m2w(int i) { return _ec_pcal_m2w->at(i); }
-float Branches12::ec_pcal_m3u(int i) { return _ec_pcal_m3u->at(i); }
-float Branches12::ec_pcal_m3v(int i) { return _ec_pcal_m3v->at(i); }
-float Branches12::ec_pcal_m3w(int i) { return _ec_pcal_m3w->at(i); }
-
-float Branches12::ec_ecin_energy(int i) { return _ec_ecin_energy->at(i); }
-int Branches12::ec_ecin_sec(int i) { return _ec_ecin_sec->at(i); };
-float Branches12::ec_ecin_time(int i) { return _ec_ecin_time->at(i); }
-float Branches12::ec_ecin_path(int i) { return _ec_ecin_path->at(i); }
-float Branches12::ec_ecin_x(int i) { return _ec_ecin_x->at(i); }
-float Branches12::ec_ecin_y(int i) { return _ec_ecin_y->at(i); }
-float Branches12::ec_ecin_z(int i) { return _ec_ecin_z->at(i); }
-float Branches12::ec_ecin_hx(int i) { return _ec_ecin_hx->at(i); }
-float Branches12::ec_ecin_hy(int i) { return _ec_ecin_hy->at(i); }
-float Branches12::ec_ecin_hz(int i) { return _ec_ecin_hz->at(i); }
-float Branches12::ec_ecin_lu(int i) { return _ec_ecin_lu->at(i); }
-float Branches12::ec_ecin_lv(int i) { return _ec_ecin_lv->at(i); }
-float Branches12::ec_ecin_lw(int i) { return _ec_ecin_lw->at(i); }
-float Branches12::ec_ecin_du(int i) { return _ec_ecin_du->at(i); }
-float Branches12::ec_ecin_dv(int i) { return _ec_ecin_dv->at(i); }
-float Branches12::ec_ecin_dw(int i) { return _ec_ecin_dw->at(i); }
-float Branches12::ec_ecin_m2u(int i) { return _ec_ecin_m2u->at(i); }
-float Branches12::ec_ecin_m2v(int i) { return _ec_ecin_m2v->at(i); }
-float Branches12::ec_ecin_m2w(int i) { return _ec_ecin_m2w->at(i); }
-float Branches12::ec_ecin_m3u(int i) { return _ec_ecin_m3u->at(i); }
-float Branches12::ec_ecin_m3v(int i) { return _ec_ecin_m3v->at(i); }
-float Branches12::ec_ecin_m3w(int i) { return _ec_ecin_m3w->at(i); }
-float Branches12::ec_ecout_energy(int i) { return _ec_ecout_energy->at(i); }
-int Branches12::ec_ecout_sec(int i) { return _ec_ecout_sec->at(i); };
-float Branches12::ec_ecout_time(int i) { return _ec_ecout_time->at(i); }
-float Branches12::ec_ecout_path(int i) { return _ec_ecout_path->at(i); }
-float Branches12::ec_ecout_x(int i) { return _ec_ecout_x->at(i); }
-float Branches12::ec_ecout_y(int i) { return _ec_ecout_y->at(i); }
-float Branches12::ec_ecout_z(int i) { return _ec_ecout_z->at(i); }
-float Branches12::ec_ecout_hx(int i) { return _ec_ecout_hx->at(i); }
-float Branches12::ec_ecout_hy(int i) { return _ec_ecout_hy->at(i); }
-float Branches12::ec_ecout_hz(int i) { return _ec_ecout_hz->at(i); }
-float Branches12::ec_ecout_lu(int i) { return _ec_ecout_lu->at(i); }
-float Branches12::ec_ecout_lv(int i) { return _ec_ecout_lv->at(i); }
-float Branches12::ec_ecout_lw(int i) { return _ec_ecout_lw->at(i); }
-float Branches12::ec_ecout_du(int i) { return _ec_ecout_du->at(i); }
-float Branches12::ec_ecout_dv(int i) { return _ec_ecout_dv->at(i); }
-float Branches12::ec_ecout_dw(int i) { return _ec_ecout_dw->at(i); }
-float Branches12::ec_ecout_m2u(int i) { return _ec_ecout_m2u->at(i); }
-float Branches12::ec_ecout_m2v(int i) { return _ec_ecout_m2v->at(i); }
-float Branches12::ec_ecout_m2w(int i) { return _ec_ecout_m2w->at(i); }
-float Branches12::ec_ecout_m3u(int i) { return _ec_ecout_m3u->at(i); }
-float Branches12::ec_ecout_m3v(int i) { return _ec_ecout_m3v->at(i); }
-float Branches12::ec_ecout_m3w(int i) { return _ec_ecout_m3w->at(i); }
+float Branches12::ec_ecin_energy(int i) {
+  if (i >= _ec_ecin_sec->size())
+    return NAN;
+  else
+    return _ec_ecin_energy->at(i);
+}
+int Branches12::ec_ecin_sec(int i) {
+  if (i >= _ec_ecin_sec->size())
+    return -9999;
+  else
+    return _ec_ecin_sec->at(i);
+}
+float Branches12::ec_ecin_time(int i) {
+  if (i >= _ec_ecin_sec->size())
+    return NAN;
+  else
+    return _ec_ecin_time->at(i);
+}
+float Branches12::ec_ecin_path(int i) {
+  if (i >= _ec_ecin_sec->size())
+    return NAN;
+  else
+    return _ec_ecin_path->at(i);
+}
+float Branches12::ec_ecin_x(int i) {
+  if (i >= _ec_ecin_sec->size())
+    return NAN;
+  else
+    return _ec_ecin_x->at(i);
+}
+float Branches12::ec_ecin_y(int i) {
+  if (i >= _ec_ecin_sec->size())
+    return NAN;
+  else
+    return _ec_ecin_y->at(i);
+}
+float Branches12::ec_ecin_z(int i) {
+  if (i >= _ec_ecin_sec->size())
+    return NAN;
+  else
+    return _ec_ecin_z->at(i);
+}
+float Branches12::ec_ecin_hx(int i) {
+  if (i >= _ec_ecin_sec->size())
+    return NAN;
+  else
+    return _ec_ecin_hx->at(i);
+}
+float Branches12::ec_ecin_hy(int i) {
+  if (i >= _ec_ecin_sec->size())
+    return NAN;
+  else
+    return _ec_ecin_hy->at(i);
+}
+float Branches12::ec_ecin_hz(int i) {
+  if (i >= _ec_ecin_sec->size())
+    return NAN;
+  else
+    return _ec_ecin_hz->at(i);
+}
+float Branches12::ec_ecin_lu(int i) {
+  if (i >= _ec_ecin_sec->size())
+    return NAN;
+  else
+    return _ec_ecin_lu->at(i);
+}
+float Branches12::ec_ecin_lv(int i) {
+  if (i >= _ec_ecin_sec->size())
+    return NAN;
+  else
+    return _ec_ecin_lv->at(i);
+}
+float Branches12::ec_ecin_lw(int i) {
+  if (i >= _ec_ecin_sec->size())
+    return NAN;
+  else
+    return _ec_ecin_lw->at(i);
+}
+float Branches12::ec_ecin_du(int i) {
+  if (i >= _ec_ecin_sec->size())
+    return NAN;
+  else
+    return _ec_ecin_du->at(i);
+}
+float Branches12::ec_ecin_dv(int i) {
+  if (i >= _ec_ecin_sec->size())
+    return NAN;
+  else
+    return _ec_ecin_dv->at(i);
+}
+float Branches12::ec_ecin_dw(int i) {
+  if (i >= _ec_ecin_sec->size())
+    return NAN;
+  else
+    return _ec_ecin_dw->at(i);
+}
+float Branches12::ec_ecin_m2u(int i) {
+  if (i >= _ec_ecin_sec->size())
+    return NAN;
+  else
+    return _ec_ecin_m2u->at(i);
+}
+float Branches12::ec_ecin_m2v(int i) {
+  if (i >= _ec_ecin_sec->size())
+    return NAN;
+  else
+    return _ec_ecin_m2v->at(i);
+}
+float Branches12::ec_ecin_m2w(int i) {
+  if (i >= _ec_ecin_sec->size())
+    return NAN;
+  else
+    return _ec_ecin_m2w->at(i);
+}
+float Branches12::ec_ecin_m3u(int i) {
+  if (i >= _ec_ecin_sec->size())
+    return NAN;
+  else
+    return _ec_ecin_m3u->at(i);
+}
+float Branches12::ec_ecin_m3v(int i) {
+  if (i >= _ec_ecin_sec->size())
+    return NAN;
+  else
+    return _ec_ecin_m3v->at(i);
+}
+float Branches12::ec_ecin_m3w(int i) {
+  if (i >= _ec_ecin_sec->size())
+    return NAN;
+  else
+    return _ec_ecin_m3w->at(i);
+}
+float Branches12::ec_ecout_energy(int i) {
+  if (i >= _ec_ecin_sec->size())
+    return NAN;
+  else
+    return _ec_ecout_energy->at(i);
+}
+int Branches12::ec_ecout_sec(int i) {
+  if (i >= _ec_ecin_sec->size())
+    return -9999;
+  else
+    return _ec_ecout_sec->at(i);
+}
+float Branches12::ec_ecout_time(int i) {
+  if (i >= _ec_ecin_sec->size())
+    return NAN;
+  else
+    return _ec_ecout_time->at(i);
+}
+float Branches12::ec_ecout_path(int i) {
+  if (i >= _ec_ecin_sec->size())
+    return NAN;
+  else
+    return _ec_ecout_path->at(i);
+}
+float Branches12::ec_ecout_x(int i) {
+  if (i >= _ec_ecin_sec->size())
+    return NAN;
+  else
+    return _ec_ecout_x->at(i);
+}
+float Branches12::ec_ecout_y(int i) {
+  if (i >= _ec_ecin_sec->size())
+    return NAN;
+  else
+    return _ec_ecout_y->at(i);
+}
+float Branches12::ec_ecout_z(int i) {
+  if (i >= _ec_ecin_sec->size())
+    return NAN;
+  else
+    return _ec_ecout_z->at(i);
+}
+float Branches12::ec_ecout_hx(int i) {
+  if (i >= _ec_ecin_sec->size())
+    return NAN;
+  else
+    return _ec_ecout_hx->at(i);
+}
+float Branches12::ec_ecout_hy(int i) {
+  if (i >= _ec_ecin_sec->size())
+    return NAN;
+  else
+    return _ec_ecout_hy->at(i);
+}
+float Branches12::ec_ecout_hz(int i) {
+  if (i >= _ec_ecin_sec->size())
+    return NAN;
+  else
+    return _ec_ecout_hz->at(i);
+}
+float Branches12::ec_ecout_lu(int i) {
+  if (i >= _ec_ecin_sec->size())
+    return NAN;
+  else
+    return _ec_ecout_lu->at(i);
+}
+float Branches12::ec_ecout_lv(int i) {
+  if (i >= _ec_ecin_sec->size())
+    return NAN;
+  else
+    return _ec_ecout_lv->at(i);
+}
+float Branches12::ec_ecout_lw(int i) {
+  if (i >= _ec_ecin_sec->size())
+    return NAN;
+  else
+    return _ec_ecout_lw->at(i);
+}
+float Branches12::ec_ecout_du(int i) {
+  if (i >= _ec_ecin_sec->size())
+    return NAN;
+  else
+    return _ec_ecout_du->at(i);
+}
+float Branches12::ec_ecout_dv(int i) {
+  if (i >= _ec_ecin_sec->size())
+    return NAN;
+  else
+    return _ec_ecout_dv->at(i);
+}
+float Branches12::ec_ecout_dw(int i) {
+  if (i >= _ec_ecin_sec->size())
+    return NAN;
+  else
+    return _ec_ecout_dw->at(i);
+}
+float Branches12::ec_ecout_m2u(int i) {
+  if (i >= _ec_ecin_sec->size())
+    return NAN;
+  else
+    return _ec_ecout_m2u->at(i);
+}
+float Branches12::ec_ecout_m2v(int i) {
+  if (i >= _ec_ecin_sec->size())
+    return NAN;
+  else
+    return _ec_ecout_m2v->at(i);
+}
+float Branches12::ec_ecout_m2w(int i) {
+  if (i >= _ec_ecin_sec->size())
+    return NAN;
+  else
+    return _ec_ecout_m2w->at(i);
+}
+float Branches12::ec_ecout_m3u(int i) {
+  if (i >= _ec_ecin_sec->size())
+    return NAN;
+  else
+    return _ec_ecout_m3u->at(i);
+}
+float Branches12::ec_ecout_m3v(int i) {
+  if (i >= _ec_ecin_sec->size())
+    return NAN;
+  else
+    return _ec_ecout_m3v->at(i);
+}
+float Branches12::ec_ecout_m3w(int i) {
+  if (i >= _ec_ecin_sec->size())
+    return NAN;
+  else
+    return _ec_ecout_m3w->at(i);
+}
 
 float Branches12::cvt_x(int i) { return _cvt_x->at(i); }
 float Branches12::cvt_y(int i) { return _cvt_y->at(i); }
