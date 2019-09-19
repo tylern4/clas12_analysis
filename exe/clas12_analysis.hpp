@@ -88,7 +88,7 @@ size_t run(std::shared_ptr<TChain> _chain, std::shared_ptr<Histogram> _hists, in
     if (event->SinglePip()) _hists->Fill_WvsQ2_singlePi(event);
     if (event->NeutronPip()) _hists->Fill_WvsQ2_Npip(event);
   }
-
+  std::cout << "Percent = " << 100.0 * total / num_of_events << std::endl;
   // Return the total number of events
   return total;
 }

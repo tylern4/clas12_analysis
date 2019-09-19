@@ -77,9 +77,16 @@ void Histogram::Fill_WvsQ2(std::shared_ptr<Reaction> _e) {
     W_sec[sec - 1]->Fill(_e->W());
   }
   short det = _e->det();
-  if (det == 1) W_det[0]->Fill(_e->W());
-  if (det == 2) W_det[1]->Fill(_e->W());
-  if (det == 4) W_det[2]->Fill(_e->W());
+  if (det == 1 && _e->W() <= 3.5) {
+    W_det[0]->Fill(_e->W());
+    WQ2_det[0]->Fill(_e->W(), _e->Q2());
+  } else if (det == 2) {
+    W_det[1]->Fill(_e->W());
+    WQ2_det[1]->Fill(_e->W(), _e->Q2());
+  } else {
+    W_det[2]->Fill(_e->W());
+    WQ2_det[2]->Fill(_e->W(), _e->Q2());
+  }
 }
 void Histogram::Fill_WvsQ2(std::shared_ptr<MCReaction> _e) {
   W_vs_q2->Fill(_e->W(), _e->Q2(), _e->weight());
@@ -125,6 +132,10 @@ void Histogram::Fill_WvsQ2_Npip(std::shared_ptr<Reaction> _e) {
 
 void Histogram::Write_WvsQ2() {
   for (short i = 0; i < 3; i++) {
+    WQ2_det[i]->SetXTitle("W (GeV)");
+    WQ2_det[i]->SetYTitle("Q^2 (GeV^2)");
+    WQ2_det[i]->SetOption("COLZ");
+    WQ2_det[i]->Write();
     W_det[i]->SetXTitle("W (GeV)");
     W_det[i]->Write();
   }
@@ -232,6 +243,12 @@ void Histogram::Write_WvsQ2() {
 void Histogram::makeHists_sector() {
   for (short i = 0; i < 3; i++) {
     W_det[i] = std::make_shared<TH1D>(Form("W_det_%d", i + 1), Form("W detector: %d", i + 1), bins, zero, w_max);
+    if (i == 0)
+      WQ2_det[i] = std::make_shared<TH2D>(Form("WQ2_det_%d", i + 1), Form("W vs Q^2 detector: %d", i + 1), bins, zero,
+                                          w_max, bins, zero, 0.5);
+    else
+      WQ2_det[i] = std::make_shared<TH2D>(Form("WQ2_det_%d", i + 1), Form("W vs Q^2 detector: %d", i + 1), bins, zero,
+                                          w_max, bins, zero, q2_max);
   }
 
   for (short i = 0; i < num_sectors; i++) {

@@ -30,7 +30,7 @@ class Histogram {
   double Dt_max = 10.0;
   double Dt_min = -Dt_max;
   double q2_max = 8.0;
-  double w_max = 5.0;
+  double w_max = 4.0;
 
   double zero = 0.0;
 
@@ -51,6 +51,7 @@ class Histogram {
   TH2D_ptr W_vs_q2_sec[num_sectors];
   TH1D_ptr W_sec[num_sectors];
   TH1D_ptr W_det[3];
+  TH2D_ptr WQ2_det[3];
 
   TH2D_ptr W_vs_q2_singlePi_sec[num_sectors];
   TH1D_ptr W_singlePi_sec[num_sectors];
