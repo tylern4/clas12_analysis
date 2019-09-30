@@ -86,21 +86,21 @@ class Histogram {
 
   // W and Q^2
   void makeHists_sector();
-  void Fill_WvsQ2(std::shared_ptr<Reaction> _e);
-  void Fill_WvsQ2(std::shared_ptr<MCReaction> _e);
-  void Fill_WvsQ2_singlePi(std::shared_ptr<Reaction> _e);
-  void Fill_WvsQ2_Npip(std::shared_ptr<Reaction> _e);
+  void Fill_WvsQ2(const std::shared_ptr<Reaction>& _e);
+  void Fill_WvsQ2(const std::shared_ptr<MCReaction>& _e);
+  void Fill_WvsQ2_singlePi(const std::shared_ptr<Reaction>& _e);
+  void Fill_WvsQ2_Npip(const std::shared_ptr<Reaction>& _e);
   void Write_WvsQ2();
 
   // P and E
   void makeHists_MomVsBeta();
-  void Fill_MomVsBeta(int pid, int charge, double P, double beta);
+  void Fill_MomVsBeta(const std::shared_ptr<Branches12>& data, int part);
   void Write_MomVsBeta();
 
   // Delta T
   void makeHists_deltat();
-  void Fill_deltat_pi(int pid, int charge, float dt, float momentum, bool fc);
-  void Fill_deltat_prot(int pid, int charge, float dt, float momentum, bool fc);
+  void Fill_deltat_pi(const std::shared_ptr<Branches12>& data, const std::shared_ptr<Delta_T>& dt, int part);
+  void Fill_deltat_prot(const std::shared_ptr<Branches12>& data, const std::shared_ptr<Delta_T>& dt, int part);
   void Write_deltat();
 
   // EC Sampling Fraction

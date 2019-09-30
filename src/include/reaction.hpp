@@ -85,7 +85,7 @@ class Reaction {
   inline bool SingleP() {
     return ((_numProt == 1) && (_hasE && _hasP && !_hasPip && !_hasPim && !_hasNeutron && !_hasOther));
   }
-  inline bool NeutronPip() { return (Reaction::SinglePip() && Reaction::MM() >= 0.8 && Reaction::MM() <= 1.1); }
+  inline bool NeutronPip() { return (Reaction::SinglePip() && Reaction::MM() >= 0.85 && Reaction::MM() <= 1.0); }
 
   inline TLorentzVector e_mu() { return *_beam; }
   inline TLorentzVector e_mu_prime() { return *_elec; }

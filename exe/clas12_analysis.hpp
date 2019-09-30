@@ -58,9 +58,6 @@ size_t run(std::shared_ptr<TChain> _chain, std::shared_ptr<Histogram> _hists, in
     elec &= (data->pid(0) == 11);
     if (!elec) continue;
 
-    // If we pass electron cuts the event is processed
-    total++;
-
     // Make a reaction class from the data given
     auto event = std::make_shared<Reaction>(data, beam_energy);
     auto dt = std::make_shared<Delta_T>(data);
@@ -68,16 +65,18 @@ size_t run(std::shared_ptr<TChain> _chain, std::shared_ptr<Histogram> _hists, in
     // For each particle in the event
     for (int part = 1; part < data->gpart(); part++) {
       dt->dt_calc(part);
-      _hists->Fill_MomVsBeta(data->pid(part), data->charge(part), data->p(part), data->beta(part));
-      _hists->Fill_deltat_pi(data->pid(part), data->charge(part), dt->dt_Pi(), dt->momentum(), dt->ctof());
-      _hists->Fill_deltat_prot(data->pid(part), data->charge(part), dt->dt_P(), dt->momentum(), dt->ctof());
+      _hists->Fill_MomVsBeta(data, part);
+      _hists->Fill_deltat_pi(data, dt, part);
+      _hists->Fill_deltat_prot(data, dt, part);
 
       // Check particle ID's and fill the reaction class
-      if (abs(dt->dt_Pi()) < 0.5 && data->charge(part) == POSITIVE) {
+      if ((abs(dt->dt_Pi()) < 0.5 || abs(dt->dt_ctof_Pi()) < 0.2) && data->charge(part) == POSITIVE &&
+          data->pid(part) == PIP) {
         event->SetPip(part);
-      } else if (abs(dt->dt_P()) < 0.5 && data->charge(part) == POSITIVE) {
+      } else if ((abs(dt->dt_P()) < 0.5 || abs(dt->dt_ctof_P()) < 0.2) && data->charge(part) == POSITIVE &&
+                 data->pid(part) == PROTON) {
         event->SetProton(part);
-      } else if (abs(dt->dt_Pi()) < 0.5 && data->charge(part) == NEGATIVE) {
+      } else if ((abs(dt->dt_Pi()) < 0.5 || abs(dt->dt_ctof_Pi()) < 0.2) && data->charge(part) == NEGATIVE) {
         event->SetPim(part);
       } else {
         event->SetOther(part);
@@ -85,7 +84,10 @@ size_t run(std::shared_ptr<TChain> _chain, std::shared_ptr<Histogram> _hists, in
     }
     // Check the reaction class what kind of even it is and fill the appropriate histograms
     _hists->Fill_WvsQ2(event);
-    if (event->SinglePip()) _hists->Fill_WvsQ2_singlePi(event);
+    if (event->SinglePip()) {
+      total++;
+      _hists->Fill_WvsQ2_singlePi(event);
+    }
     if (event->NeutronPip()) _hists->Fill_WvsQ2_Npip(event);
   }
   std::cout << "Percent = " << 100.0 * total / num_of_events << std::endl;

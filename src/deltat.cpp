@@ -24,6 +24,8 @@ Delta_T::Delta_T(std::shared_ptr<Branches12> data) {
     _ctof_t_v = _data->sc_ctof_time(0);
     _ctof_r_v = _data->sc_ctof_path(0);
     _ctof_vertex = _vertex_time(_ctof_t_v, _ctof_r_v, 1.0);
+  } else {
+    _ctof_vertex = _vertex;
   }
 }
 

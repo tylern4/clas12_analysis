@@ -66,7 +66,7 @@ void Histogram::Write() {
   std::cerr << BOLDBLUE << "Done Writing!!!" << DEF << std::endl;
 }
 
-void Histogram::Fill_WvsQ2(std::shared_ptr<Reaction> _e) {
+void Histogram::Fill_WvsQ2(const std::shared_ptr<Reaction>& _e) {
   W_vs_q2->Fill(_e->W(), _e->Q2());
   W_hist->Fill(_e->W());
   Q2_hist->Fill(_e->Q2());
@@ -88,14 +88,14 @@ void Histogram::Fill_WvsQ2(std::shared_ptr<Reaction> _e) {
     WQ2_det[2]->Fill(_e->W(), _e->Q2());
   }
 }
-void Histogram::Fill_WvsQ2(std::shared_ptr<MCReaction> _e) {
+void Histogram::Fill_WvsQ2(const std::shared_ptr<MCReaction>& _e) {
   W_vs_q2->Fill(_e->W(), _e->Q2(), _e->weight());
   W_hist->Fill(_e->W(), _e->weight());
   Q2_hist->Fill(_e->Q2(), _e->weight());
 
   short sec = _e->sec();
   if (sec > 0 && sec <= 6) {
-    W_vs_q2_sec[sec - 1]->Fill(_e->W(), _e->Q2(), 100.0 * _e->weight());
+    W_vs_q2_sec[sec - 1]->Fill(_e->W(), _e->Q2(), _e->weight());
     W_sec[sec - 1]->Fill(_e->W(), _e->weight());
   }
 
@@ -113,7 +113,7 @@ void Histogram::Fill_WvsQ2(std::shared_ptr<MCReaction> _e) {
 }
 
 // W and Q^2
-void Histogram::Fill_WvsQ2_singlePi(std::shared_ptr<Reaction> _e) {
+void Histogram::Fill_WvsQ2_singlePi(const std::shared_ptr<Reaction>& _e) {
   short sec = _e->sec();
   W_vs_q2_singlePi->Fill(_e->W(), _e->Q2());
   W_hist_singlePi->Fill(_e->W());
@@ -128,7 +128,7 @@ void Histogram::Fill_WvsQ2_singlePi(std::shared_ptr<Reaction> _e) {
 }
 
 // W and Q^2
-void Histogram::Fill_WvsQ2_Npip(std::shared_ptr<Reaction> _e) {
+void Histogram::Fill_WvsQ2_Npip(const std::shared_ptr<Reaction>& _e) {
   short sec = _e->sec();
   if (sec > 0 && sec <= 6) {
     W_vs_q2_Npip_sec[sec - 1]->Fill(_e->W(), _e->Q2());
@@ -318,35 +318,57 @@ void Histogram::makeHists_deltat() {
   }
 }
 
-void Histogram::Fill_deltat_pi(int pid, int charge, float dt, float momentum, bool fc) {
+void Histogram::Fill_deltat_pi(const std::shared_ptr<Branches12>& data, const std::shared_ptr<Delta_T>& dt, int part) {
+  int charge = data->charge(part);
+  bool fc = dt->ctof();
+  int pid = data->pid(part);
+  float mom = data->p(part);
+  float time = NAN;
+  if (fc)
+    time = dt->dt_ctof_Pi();
+  else
+    time = dt->dt_Pi();
+
   if (charge == 1) {
-    delta_t_hist[1][0][0][fc]->Fill(momentum, dt);
+    delta_t_hist[1][0][0][fc]->Fill(mom, time);
     if (pid == PIP)
-      delta_t_hist[1][0][1][fc]->Fill(momentum, dt);
+      delta_t_hist[1][0][1][fc]->Fill(mom, time);
     else
-      delta_t_hist[1][0][2][fc]->Fill(momentum, dt);
+      delta_t_hist[1][0][2][fc]->Fill(mom, time);
   } else if (charge == -1) {
-    delta_t_hist[1][1][0][fc]->Fill(momentum, dt);
+    delta_t_hist[1][1][0][fc]->Fill(mom, time);
     if (pid == -PIP)
-      delta_t_hist[1][1][1][fc]->Fill(momentum, dt);
+      delta_t_hist[1][1][1][fc]->Fill(mom, time);
     else
-      delta_t_hist[1][1][2][fc]->Fill(momentum, dt);
+      delta_t_hist[1][1][2][fc]->Fill(mom, time);
   }
 }
 
-void Histogram::Fill_deltat_prot(int pid, int charge, float dt, float momentum, bool fc) {
+void Histogram::Fill_deltat_prot(const std::shared_ptr<Branches12>& data, const std::shared_ptr<Delta_T>& dt,
+                                 int part) {
+  int charge = data->charge(part);
+  bool fc = dt->ctof();
+  int pid = data->pid(part);
+  float mom = data->p(part);
+  float time = NAN;
+
+  if (fc)
+    time = dt->dt_ctof_P();
+  else
+    time = dt->dt_P();
+
   if (charge == 1) {
-    delta_t_hist[2][0][0][fc]->Fill(momentum, dt);
-    if (pid == PROTON)
-      delta_t_hist[2][0][1][fc]->Fill(momentum, dt);
+    delta_t_hist[2][0][0][fc]->Fill(mom, time);
+    if (pid == PIP)
+      delta_t_hist[2][0][1][fc]->Fill(mom, time);
     else
-      delta_t_hist[2][0][2][fc]->Fill(momentum, dt);
+      delta_t_hist[2][0][2][fc]->Fill(mom, time);
   } else if (charge == -1) {
-    delta_t_hist[2][1][0][fc]->Fill(momentum, dt);
-    if (pid == -PROTON)
-      delta_t_hist[2][1][1][fc]->Fill(momentum, dt);
+    delta_t_hist[2][1][0][fc]->Fill(mom, time);
+    if (pid == -PIP)
+      delta_t_hist[2][1][1][fc]->Fill(mom, time);
     else
-      delta_t_hist[2][1][2][fc]->Fill(momentum, dt);
+      delta_t_hist[2][1][2][fc]->Fill(mom, time);
   }
 }
 
@@ -390,10 +412,14 @@ void Histogram::makeHists_MomVsBeta() {
   }
 }
 
-void Histogram::Fill_MomVsBeta(int pid, int charge, double P, double beta) {
+void Histogram::Fill_MomVsBeta(const std::shared_ptr<Branches12>& data, int part) {
   int good_ID = 0;
+  float beta = data->beta(part);
+  float mom = data->p(part);
+  int charge = data->charge(part);
+  int pid = data->pid(part);
   if (beta != 0) {
-    momentum->Fill(P);
+    momentum->Fill(mom);
     for (short p = 0; p < particle_num; p++) {
       switch (p) {
         case 0:
@@ -410,26 +436,26 @@ void Histogram::Fill_MomVsBeta(int pid, int charge, double P, double beta) {
           break;
       }
 
-      momvsbeta_hist[p][0][0]->Fill(P, beta);
+      momvsbeta_hist[p][0][0]->Fill(mom, beta);
       if (good_ID == abs(pid)) {
-        momvsbeta_hist[p][0][1]->Fill(P, beta);
+        momvsbeta_hist[p][0][1]->Fill(mom, beta);
       } else {
-        momvsbeta_hist[p][0][2]->Fill(P, beta);
+        momvsbeta_hist[p][0][2]->Fill(mom, beta);
       }
 
       if (charge == -1) {
-        momvsbeta_hist[p][2][0]->Fill(P, beta);
+        momvsbeta_hist[p][2][0]->Fill(mom, beta);
         if (-good_ID == pid) {
-          momvsbeta_hist[p][2][1]->Fill(P, beta);
+          momvsbeta_hist[p][2][1]->Fill(mom, beta);
         } else {
-          momvsbeta_hist[p][2][2]->Fill(P, beta);
+          momvsbeta_hist[p][2][2]->Fill(mom, beta);
         }
       } else if (charge == 1) {
-        momvsbeta_hist[p][1][0]->Fill(P, beta);
+        momvsbeta_hist[p][1][0]->Fill(mom, beta);
         if (good_ID == pid) {
-          momvsbeta_hist[p][1][1]->Fill(P, beta);
+          momvsbeta_hist[p][1][1]->Fill(mom, beta);
         } else {
-          momvsbeta_hist[p][1][2]->Fill(P, beta);
+          momvsbeta_hist[p][1][2]->Fill(mom, beta);
         }
       }
     }
