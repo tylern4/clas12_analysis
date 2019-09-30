@@ -95,14 +95,21 @@ void Histogram::Fill_WvsQ2(std::shared_ptr<MCReaction> _e) {
 
   short sec = _e->sec();
   if (sec > 0 && sec <= 6) {
-    W_vs_q2_sec[sec - 1]->Fill(_e->W(), _e->Q2(), _e->weight());
+    W_vs_q2_sec[sec - 1]->Fill(_e->W(), _e->Q2(), 100.0 * _e->weight());
     W_sec[sec - 1]->Fill(_e->W(), _e->weight());
   }
 
   short det = _e->det();
-  if (det == 1) W_det[0]->Fill(_e->W(), _e->weight());
-  if (det == 2) W_det[1]->Fill(_e->W(), _e->weight());
-  if (det == 4) W_det[2]->Fill(_e->W(), _e->weight());
+  if (det == 1 && _e->W() <= 3.5) {
+    W_det[0]->Fill(_e->W(), _e->weight());
+    WQ2_det[0]->Fill(_e->W(), _e->Q2(), _e->weight());
+  } else if (det == 2) {
+    W_det[1]->Fill(_e->W(), _e->weight());
+    WQ2_det[1]->Fill(_e->W(), _e->Q2(), _e->weight());
+  } else {
+    W_det[2]->Fill(_e->W(), _e->weight());
+    WQ2_det[2]->Fill(_e->W(), _e->Q2(), _e->weight());
+  }
 }
 
 // W and Q^2
@@ -133,18 +140,18 @@ void Histogram::Fill_WvsQ2_Npip(std::shared_ptr<Reaction> _e) {
 void Histogram::Write_WvsQ2() {
   for (short i = 0; i < 3; i++) {
     WQ2_det[i]->SetXTitle("W (GeV)");
-    WQ2_det[i]->SetYTitle("Q^2 (GeV^2)");
-    WQ2_det[i]->SetOption("COLZ");
-    WQ2_det[i]->Write();
+    WQ2_det[i]->SetYTitle("Q^{2} (GeV^2)");
+    WQ2_det[i]->SetOption("COLZ1");
+    if (WQ2_det[i]->GetEntries()) WQ2_det[i]->Write();
     W_det[i]->SetXTitle("W (GeV)");
-    W_det[i]->Write();
+    if (W_det[i]->GetEntries()) W_det[i]->Write();
   }
   auto WvsQ2_can = std::make_unique<TCanvas>("WvsQ2_can", "W vs Q2 sectors", 1920, 1080);
   WvsQ2_can->Divide(3, 2);
   for (short i = 0; i < num_sectors; i++) {
     W_vs_q2_sec[i]->SetYTitle("Q^{2} (GeV^{2})");
     W_vs_q2_sec[i]->SetXTitle("W (GeV)");
-    W_vs_q2_sec[i]->SetOption("COLZ");
+    W_vs_q2_sec[i]->SetOption("COLZ1");
     WvsQ2_can->cd(i + 1);
     W_vs_q2_sec[i]->Draw("same");
   }
@@ -155,40 +162,41 @@ void Histogram::Write_WvsQ2() {
   for (short i = 0; i < num_sectors; i++) {
     W_sec[i]->SetXTitle("W (GeV)");
     W_can->cd(i + 1);
-    W_sec[i]->Fit("gaus", "QMR+", "QMR+", 0.5, 1.2);
+    // W_sec[i]->Fit("gaus", "QMR+", "QMR+", 0.5, 1.2);
     W_sec[i]->Draw("same");
   }
   W_can->Write();
 
   W_vs_q2->SetXTitle("W (GeV)");
   W_vs_q2->SetYTitle("Q^{2} (GeV^{2})");
-  W_vs_q2->SetOption("COLZ");
-  W_vs_q2->Write();
+  W_vs_q2->SetOption("COLZ1");
+  if (W_vs_q2->GetEntries()) W_vs_q2->Write();
 
   W_hist->SetXTitle("W (GeV)");
-  W_hist->Write();
+  if (W_hist->GetEntries()) W_hist->Write();
 
   Q2_hist->SetXTitle("Q^{2} (GeV^{2})");
-  Q2_hist->Write();
+  if (Q2_hist->GetEntries()) Q2_hist->Write();
 
   W_vs_q2_singlePi->SetXTitle("W (GeV)");
   W_vs_q2_singlePi->SetYTitle("Q^{2} (GeV^{2})");
-  W_vs_q2_singlePi->SetOption("COLZ");
-  W_vs_q2_singlePi->Write();
+  W_vs_q2_singlePi->SetOption("COLZ1");
+  if (W_vs_q2_singlePi->GetEntries()) W_vs_q2_singlePi->Write();
 
   W_hist_singlePi->SetXTitle("W (GeV)");
-  W_hist_singlePi->Write();
+  if (W_hist_singlePi->GetEntries()) W_hist_singlePi->Write();
 
   Q2_hist_singlePi->SetXTitle("Q^{2} (GeV^{2})");
-  Q2_hist_singlePi->Write();
-  MM_neutron->Write();
+  if (Q2_hist_singlePi->GetEntries()) Q2_hist_singlePi->Write();
+
+  if (MM_neutron->GetEntries()) MM_neutron->Write();
 
   auto wvsq2_sec = RootOutputFile->mkdir("wvsq2_sec");
   wvsq2_sec->cd();
   for (short i = 0; i < num_sectors; i++) {
     W_vs_q2_sec[i]->SetYTitle("Q^{2} (GeV^{2})");
     W_vs_q2_sec[i]->SetXTitle("W (GeV)");
-    W_vs_q2_sec[i]->SetOption("COLZ");
+    W_vs_q2_sec[i]->SetOption("COLZ1");
     W_vs_q2_sec[i]->Write();
   }
   auto w_sec = RootOutputFile->mkdir("w_sec");
@@ -202,23 +210,26 @@ void Histogram::Write_WvsQ2() {
   for (short i = 0; i < num_sectors; i++) {
     W_vs_q2_singlePi_sec[i]->SetYTitle("Q^{2} (GeV^{2})");
     W_vs_q2_singlePi_sec[i]->SetXTitle("W (GeV)");
-    W_vs_q2_singlePi_sec[i]->SetOption("COLZ");
-    W_vs_q2_singlePi_sec[i]->Write();
+    W_vs_q2_singlePi_sec[i]->SetOption("COLZ1");
+    if (W_vs_q2_singlePi_sec[i]->GetEntries()) W_vs_q2_singlePi_sec[i]->Write();
   }
+
   for (short i = 0; i < num_sectors; i++) {
-    W_vs_MM_singlePi[i]->SetOption("COLZ");
+    W_vs_MM_singlePi[i]->SetOption("COLZ1");
     W_vs_MM_singlePi[i]->SetYTitle("MM (GeV)");
     W_vs_MM_singlePi[i]->SetXTitle("W (GeV)");
-    W_vs_MM_singlePi[i]->Write();
+    if (W_vs_MM_singlePi[i]->GetEntries()) W_vs_MM_singlePi[i]->Write();
   }
+
   for (short i = 0; i < num_sectors; i++) {
     W_singlePi_sec[i]->SetXTitle("W (GeV)");
-    W_singlePi_sec[i]->Write();
+    if (W_singlePi_sec[i]->GetEntries()) W_singlePi_sec[i]->Write();
   }
+
   for (short i = 0; i < num_sectors; i++) {
-    MM_neutron_sec[i]->Fit("gaus", "QMR+", "QMR+", 0.7, 1.1);
+    if (MM_neutron_sec[i]->GetEntries()) MM_neutron_sec[i]->Fit("gaus", "QMR+", "QMR+", 0.7, 1.1);
     MM_neutron_sec[i]->SetXTitle("Mass (GeV)");
-    MM_neutron_sec[i]->Write();
+    if (MM_neutron_sec[i]->GetEntries()) MM_neutron_sec[i]->Write();
   }
 
   auto Npip_sec = RootOutputFile->mkdir("Npip_sec");
@@ -227,7 +238,7 @@ void Histogram::Write_WvsQ2() {
   for (short i = 0; i < num_sectors; i++) {
     W_vs_q2_Npip_sec[i]->SetYTitle("Q^{2} (GeV^{2})");
     W_vs_q2_Npip_sec[i]->SetXTitle("W (GeV)");
-    W_vs_q2_Npip_sec[i]->SetOption("COLZ");
+    W_vs_q2_Npip_sec[i]->SetOption("COLZ1");
     W_vs_q2_Npip_sec[i]->Write();
   }
   for (short i = 0; i < num_sectors; i++) {
@@ -244,10 +255,10 @@ void Histogram::makeHists_sector() {
   for (short i = 0; i < 3; i++) {
     W_det[i] = std::make_shared<TH1D>(Form("W_det_%d", i + 1), Form("W detector: %d", i + 1), bins, zero, w_max);
     if (i == 0)
-      WQ2_det[i] = std::make_shared<TH2D>(Form("WQ2_det_%d", i + 1), Form("W vs Q^2 detector: %d", i + 1), bins, zero,
+      WQ2_det[i] = std::make_shared<TH2D>(Form("WQ2_det_%d", i + 1), Form("W vs Q^{2} detector: %d", i + 1), bins, zero,
                                           w_max, bins, zero, 0.5);
     else
-      WQ2_det[i] = std::make_shared<TH2D>(Form("WQ2_det_%d", i + 1), Form("W vs Q^2 detector: %d", i + 1), bins, zero,
+      WQ2_det[i] = std::make_shared<TH2D>(Form("WQ2_det_%d", i + 1), Form("W vs Q^{2} detector: %d", i + 1), bins, zero,
                                           w_max, bins, zero, q2_max);
   }
 
@@ -347,7 +358,7 @@ void Histogram::Write_deltat() {
       for (short i = 0; i < with_id_num; i++) {
         delta_t_hist[p][c][i][0]->SetXTitle("Momentum (GeV)");
         delta_t_hist[p][c][i][0]->SetYTitle("#Deltat");
-        delta_t_hist[p][c][i][0]->SetOption("COLZ");
+        delta_t_hist[p][c][i][0]->SetOption("COLZ1");
         if (delta_t_hist[p][c][i][0]->GetEntries() > 1) delta_t_hist[p][c][i][0]->Write();
       }
     }
@@ -359,7 +370,7 @@ void Histogram::Write_deltat() {
       for (short i = 0; i < with_id_num; i++) {
         delta_t_hist[p][c][i][1]->SetXTitle("Momentum (GeV)");
         delta_t_hist[p][c][i][1]->SetYTitle("#Deltat");
-        delta_t_hist[p][c][i][1]->SetOption("COLZ");
+        delta_t_hist[p][c][i][1]->SetOption("COLZ1");
         if (delta_t_hist[p][c][i][1]->GetEntries() > 1) delta_t_hist[p][c][i][1]->Write();
       }
     }
@@ -433,7 +444,7 @@ void Histogram::Write_MomVsBeta() {
       for (short i = 0; i < with_id_num; i++) {
         momvsbeta_hist[p][c][i]->SetXTitle("Momentum (GeV)");
         momvsbeta_hist[p][c][i]->SetYTitle("#beta");
-        momvsbeta_hist[p][c][i]->SetOption("COLZ");
+        momvsbeta_hist[p][c][i]->SetOption("COLZ1");
         momvsbeta_hist[p][c][i]->Write();
       }
     }
@@ -444,6 +455,6 @@ void Histogram::Fill_EC(double sf, double momentum) { EC_sampling_fraction->Fill
 void Histogram::Write_EC() {
   EC_sampling_fraction->SetXTitle("Momentum (GeV)");
   EC_sampling_fraction->SetYTitle("Sampling Fraction");
-  EC_sampling_fraction->SetOption("COLZ");
+  EC_sampling_fraction->SetOption("COLZ1");
   EC_sampling_fraction->Write();
 }
