@@ -5,6 +5,7 @@
 
 #ifndef DT_H_GUARD
 #define DT_H_GUARD
+#include <cmath>
 #include <iostream>
 #include "branches.hpp"
 
@@ -38,12 +39,21 @@ class Delta_T {
   ~Delta_T();
 
   void dt_calc(int i);
+
+  float dt_E(int i);
+  float dt_P(int i);
+  float dt_Pi(int i);
+  float dt_K(int i);
   float dt_E();
   float dt_P();
   float dt_Pi();
   float dt_K();
   float dt(int pid);
 
+  float dt_ctof_E(int i);
+  float dt_ctof_P(int i);
+  float dt_ctof_Pi(int i);
+  float dt_ctof_K(int i);
   float dt_ctof_E();
   float dt_ctof_P();
   float dt_ctof_Pi();

@@ -47,7 +47,7 @@ Histogram::~Histogram() { this->Write(); }
 
 void Histogram::Write() {
   std::cout << GREEN << "Writting" << DEF << std::endl;
-
+  Write_EC();
   std::cerr << BOLDBLUE << "WvsQ2()" << DEF << std::endl;
   TDirectory* WvsQ2_folder = RootOutputFile->mkdir("W vs Q2");
   WvsQ2_folder->cd();
@@ -319,6 +319,7 @@ void Histogram::makeHists_deltat() {
 }
 
 void Histogram::Fill_deltat_pi(const std::shared_ptr<Branches12>& data, const std::shared_ptr<Delta_T>& dt, int part) {
+  auto _cuts = std::make_unique<Cuts>(data, dt);
   int charge = data->charge(part);
   bool fc = dt->ctof();
   int pid = data->pid(part);
@@ -331,13 +332,13 @@ void Histogram::Fill_deltat_pi(const std::shared_ptr<Branches12>& data, const st
 
   if (charge == 1) {
     delta_t_hist[1][0][0][fc]->Fill(mom, time);
-    if (pid == PIP)
+    if (_cuts->IsPip(part))
       delta_t_hist[1][0][1][fc]->Fill(mom, time);
     else
       delta_t_hist[1][0][2][fc]->Fill(mom, time);
   } else if (charge == -1) {
     delta_t_hist[1][1][0][fc]->Fill(mom, time);
-    if (pid == -PIP)
+    if (_cuts->IsPim(part))
       delta_t_hist[1][1][1][fc]->Fill(mom, time);
     else
       delta_t_hist[1][1][2][fc]->Fill(mom, time);
@@ -346,6 +347,7 @@ void Histogram::Fill_deltat_pi(const std::shared_ptr<Branches12>& data, const st
 
 void Histogram::Fill_deltat_prot(const std::shared_ptr<Branches12>& data, const std::shared_ptr<Delta_T>& dt,
                                  int part) {
+  auto _cuts = std::make_unique<Cuts>(data, dt);
   int charge = data->charge(part);
   bool fc = dt->ctof();
   int pid = data->pid(part);
@@ -359,13 +361,13 @@ void Histogram::Fill_deltat_prot(const std::shared_ptr<Branches12>& data, const 
 
   if (charge == 1) {
     delta_t_hist[2][0][0][fc]->Fill(mom, time);
-    if (pid == PIP)
+    if (_cuts->IsProton(part))
       delta_t_hist[2][0][1][fc]->Fill(mom, time);
     else
       delta_t_hist[2][0][2][fc]->Fill(mom, time);
-  } else if (charge == -1) {
+
     delta_t_hist[2][1][0][fc]->Fill(mom, time);
-    if (pid == -PIP)
+    if (pid == PROTON)
       delta_t_hist[2][1][1][fc]->Fill(mom, time);
     else
       delta_t_hist[2][1][2][fc]->Fill(mom, time);
@@ -477,7 +479,7 @@ void Histogram::Write_MomVsBeta() {
   }
 }
 
-void Histogram::Fill_EC(double sf, double momentum) { EC_sampling_fraction->Fill(momentum, sf); }
+void Histogram::Fill_EC(double etot, double momentum) { EC_sampling_fraction->Fill(momentum, etot / momentum); }
 void Histogram::Write_EC() {
   EC_sampling_fraction->SetXTitle("Momentum (GeV)");
   EC_sampling_fraction->SetYTitle("Sampling Fraction");

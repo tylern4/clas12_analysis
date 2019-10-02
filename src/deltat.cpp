@@ -79,11 +79,45 @@ void Delta_T::dt_calc(int i) {
   }
 }
 
+float Delta_T::dt_E(int i) {
+  this->dt_calc(i);
+  return _deltat(ELECTRON);
+}
+float Delta_T::dt_P(int i) {
+  this->dt_calc(i);
+  return _deltat(PROTON);
+}
+float Delta_T::dt_Pi(int i) {
+  this->dt_calc(i);
+  return _deltat(PIP);
+}
+float Delta_T::dt_K(int i) {
+  this->dt_calc(i);
+  return _deltat(KP);
+}
+
 float Delta_T::dt_E() { return _deltat(ELECTRON); }
 float Delta_T::dt_P() { return _deltat(PROTON); }
 float Delta_T::dt_Pi() { return _deltat(PIP); }
 float Delta_T::dt_K() { return _deltat(KP); }
 float Delta_T::dt(int pid) { return _deltat(pid); }
+
+float Delta_T::dt_ctof_E(int i) {
+  this->dt_calc(i);
+  return _ctof_deltat(ELECTRON);
+}
+float Delta_T::dt_ctof_P(int i) {
+  this->dt_calc(i);
+  return _ctof_deltat(PROTON);
+}
+float Delta_T::dt_ctof_Pi(int i) {
+  this->dt_calc(i);
+  return _ctof_deltat(PIP);
+}
+float Delta_T::dt_ctof_K(int i) {
+  this->dt_calc(i);
+  return _ctof_deltat(KP);
+}
 
 float Delta_T::dt_ctof_E() { return _ctof_deltat(ELECTRON); }
 float Delta_T::dt_ctof_P() { return _ctof_deltat(PROTON); }

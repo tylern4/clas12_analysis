@@ -56,7 +56,7 @@ class Reaction {
 
  public:
   Reaction(){};
-  Reaction(std::shared_ptr<Branches12> data, float beam_energy);
+  Reaction(const std::shared_ptr<Branches12> &data, float beam_energy);
   ~Reaction();
 
   inline bool mc() { return _mc; }
@@ -85,7 +85,13 @@ class Reaction {
   inline bool SingleP() {
     return ((_numProt == 1) && (_hasE && _hasP && !_hasPip && !_hasPim && !_hasNeutron && !_hasOther));
   }
-  inline bool NeutronPip() { return (Reaction::SinglePip() && Reaction::MM() >= 0.85 && Reaction::MM() <= 1.0); }
+
+  inline bool NeutronPip() {
+    bool _channel = true;
+    _channel &= ((_numPip == 1) && (_hasE && !_hasP && _hasPip && !_hasPim && _hasNeutron)) ||
+                (Reaction::SinglePip() && Reaction::MM() >= 0.85 && Reaction::MM() <= 1.0);
+    return _channel;
+  }
 
   inline TLorentzVector e_mu() { return *_beam; }
   inline TLorentzVector e_mu_prime() { return *_elec; }
@@ -102,7 +108,7 @@ class MCReaction : public Reaction {
   std::unique_ptr<TLorentzVector> _gamma_mc;
 
  public:
-  MCReaction(std::shared_ptr<Branches12> data, float beam_energy);
+  MCReaction(const std::shared_ptr<Branches12> &data, float beam_energy);
   void SetMCElec();
   inline float weight() { return _data->mc_weight(); }
   inline float W() { return _W_mc; }

@@ -5,7 +5,7 @@
 /**************************************/
 #include "reaction.hpp"
 
-Reaction::Reaction(std::shared_ptr<Branches12> data, float beam_energy) {
+Reaction::Reaction(const std::shared_ptr<Branches12>& data, float beam_energy) {
   _data = data;
   _beam = std::make_unique<TLorentzVector>();
   _beam_energy = beam_energy;  // atof(getenv("CLAS12_E"));
@@ -62,7 +62,7 @@ void Reaction::SetNeutron(int i) {
 }
 
 void Reaction::SetOther(int i) {
-  if (_data->pid(i) == NEUTRON)
+  if (_data->pid(i) == NEUTRON && abs(_data->chi2pid(i)) < 0.5)
     SetNeutron(i);
   else {
     _numOther++;
@@ -73,7 +73,7 @@ void Reaction::SetOther(int i) {
 
 void Reaction::CalcMissMass() {
   auto mm = std::make_unique<TLorentzVector>();
-  *mm += (*_beam - *_elec + *_target);
+  *mm += (*_gamma + *_target);
   if (SinglePip() || NeutronPip()) {
     *mm -= *_pip;
     _MM = mm->M();
@@ -105,7 +105,7 @@ float Reaction::MM2() {
   return _MM2;
 }
 
-MCReaction::MCReaction(std::shared_ptr<Branches12> data, float beam_enrgy) {
+MCReaction::MCReaction(const std::shared_ptr<Branches12>& data, float beam_enrgy) {
   _data = data;
   if (!_data->mc()) _data->mc_branches();
   _beam = std::make_unique<TLorentzVector>();
