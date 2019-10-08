@@ -93,9 +93,9 @@ class Reaction {
     return _channel;
   }
 
-  inline TLorentzVector e_mu() { return *_beam; }
-  inline TLorentzVector e_mu_prime() { return *_elec; }
-  inline TLorentzVector gamma() { return *_gamma; }
+  const TLorentzVector &e_mu() { return *_beam; }
+  const TLorentzVector &e_mu_prime() { return *_elec; }
+  const TLorentzVector &gamma() { return *_gamma; }
 };
 
 class MCReaction : public Reaction {

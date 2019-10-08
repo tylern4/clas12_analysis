@@ -248,8 +248,8 @@ class Branches12 {
 
  public:
   Branches12(){};
-  Branches12(std::shared_ptr<TChain> tree);
-  Branches12(std::shared_ptr<TChain> tree, bool mc);
+  Branches12(const std::shared_ptr<TChain> &tree);
+  Branches12(const std::shared_ptr<TChain> &tree, bool mc);
   ~Branches12(){};
   bool mc();
   void mc_branches();
@@ -469,4 +469,8 @@ class Branches12 {
   float ft_hodo_radius(int i);
 };
 
+class MCBranches12 : public Branches12 {
+ public:
+  MCBranches12(const std::shared_ptr<TChain> &tree);
+};
 #endif
