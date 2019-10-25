@@ -479,7 +479,10 @@ void Histogram::Write_MomVsBeta() {
   }
 }
 
-void Histogram::Fill_EC(double etot, double momentum) { EC_sampling_fraction->Fill(momentum, etot / momentum); }
+void Histogram::Fill_EC(const std::shared_ptr<Branches12>& data) {
+  EC_sampling_fraction->Fill(data->p(0), data->ec_tot_energy(0) / data->p(0));
+}
+
 void Histogram::Write_EC() {
   EC_sampling_fraction->SetXTitle("Momentum (GeV)");
   EC_sampling_fraction->SetYTitle("Sampling Fraction");

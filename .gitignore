@@ -53,3 +53,5 @@ cmake-build-debug
 .vscode
 build
 cpp/clas12_analysis
+*.phd
+*.class

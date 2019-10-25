@@ -105,7 +105,7 @@ class Histogram {
   void Write_deltat();
 
   // EC Sampling Fraction
-  void Fill_EC(double etot, double momentum);
+  void Fill_EC(const std::shared_ptr<Branches12>& data);
   void Write_EC();
 
   //
