@@ -84,7 +84,7 @@ size_t run(std::shared_ptr<TChain> _chain, const std::shared_ptr<Histogram>& _hi
     }
     // Check the reaction class what kind of even it is and fill the appropriate histograms
     _hists->Fill_WvsQ2(event);
-    if (event->SingleP()) _hists->Fill_WvsQ2_singleP(event);
+    if (event->SinglePip()) _hists->Fill_WvsQ2_singlePip(event);
     if (event->NeutronPip()) _hists->Fill_WvsQ2_Npip(event);
   }
   std::cout << "Percent = " << 100.0 * total / num_of_events << std::endl;

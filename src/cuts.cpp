@@ -31,8 +31,9 @@ bool Cuts::ElectronCuts() {
   // FiducialCuts is the slowest of the cuts because of all the calcuations
   // If it already fails a different cut we will quit before
   // calulating for the FiducialCuts to save time
-  if (!_elec) return _elec;
-  _elec &= FiducialCuts();
+
+  // if (!_elec) return _elec;
+  //_elec &= FiducialCuts();
 
   return _elec;
 }

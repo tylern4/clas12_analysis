@@ -31,9 +31,10 @@ Histogram::Histogram(const std::string& output_file) {
 
   MM_neutron = std::make_shared<TH1D>("missMass", "missMass", bins, zero, 4.0);
 
-  W_hist_singleP = std::make_shared<TH1D>("W_singleP", "W_singleP", bins, zero, w_max);
-  Q2_hist_singleP = std::make_shared<TH1D>("Q2_singleP", "Q2_singleP", bins, zero, q2_max);
-  W_vs_q2_singleP = std::make_shared<TH2D>("W_vs_q2_singleP", "W_vs_q2_singleP", bins, zero, w_max, bins, zero, q2_max);
+  W_hist_singlePip = std::make_shared<TH1D>("W_singlePip", "W_singlePip", bins, zero, w_max);
+  Q2_hist_singlePip = std::make_shared<TH1D>("Q2_singlePip", "Q2_singlePip", bins, zero, q2_max);
+  W_vs_q2_singlePip =
+      std::make_shared<TH2D>("W_vs_q2_singlePip", "W_vs_q2_singlePip", bins, zero, w_max, bins, zero, q2_max);
 
   EC_sampling_fraction =
       std::make_shared<TH2D>("EC_sampling_fraction", "EC_sampling_fraction", bins, p_min, p_max, bins, zero, 1.0);
@@ -112,16 +113,16 @@ void Histogram::Fill_WvsQ2(const std::shared_ptr<MCReaction>& _e) {
 }
 
 // W and Q^2
-void Histogram::Fill_WvsQ2_singleP(const std::shared_ptr<Reaction>& _e) {
+void Histogram::Fill_WvsQ2_singlePip(const std::shared_ptr<Reaction>& _e) {
   short sec = _e->sec();
-  W_vs_q2_singleP->Fill(_e->W(), _e->Q2());
-  W_hist_singleP->Fill(_e->W());
-  Q2_hist_singleP->Fill(_e->Q2());
+  W_vs_q2_singlePip->Fill(_e->W(), _e->Q2());
+  W_hist_singlePip->Fill(_e->W());
+  Q2_hist_singlePip->Fill(_e->Q2());
   MM_neutron->Fill(_e->MM());
   if (sec > 0 && sec <= 6) {
-    W_vs_MM_singleP[sec - 1]->Fill(_e->W(), _e->MM());
-    W_vs_q2_singleP_sec[sec - 1]->Fill(_e->W(), _e->Q2());
-    W_singleP_sec[sec - 1]->Fill(_e->W());
+    W_vs_MM_singlePip[sec - 1]->Fill(_e->W(), _e->MM());
+    W_vs_q2_singlePip_sec[sec - 1]->Fill(_e->W(), _e->Q2());
+    W_singlePip_sec[sec - 1]->Fill(_e->W());
     MM_neutron_sec[sec - 1]->Fill(_e->MM());
   }
 }
@@ -177,16 +178,16 @@ void Histogram::Write_WvsQ2() {
   Q2_hist->SetXTitle("Q^{2} (GeV^{2})");
   if (Q2_hist->GetEntries()) Q2_hist->Write();
 
-  W_vs_q2_singleP->SetXTitle("W (GeV)");
-  W_vs_q2_singleP->SetYTitle("Q^{2} (GeV^{2})");
-  W_vs_q2_singleP->SetOption("COLZ1");
-  if (W_vs_q2_singleP->GetEntries()) W_vs_q2_singleP->Write();
+  W_vs_q2_singlePip->SetXTitle("W (GeV)");
+  W_vs_q2_singlePip->SetYTitle("Q^{2} (GeV^{2})");
+  W_vs_q2_singlePip->SetOption("COLZ1");
+  if (W_vs_q2_singlePip->GetEntries()) W_vs_q2_singlePip->Write();
 
-  W_hist_singleP->SetXTitle("W (GeV)");
-  if (W_hist_singleP->GetEntries()) W_hist_singleP->Write();
+  W_hist_singlePip->SetXTitle("W (GeV)");
+  if (W_hist_singlePip->GetEntries()) W_hist_singlePip->Write();
 
-  Q2_hist_singleP->SetXTitle("Q^{2} (GeV^{2})");
-  if (Q2_hist_singleP->GetEntries()) Q2_hist_singleP->Write();
+  Q2_hist_singlePip->SetXTitle("Q^{2} (GeV^{2})");
+  if (Q2_hist_singlePip->GetEntries()) Q2_hist_singlePip->Write();
 
   if (MM_neutron->GetEntries()) MM_neutron->Write();
 
@@ -204,25 +205,25 @@ void Histogram::Write_WvsQ2() {
     W_sec[i]->SetXTitle("W (GeV)");
     W_sec[i]->Write();
   }
-  auto singleP_sec = RootOutputFile->mkdir("singleP_sec");
-  singleP_sec->cd();
+  auto singlePip_sec = RootOutputFile->mkdir("singlePip_sec");
+  singlePip_sec->cd();
   for (short i = 0; i < num_sectors; i++) {
-    W_vs_q2_singleP_sec[i]->SetYTitle("Q^{2} (GeV^{2})");
-    W_vs_q2_singleP_sec[i]->SetXTitle("W (GeV)");
-    W_vs_q2_singleP_sec[i]->SetOption("COLZ1");
-    if (W_vs_q2_singleP_sec[i]->GetEntries()) W_vs_q2_singleP_sec[i]->Write();
+    W_vs_q2_singlePip_sec[i]->SetYTitle("Q^{2} (GeV^{2})");
+    W_vs_q2_singlePip_sec[i]->SetXTitle("W (GeV)");
+    W_vs_q2_singlePip_sec[i]->SetOption("COLZ1");
+    if (W_vs_q2_singlePip_sec[i]->GetEntries()) W_vs_q2_singlePip_sec[i]->Write();
   }
 
   for (short i = 0; i < num_sectors; i++) {
-    W_vs_MM_singleP[i]->SetOption("COLZ1");
-    W_vs_MM_singleP[i]->SetYTitle("MM (GeV)");
-    W_vs_MM_singleP[i]->SetXTitle("W (GeV)");
-    if (W_vs_MM_singleP[i]->GetEntries()) W_vs_MM_singleP[i]->Write();
+    W_vs_MM_singlePip[i]->SetOption("COLZ1");
+    W_vs_MM_singlePip[i]->SetYTitle("MM (GeV)");
+    W_vs_MM_singlePip[i]->SetXTitle("W (GeV)");
+    if (W_vs_MM_singlePip[i]->GetEntries()) W_vs_MM_singlePip[i]->Write();
   }
 
   for (short i = 0; i < num_sectors; i++) {
-    W_singleP_sec[i]->SetXTitle("W (GeV)");
-    if (W_singleP_sec[i]->GetEntries()) W_singleP_sec[i]->Write();
+    W_singlePip_sec[i]->SetXTitle("W (GeV)");
+    if (W_singlePip_sec[i]->GetEntries()) W_singlePip_sec[i]->Write();
   }
 
   for (short i = 0; i < num_sectors; i++) {
@@ -267,12 +268,12 @@ void Histogram::makeHists_sector() {
 
     W_sec[i] = std::make_shared<TH1D>(Form("w_sec_%d", i + 1), Form("W Sector: %d", i + 1), bins, zero, w_max);
 
-    W_vs_q2_singleP_sec[i] =
-        std::make_shared<TH2D>(Form("wvsq2_sec_singleP_%d", i + 1), Form("W vs Q^{2} W_singleP Sector: %d", i + 1),
+    W_vs_q2_singlePip_sec[i] =
+        std::make_shared<TH2D>(Form("wvsq2_sec_singlePip_%d", i + 1), Form("W vs Q^{2} W_singlePip Sector: %d", i + 1),
                                bins, zero, w_max, bins, zero, q2_max);
 
-    W_singleP_sec[i] =
-        std::make_shared<TH1D>(Form("w_sec_singleP_%d", i + 1), Form("W singleP Sector: %d", i + 1), bins, zero, w_max);
+    W_singlePip_sec[i] = std::make_shared<TH1D>(Form("w_sec_singlePip_%d", i + 1),
+                                                Form("W singlePip Sector: %d", i + 1), bins, zero, w_max);
 
     W_vs_q2_Npip_sec[i] =
         std::make_shared<TH2D>(Form("wvsq2_sec_Npip_%d", i + 1), Form("W vs Q^{2} W_Npip Sector: %d", i + 1), bins,
@@ -287,8 +288,9 @@ void Histogram::makeHists_sector() {
     MM_Npip_sec[i] = std::make_shared<TH1D>(Form("MM_Npip_Sec_%d", i + 1), Form("MM^{2} neutron pip Sector: %d", i + 1),
                                             bins, -2.0, 2.0);
 
-    W_vs_MM_singleP[i] = std::make_shared<TH2D>(Form("W_vs_MM_singleP_%d", i + 1), Form("W_vs_MM_singleP_%d", i + 1),
-                                                bins, zero, w_max, bins, -q2_max, q2_max);
+    W_vs_MM_singlePip[i] =
+        std::make_shared<TH2D>(Form("W_vs_MM_singlePip_%d", i + 1), Form("W_vs_MM_singlePip_%d", i + 1), bins, zero,
+                               w_max, bins, -q2_max, q2_max);
   }
 }
 

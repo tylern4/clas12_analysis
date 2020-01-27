@@ -54,20 +54,20 @@ class Histogram {
   TH1D_ptr W_det[3];
   TH2D_ptr WQ2_det[3];
 
-  TH2D_ptr W_vs_q2_singleP_sec[num_sectors];
-  TH1D_ptr W_singleP_sec[num_sectors];
+  TH2D_ptr W_vs_q2_singlePip_sec[num_sectors];
+  TH1D_ptr W_singlePip_sec[num_sectors];
 
   TH2D_ptr W_vs_q2_Npip_sec[num_sectors];
-  TH2D_ptr W_vs_MM_singleP[num_sectors];
+  TH2D_ptr W_vs_MM_singlePip[num_sectors];
   TH1D_ptr W_Npip_sec[num_sectors];
   TH1D_ptr MM_Npip_sec[num_sectors];
 
   TH1D_ptr MM_neutron;
   TH1D_ptr MM_neutron_sec[num_sectors];
 
-  TH1D_ptr W_hist_singleP;
-  TH1D_ptr Q2_hist_singleP;
-  TH2D_ptr W_vs_q2_singleP;
+  TH1D_ptr W_hist_singlePip;
+  TH1D_ptr Q2_hist_singlePip;
+  TH2D_ptr W_vs_q2_singlePip;
 
   // EC Sampling Fraction
   TH2D_ptr EC_sampling_fraction;
@@ -89,7 +89,7 @@ class Histogram {
   void makeHists_sector();
   void Fill_WvsQ2(const std::shared_ptr<Reaction>& _e);
   void Fill_WvsQ2(const std::shared_ptr<MCReaction>& _e);
-  void Fill_WvsQ2_singleP(const std::shared_ptr<Reaction>& _e);
+  void Fill_WvsQ2_singlePip(const std::shared_ptr<Reaction>& _e);
   void Fill_WvsQ2_Npip(const std::shared_ptr<Reaction>& _e);
   void Write_WvsQ2();
 
