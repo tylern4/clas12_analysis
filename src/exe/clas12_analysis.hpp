@@ -34,7 +34,7 @@ size_t run(std::shared_ptr<TChain> _chain, const std::shared_ptr<Histogram>& _hi
   // Get the number of events in this thread
   size_t num_of_events = (int)_chain->GetEntries();
   float beam_energy = NAN;
-  if (getenv("CLAS12_E") != NULL) beam_energy = atof(getenv("CLAS12_E"));
+  if (getenv("BEAM_E") != NULL) beam_energy = atof(getenv("BEAM_E"));
 
   // Print some information for each thread
   std::cout << "=============== " << RED << "Thread " << thread_id << DEF << " =============== " << BLUE
@@ -84,9 +84,7 @@ size_t run(std::shared_ptr<TChain> _chain, const std::shared_ptr<Histogram>& _hi
     }
     // Check the reaction class what kind of even it is and fill the appropriate histograms
     _hists->Fill_WvsQ2(event);
-    if (event->SinglePip()) {
-      _hists->Fill_WvsQ2_singlePi(event);
-    }
+    if (event->SingleP()) _hists->Fill_WvsQ2_singleP(event);
     if (event->NeutronPip()) _hists->Fill_WvsQ2_Npip(event);
   }
   std::cout << "Percent = " << 100.0 * total / num_of_events << std::endl;
@@ -94,3 +92,18 @@ size_t run(std::shared_ptr<TChain> _chain, const std::shared_ptr<Histogram>& _hi
   return num_of_events;
 }
 #endif
+
+/*
+ep -> e x+
+
+W for all events
+W for 2 particles
+W for 2 Part 2nd positive
+hist Phi_e - Phi_pos ~ 90
+W for cut around 90
+pos_mom vs pos_theta
+theta_p_pos_calc_from_electron - theta_pos_measured
+
+calc theta from magnitude of pos momentum
+
+*/

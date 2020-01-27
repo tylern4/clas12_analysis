@@ -33,7 +33,7 @@ size_t run(std::shared_ptr<TChain> _chain, const std::shared_ptr<Histogram>& _hi
   // Get the number of events in this thread
   size_t num_of_events = (int)_chain->GetEntries();
   float beam_energy = NAN;
-  if (getenv("CLAS12_E") != NULL) beam_energy = atof(getenv("CLAS12_E"));
+  if (getenv("BEAM_E") != NULL) beam_energy = atof(getenv("BEAM_E"));
 
   // Print some information for each thread
   std::cout << "=============== " << RED << "Thread " << thread_id << DEF << " =============== " << BLUE
@@ -48,6 +48,7 @@ size_t run(std::shared_ptr<TChain> _chain, const std::shared_ptr<Histogram>& _hi
   for (size_t current_event = 0; current_event < num_of_events; current_event++) {
     // Get current event
     _chain->GetEntry(current_event);
+
     // If we are the 0th thread print the progress of the thread every 1000 events
     if (thread_id == 0 && current_event % 1000 == 0)
       std::cout << "\t" << (100 * current_event / num_of_events) << " %\r" << std::flush;
@@ -59,6 +60,7 @@ size_t run(std::shared_ptr<TChain> _chain, const std::shared_ptr<Histogram>& _hi
 
     // Make a reaction class from the data given
     auto mc_event = std::make_shared<MCReaction>(data, beam_energy);
+    _hists->Fill_EC(data);
     for (int part = 1; part < data->mc_npart(); part++) {
       // Check particle ID's and fill the reaction class
       if (data->mc_pid(part) == PIP) {
@@ -102,7 +104,7 @@ size_t run(std::shared_ptr<TChain> _chain, const std::shared_ptr<Histogram>& _hi
     }
 
     // Check the reaction class what kind of even it is and fill the appropriate histograms
-    if (event->SinglePip()) _hists->Fill_WvsQ2_singlePi(event);
+    if (event->SingleP()) _hists->Fill_WvsQ2_singleP(event);
     if (event->NeutronPip()) _hists->Fill_WvsQ2_Npip(event);
   }
 

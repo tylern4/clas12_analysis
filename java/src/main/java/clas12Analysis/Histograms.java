@@ -1,6 +1,10 @@
 package clas12Analysis;
 
 import org.jlab.groot.ui.TCanvas;
+
+import java.util.HashMap;
+import java.util.Map;
+
 import org.jlab.groot.base.GStyle;
 import org.jlab.groot.data.H2F;
 import org.jlab.groot.data.H1F;
@@ -11,12 +15,15 @@ import org.jlab.groot.data.H1F;
 public class Histograms {
     private static TCanvas can = new TCanvas("DeltaT Proton", 600, 600);
     private static TCanvas can2 = new TCanvas("W vs Q^{2}", 1200, 1200);
-    private static TCanvas can3 = new TCanvas("Missing Mass e(p,pi+)e' ", 1200, 600);
+    private static TCanvas can3 = new TCanvas("Missing Mass e(p,pi+)e' ", 1200, 1200);
+    private static TCanvas can4 = new TCanvas("W sec", 1200, 1200);
 
     private static H2F dt_prot = new H2F("DeltaT Proton", 1000, 0, 4, 1000, -10, 10);
     private static H2F WvsQ2_cut = new H2F("WvsQ2_cut", 200, 0.5, 3.0, 200, 0, 5.0);
     private static H2F WvsQ2 = new H2F("WvsQ2", 200, 0.5, 3.0, 200, 0, 5.0);
+    private static H2F WvsTheta = new H2F("WvsQ2", 200, 0.0, 2.0, 200, 0, 1.0);
     private static H1F W = new H1F("W", 200, 0.5, 3.0);
+    private static Map<Integer, H1F> W_sec = new HashMap<Integer, H1F>();;
     private static H1F W_cut = new H1F("W_cut", 200, 0.5, 3.0);
     private static H1F MissingMass = new H1F("MissingMass", 200, 0.8, 1.3);
     private static H1F MissingMass_cut = new H1F("MissingMass", 200, 0.8, 1.3);
@@ -25,6 +32,10 @@ public class Histograms {
 
     public Histograms() {
         GStyle.setPalette("kViridis");
+        for (int sector = 0; sector < 6; sector++) {
+            W_sec.put(sector, new H1F("W", 200, 0.5, 3.0));
+        }
+
         can.getCanvas().initTimer(1000);
         dt_prot.setTitleX("Momentum (GeV)");
         dt_prot.setTitleY("#DeltaT (ns)");
@@ -42,7 +53,7 @@ public class Histograms {
         can2.cd(3);
         can2.draw(W_cut);
 
-        can3.divide(2, 1);
+        can3.divide(2, 2);
         can3.getCanvas().initTimer(1000);
         can3.cd(0);
         can3.draw(MissingMass);
@@ -52,6 +63,15 @@ public class Histograms {
         can3.draw(MassPhotons);
         MassPhotons_cut.setFillColor(45);
         can3.draw(MassPhotons_cut, "same");
+        can3.cd(2);
+        can3.draw(WvsTheta);
+
+        can4.divide(3, 2);
+        can4.getCanvas().initTimer(1000);
+        for (Map.Entry<Integer, H1F> sec : W_sec.entrySet()) {
+            can4.cd(1 + sec.getKey());
+            can4.draw(sec.getValue());
+        }
 
     }
 
@@ -60,7 +80,9 @@ public class Histograms {
     }
 
     public void fill_WvsQ2(Reaction event) {
+        WvsTheta.fill(event.W, event.theta_e);
         if (event.Elastic()) {
+            W_sec.get(event.sector()).fill(event.W);
             W.fill(event.W, event.Q2);
             WvsQ2.fill(event.W, event.Q2);
         }

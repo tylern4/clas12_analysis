@@ -45,7 +45,7 @@ public class Reaction {
     private short _numPhotons = 0;
     private short _numOther = 0;
 
-    private short _sector = -1;
+    private byte _sector = -1;
 
     private boolean _MM_calc = false;
     public float MM = Float.NaN;
@@ -58,11 +58,12 @@ public class Reaction {
     public float Q2 = Float.NaN;
     public float xb = Float.NaN;
 
-    private float _theta_e = Float.NaN;
+    public float theta_e = Float.NaN;
     private float _theta_star = Float.NaN;
     private float _phi_star = Float.NaN;
 
-    Reaction(Bank particle) {
+    Reaction(Bank particle, Byte sector) {
+        _sector = sector;
         Reaction.particles = particle;
         Reaction._photons = new ArrayList<LorentzVector>();
         _hasE = true;
@@ -70,6 +71,11 @@ public class Reaction {
                 MASS_E);
         Q2 = Q2_calc(_elec);
         W = W_calc(_elec);
+        theta_e = (float) _elec.theta();
+    }
+
+    public int sector() {
+        return _sector - 1;
     }
 
     public void SetProton(int i) {
@@ -168,7 +174,7 @@ public class Reaction {
     }
 
     public boolean Elastic() {
-        return (_hasE && _hasP);
+        return (_hasE && !_hasP && !_hasPip && !_hasPim && !_hasNeutron && !_hasOther);
     }
 
     public boolean PPi0() {

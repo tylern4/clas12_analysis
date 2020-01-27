@@ -16,6 +16,7 @@ public class Datahandeler implements Runnable {
     private Bank ftParticle;
     private Bank scint;
     private Bank rec_event;
+    private Bank rec_track;
     private Event event = new Event();
     private DeltaT dt;
     private static Reaction react;
@@ -29,16 +30,19 @@ public class Datahandeler implements Runnable {
     @Override
     public void run() {
         HipoReader reader = new HipoReader();
+
         reader.open(Filename);
         factory = reader.getSchemaFactory();
         particles = new Bank(factory.getSchema("REC::Particle"));
         ftParticle = new Bank(factory.getSchema("RECFT::Particle"));
         scint = new Bank(factory.getSchema("REC::Scintillator"));
         rec_event = new Bank(factory.getSchema("REC::Event"));
+        rec_track = new Bank(factory.getSchema("REC::Track"));
 
         while (reader.hasNext()) {
             reader.nextEvent(event);
             event.read(rec_event);
+            event.read(rec_track);
             event.read(particles);
             event.read(ftParticle);
             event.read(scint);
@@ -48,9 +52,11 @@ public class Datahandeler implements Runnable {
 
             if (Math.abs(particles.getShort("status", 0)) <= 2000)
                 continue;
+            if (rec_track.getByte("sector", 0) == 0)
+                continue;
 
             dt = new DeltaT(particles, scint);
-            react = new Reaction(particles);
+            react = new Reaction(particles, rec_track.getByte("sector", 0));
 
             for (int ipart = 1; ipart < particles.getRows(); ipart++) {
                 final float px = particles.getFloat("px", ipart);
