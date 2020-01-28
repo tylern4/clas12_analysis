@@ -79,6 +79,7 @@ class Histogram {
 
   // Delta T
   TH2D_ptr delta_t_hist[particle_num][charge_num][with_id_num][2];
+  TH2D_ptr delta_t_pip[num_sectors];
   // Delta T
 
  public:

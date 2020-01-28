@@ -286,8 +286,7 @@ void Histogram::makeHists_sector() {
         std::make_shared<TH1D>(Form("MM_Sec_%d", i + 1), Form("MM neutron Sector: %d", i + 1), bins, zero, 4.0);
 
     MM_Npip_sec[i] = std::make_shared<TH1D>(Form("MM_Npip_Sec_%d", i + 1), Form("MM^{2} neutron pip Sector: %d", i + 1),
-                                            bins, -2.0, 2.0);
-
+                                            bins, zero, 4.0);
     W_vs_MM_singlePip[i] =
         std::make_shared<TH2D>(Form("W_vs_MM_singlePip_%d", i + 1), Form("W_vs_MM_singlePip_%d", i + 1), bins, zero,
                                w_max, bins, -q2_max, q2_max);
@@ -295,6 +294,11 @@ void Histogram::makeHists_sector() {
 }
 
 void Histogram::makeHists_deltat() {
+  for (short sec = 0; sec < num_sectors; sec++) {
+    delta_t_pip[sec] = std::make_shared<TH2D>(Form("delta_t_pip_%d", sec), Form("#Deltat #pi^{+} Sector %d", sec), bins,
+                                              p_min, p_max, bins, Dt_min, Dt_max);
+  }
+
   std::string tof = "";
   for (short p = 0; p < particle_num; p++) {
     for (short c = 0; c < charge_num; c++) {
@@ -333,9 +337,10 @@ void Histogram::Fill_deltat_pi(const std::shared_ptr<Branches12>& data, const st
 
   if (charge == 1) {
     delta_t_hist[1][0][0][fc]->Fill(mom, time);
-    if (_cuts->IsPip(part))
+    if (_cuts->IsPip(part)) {
       delta_t_hist[1][0][1][fc]->Fill(mom, time);
-    else
+      if (data->dc_sec(0) >= 1 && data->dc_sec(0) <= 6) delta_t_pip[data->dc_sec(0) - 1]->Fill(mom, time);
+    } else
       delta_t_hist[1][0][2][fc]->Fill(mom, time);
   } else if (charge == -1) {
     delta_t_hist[1][1][0][fc]->Fill(mom, time);
@@ -378,6 +383,13 @@ void Histogram::Fill_deltat_prot(const std::shared_ptr<Branches12>& data, const 
 void Histogram::Write_deltat() {
   TDirectory* ftof_folder = RootOutputFile->mkdir("ftof");
   ftof_folder->cd();
+  for (short sec = 0; sec < num_sectors; sec++) {
+    delta_t_pip[sec]->SetXTitle("Momentum (GeV)");
+    delta_t_pip[sec]->SetYTitle("#Deltat");
+    delta_t_pip[sec]->SetOption("COLZ1");
+    delta_t_pip[sec]->Write();
+  }
+
   for (short p = 0; p < particle_num; p++) {
     for (short c = 0; c < charge_num; c++) {
       for (short i = 0; i < with_id_num; i++) {
