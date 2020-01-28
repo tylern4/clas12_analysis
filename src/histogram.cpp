@@ -296,7 +296,7 @@ void Histogram::makeHists_sector() {
 void Histogram::makeHists_deltat() {
   for (short sec = 0; sec < num_sectors; sec++) {
     delta_t_pip[sec] = std::make_shared<TH2D>(Form("delta_t_pip_%d", sec), Form("#Deltat #pi^{+} Sector %d", sec), bins,
-                                              p_min, p_max, bins, Dt_min, Dt_max);
+                                              0, 6.0, bins, -0.6, 0.6);
   }
 
   std::string tof = "";
@@ -339,7 +339,7 @@ void Histogram::Fill_deltat_pi(const std::shared_ptr<Branches12>& data, const st
     delta_t_hist[1][0][0][fc]->Fill(mom, time);
     if (_cuts->IsPip(part)) {
       delta_t_hist[1][0][1][fc]->Fill(mom, time);
-      if (data->dc_sec(0) >= 1 && data->dc_sec(0) <= 6) delta_t_pip[data->dc_sec(0) - 1]->Fill(mom, time);
+      if (data->dc_sec(part) >= 1 && data->dc_sec(part) <= 6) delta_t_pip[data->dc_sec(part) - 1]->Fill(mom, time);
     } else
       delta_t_hist[1][0][2][fc]->Fill(mom, time);
   } else if (charge == -1) {
