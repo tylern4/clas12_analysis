@@ -81,15 +81,14 @@ class Reaction {
   inline bool ProtonPim() {
     return ((_numProt == 1 && _numPim == 1) && (_hasE && _hasP && !_hasPip && _hasPim && !_hasNeutron && !_hasOther));
   }
-  inline bool SinglePip() { return ((_numPip == 1) && (_hasE && !_hasP && _hasPip && !_hasPim && !_hasOther)); }
+  inline bool SinglePip() { return ((_numPip == 1) && (_hasE && !_hasP && _hasPip && !_hasPim)); }
   inline bool SingleP() {
     return ((_numProt == 1) && (_hasE && _hasP && !_hasPip && !_hasPim && !_hasNeutron && !_hasOther));
   }
 
   inline bool NeutronPip() {
     bool _channel = true;
-    _channel &= ((_numPip == 1) && (_hasE && !_hasP && _hasPip && !_hasPim && _hasNeutron)) ||
-                (Reaction::SinglePip() && Reaction::MM() >= 0.85 && Reaction::MM() <= 1.0);
+    _channel &= (Reaction::SinglePip() && Reaction::MM() >= 0.85 && Reaction::MM() <= 1.0);
     return _channel;
   }
 
