@@ -32,7 +32,7 @@ size_t run_files(std::vector<std::string> inputs, const std::shared_ptr<Histogra
 size_t run(std::shared_ptr<TChain> _chain, const std::shared_ptr<Histogram>& _hists, int thread_id) {
   // Get the number of events in this thread
   size_t num_of_events = (int)_chain->GetEntries();
-  float beam_energy = NAN;
+  float beam_energy = 10.6041;
   if (getenv("BEAM_E") != NULL) beam_energy = atof(getenv("BEAM_E"));
 
   // Print some information for each thread

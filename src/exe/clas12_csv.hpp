@@ -4,22 +4,21 @@
 /*	University Of South Carolina      */
 /**************************************/
 
-#ifndef MAIN_H_GUARD
-#define MAIN_H_GUARD
+#ifndef CSV_H_GUARD
+#define CSV_H_GUARD
 
 #include <iostream>
 #include "TFile.h"
-#include "TH1.h"
 #include "branches.hpp"
 #include "colors.hpp"
 #include "cuts.hpp"
-#include "histogram.hpp"
+#include "deltat.hpp"
 #include "reaction.hpp"
 
-size_t run(std::shared_ptr<TChain> _chain, const std::shared_ptr<Histogram>& _hists, int thread_id);
-size_t run_files(std::vector<std::string> inputs, const std::shared_ptr<Histogram>& hists, int thread_id);
+std::string run(std::shared_ptr<TChain> _chain, int thread_id);
+std::string run_files(std::vector<std::string> inputs, int thread_id);
 
-size_t run_files(std::vector<std::string> inputs, const std::shared_ptr<Histogram>& hists, int thread_id) {
+std::string run_files(std::vector<std::string> inputs, int thread_id) {
   // Called once for each thread
   // Make a new chain to process for this thread
   auto chain = std::make_shared<TChain>("clas12");
@@ -27,13 +26,14 @@ size_t run_files(std::vector<std::string> inputs, const std::shared_ptr<Histogra
   for (auto in : inputs) chain->Add(in.c_str());
 
   // Run the function over each thread
-  return run(chain, hists, thread_id);
+  return run(chain, thread_id);
 }
 
-size_t run(std::shared_ptr<TChain> _chain, const std::shared_ptr<Histogram>& _hists, int thread_id) {
+std::string run(std::shared_ptr<TChain> _chain, int thread_id) {
+  std::string csv_out;
   // Get the number of events in this thread
   size_t num_of_events = (int)_chain->GetEntries();
-  float beam_energy = 10.6041;
+  float beam_energy = NAN;
   if (getenv("BEAM_E") != NULL) beam_energy = atof(getenv("BEAM_E"));
 
   // Print some information for each thread
@@ -41,36 +41,46 @@ size_t run(std::shared_ptr<TChain> _chain, const std::shared_ptr<Histogram>& _hi
             << num_of_events << " Events " << DEF << "===============\n";
 
   // Make a data object which all the branches can be accessed from
-  auto data = std::make_shared<Branches12>(_chain);
+  auto data = std::make_shared<Branches12>(_chain, true);
 
   // Total number of events "Processed"
   size_t total = 0;
   // For each event
   for (size_t current_event = 0; current_event < num_of_events; current_event++) {
     // Get current event
-    _chain->GetEntry(current_event);
+    data->GetEntry(current_event);
+
     // If we are the 0th thread print the progress of the thread every 1000 events
     if (thread_id == 0 && current_event % 1000 == 0)
-      std::cout << "\t" << (100 * current_event / num_of_events) << " %\r" << std::flush;
+      std::cout << BLUE << "\t" << (100 * current_event / num_of_events) << " %\r" << DEF << std::flush;
+
+    total++;
+    if (data->mc_npart() > 1) {
+      // Make a reaction class from the data given
+      auto mc_event = std::make_shared<MCReaction>(data, beam_energy);
+      for (int part = 1; part < data->mc_npart(); part++) {
+        // Check particle ID's and fill the reaction class
+        if (data->mc_pid(part) == PIP) {
+          mc_event->SetPip(part);
+        } else if (data->mc_pid(part) == PROTON) {
+          mc_event->SetProton(part);
+        } else if (data->mc_pid(part) == PIM) {
+          mc_event->SetPim(part);
+        } else {
+          mc_event->SetOther(part);
+        }
+      }
+    }
 
     auto cuts = std::make_shared<Cuts>(data);
     if (!cuts->ElectronCuts()) continue;
 
-    _hists->Fill_EC(data);
-    // If we pass electron cuts the event is processed
-    total++;
-
-    // Make a reaction class from the data given
     auto event = std::make_shared<Reaction>(data, beam_energy);
     auto dt = std::make_shared<Delta_T>(data);
-
+    // For each particle in the event
     // For each particle in the event
     for (int part = 1; part < data->gpart(); part++) {
       dt->dt_calc(part);
-      _hists->Fill_MomVsBeta(data, part);
-      _hists->Fill_deltat_pi(data, dt, part);
-      _hists->Fill_deltat_prot(data, dt, part);
-
       // Check particle ID's and fill the reaction class
       if (cuts->IsPip(part)) {
         event->SetPip(part);
@@ -82,28 +92,10 @@ size_t run(std::shared_ptr<TChain> _chain, const std::shared_ptr<Histogram>& _hi
         event->SetOther(part);
       }
     }
-    // Check the reaction class what kind of even it is and fill the appropriate histograms
-    _hists->Fill_WvsQ2(event);
-    if (event->SinglePip()) _hists->Fill_WvsQ2_singlePip(event);
-    if (event->NeutronPip()) _hists->Fill_WvsQ2_Npip(event);
+    // if (event->NeutronPip())
   }
-  std::cout << "Percent = " << 100.0 * total / num_of_events << std::endl;
+
   // Return the total number of events
-  return num_of_events;
+  return csv_out;
 }
 #endif
-
-/*
-ep -> e x+
-
-W for all events
-W for 2 particles
-W for 2 Part 2nd positive
-hist Phi_e - Phi_pos ~ 90
-W for cut around 90
-pos_mom vs pos_theta
-theta_p_pos_calc_from_electron - theta_pos_measured
-
-calc theta from magnitude of pos momentum
-
-*/

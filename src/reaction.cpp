@@ -8,7 +8,7 @@
 Reaction::Reaction(const std::shared_ptr<Branches12>& data, float beam_energy) {
   _data = data;
   _beam = std::make_unique<TLorentzVector>();
-  _beam_energy = beam_energy;  // atof(getenv("CLAS12_E"));
+  _beam_energy = beam_energy;
 
   _beam->SetPxPyPzE(0.0, 0.0, sqrt(_beam_energy * _beam_energy - MASS_E * MASS_E), _beam_energy);
 
@@ -62,9 +62,9 @@ void Reaction::SetNeutron(int i) {
 }
 
 void Reaction::SetOther(int i) {
-  if (_data->pid(i) == NEUTRON && abs(_data->chi2pid(i)) < 0.5)
+  if (_data->pid(i) == NEUTRON) {
     SetNeutron(i);
-  else {
+  } else {
     _numOther++;
     _hasOther = true;
     _other->SetXYZM(_data->px(i), _data->py(i), _data->pz(i), mass[_data->pid(i)]);

@@ -822,7 +822,9 @@ int Branches12::mc_run() { return _mc_run; }
 int Branches12::mc_event() { return _mc_event; }
 int Branches12::mc_type() { return _mc_type; }
 int Branches12::mc_helicity() { return _mc_helicity; }
-float Branches12::mc_weight() { return _mc_weight; }
+float Branches12::mc_weight() {
+  return 1.0;  //_mc_weight;
+}
 int Branches12::mc_npart() { return _mc_npart; }
 
 int Branches12::mc_pid(int i) {

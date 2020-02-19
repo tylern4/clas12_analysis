@@ -35,7 +35,7 @@ class Branches12 {
 
   bool _is_mc;
   int _mc_run;
-  int _mc_npart;
+  int _mc_npart = 0;
   int _mc_event;
   int _mc_type;
   float _mc_helicity;
@@ -251,6 +251,7 @@ class Branches12 {
   Branches12(const std::shared_ptr<TChain> &tree);
   Branches12(const std::shared_ptr<TChain> &tree, bool mc);
   ~Branches12(){};
+  int GetEntry(long evnt) { return _tree->GetEntry(evnt); };
   bool mc();
   void mc_branches();
   void init();

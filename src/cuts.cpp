@@ -18,22 +18,22 @@ bool Cuts::ElectronCuts() {
   if (!_elec) return false;
   //_elec &= !std::isnan(_data->cc_nphe_tot(0));
 
-  _elec &= (_data->gpart() < 20);
+  //_elec &= (_data->gpart() < 20);
   _elec &= (_data->charge(0) == NEGATIVE);
   _elec &= (_data->pid(0) == ELECTRON);
   // Why 1.0 for minimumm momentum cut?
-  _elec &= (_data->p(0) > 1.0);
-  _elec &= ((abs(_data->status(0)) >= 2000) && abs(_data->status(0)) < 4000);
-  _elec &= (_data->vz(0) > -7.9 && _data->vz(0) < 2.0);
+  //_elec &= (_data->p(0) > 1.0);
+  //_elec &= ((abs(_data->status(0)) >= 2000) && abs(_data->status(0)) < 4000);
+  //_elec &= (_data->vz(0) > -7.9 && _data->vz(0) < 2.0);
   // Use the chi2pid instead of straight line cuts on SF
-  _elec &= (abs(_data->chi2pid(0)) < 3);
+  //_elec &= (abs(_data->chi2pid(0)) < 3);
 
   // FiducialCuts is the slowest of the cuts because of all the calcuations
   // If it already fails a different cut we will quit before
   // calulating for the FiducialCuts to save time
 
   if (!_elec) return _elec;
-  _elec &= FiducialCuts();
+  //_elec &= FiducialCuts();
 
   return _elec;
 }
@@ -105,9 +105,8 @@ bool Cuts::IsPip(int i) {
   if (_data->gpart() <= i) return false;
   bool _pip = true;
   _pip &= (_data->charge(i) == POSITIVE);
-  _pip &= abs(_dt->dt_Pi(i)) < 0.5;
-  // || abs(_dt->dt_ctof_Pi(i)) < 0.2);
-  //_pip &= !(abs(_dt->dt_P(i)) < 0.5 || abs(_dt->dt_ctof_P(i)) < 0.2);
+  //_pip &= _data->pid(i) == PIP;
+  _pip &= (abs(_dt->dt_Pi(i)) < 0.5 || abs(_dt->dt_ctof_Pi(i)) < 0.2);
   return _pip;
 }
 
