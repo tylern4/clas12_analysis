@@ -29,6 +29,10 @@ Histogram::Histogram(const std::string& output_file) {
   Q2_hist = std::make_shared<TH1D>("Q2", "Q2", bins, zero, q2_max);
   W_vs_q2 = std::make_shared<TH2D>("W_vs_q2", "W_vs_q2", bins, zero, w_max, bins, zero, q2_max);
 
+  W_MC_hist = std::make_shared<TH1D>("W_MC", "W", bins, zero, w_max);
+  Q2_MC_hist = std::make_shared<TH1D>("Q2_MC", "Q2", bins, zero, q2_max);
+  W_vs_q2_MC = std::make_shared<TH2D>("W_vs_q2_MC", "W_vs_q2", bins, zero, w_max, bins, zero, q2_max);
+
   MM_neutron = std::make_shared<TH1D>("missMass", "missMass", bins, zero, 4.0);
 
   W_hist_singlePip = std::make_shared<TH1D>("W_singlePip", "W_singlePip", bins, zero, w_max);
@@ -63,6 +67,8 @@ void Histogram::Write() {
   // Write_deltat_folder->cd();
   Write_deltat();
 
+  Write_WvsQ2MC();
+
   std::cerr << BOLDBLUE << "Done Writing!!!" << DEF << std::endl;
 }
 
@@ -89,26 +95,26 @@ void Histogram::Fill_WvsQ2(const std::shared_ptr<Reaction>& _e) {
   }
 }
 void Histogram::Fill_WvsQ2(const std::shared_ptr<MCReaction>& _e) {
-  W_vs_q2->Fill(_e->W(), _e->Q2(), _e->weight());
-  W_hist->Fill(_e->W(), _e->weight());
-  Q2_hist->Fill(_e->Q2(), _e->weight());
+  W_vs_q2_MC->Fill(_e->W(), _e->Q2(), _e->weight());
+  W_MC_hist->Fill(_e->W(), _e->weight());
+  Q2_MC_hist->Fill(_e->Q2(), _e->weight());
 
   short sec = _e->sec();
   if (sec > 0 && sec <= 6) {
-    W_vs_q2_sec[sec - 1]->Fill(_e->W(), _e->Q2(), _e->weight());
-    W_sec[sec - 1]->Fill(_e->W(), _e->weight());
+    W_vs_q2_sec_MC[sec - 1]->Fill(_e->W(), _e->Q2(), _e->weight());
+    W_sec_MC[sec - 1]->Fill(_e->W(), _e->weight());
   }
 
   short det = _e->det();
   if (det == 1 && _e->W() <= 3.5) {
-    W_det[0]->Fill(_e->W(), _e->weight());
-    WQ2_det[0]->Fill(_e->W(), _e->Q2(), _e->weight());
+    W_det_MC[0]->Fill(_e->W(), _e->weight());
+    WQ2_det_MC[0]->Fill(_e->W(), _e->Q2(), _e->weight());
   } else if (det == 2) {
-    W_det[1]->Fill(_e->W(), _e->weight());
-    WQ2_det[1]->Fill(_e->W(), _e->Q2(), _e->weight());
+    W_det_MC[1]->Fill(_e->W(), _e->weight());
+    WQ2_det_MC[1]->Fill(_e->W(), _e->Q2(), _e->weight());
   } else {
-    W_det[2]->Fill(_e->W(), _e->weight());
-    WQ2_det[2]->Fill(_e->W(), _e->Q2(), _e->weight());
+    W_det_MC[2]->Fill(_e->W(), _e->weight());
+    WQ2_det_MC[2]->Fill(_e->W(), _e->Q2(), _e->weight());
   }
 }
 
@@ -251,15 +257,78 @@ void Histogram::Write_WvsQ2() {
   }
 }
 
+void Histogram::Write_WvsQ2MC() {
+  auto MC_dir = RootOutputFile->mkdir("MC");
+  MC_dir->cd();
+  for (short i = 0; i < 3; i++) {
+    WQ2_det_MC[i]->SetXTitle("W (GeV)");
+    WQ2_det_MC[i]->SetYTitle("Q^{2} (GeV^2)");
+    WQ2_det_MC[i]->SetOption("COLZ1");
+    if (WQ2_det_MC[i]->GetEntries()) WQ2_det_MC[i]->Write();
+    W_det_MC[i]->SetXTitle("W (GeV)");
+    if (W_det_MC[i]->GetEntries()) W_det_MC[i]->Write();
+  }
+  auto WvsQ2_can = std::make_unique<TCanvas>("WvsQ2_can_MC", "W vs Q2 sectors", 1920, 1080);
+  WvsQ2_can->Divide(3, 2);
+  for (short i = 0; i < num_sectors; i++) {
+    W_vs_q2_sec_MC[i]->SetYTitle("Q^{2} (GeV^{2})");
+    W_vs_q2_sec_MC[i]->SetXTitle("W (GeV)");
+    W_vs_q2_sec_MC[i]->SetOption("COLZ1");
+    WvsQ2_can->cd(i + 1);
+    W_vs_q2_sec_MC[i]->Draw("same");
+  }
+  WvsQ2_can->Write();
+
+  auto W_can = std::make_unique<TCanvas>("W_can_MC", "W sectors", 1920, 1080);
+  W_can->Divide(3, 2);
+  for (short i = 0; i < num_sectors; i++) {
+    W_sec_MC[i]->SetXTitle("W (GeV)");
+    W_can->cd(i + 1);
+    // W_sec[i]->Fit("gaus", "QMR+", "QMR+", 0.5, 1.2);
+    W_sec_MC[i]->Draw("same");
+  }
+  W_can->Write();
+
+  W_vs_q2_MC->SetXTitle("W (GeV)");
+  W_vs_q2_MC->SetYTitle("Q^{2} (GeV^{2})");
+  W_vs_q2_MC->SetOption("COLZ1");
+  if (W_vs_q2_MC->GetEntries()) W_vs_q2_MC->Write();
+
+  W_MC_hist->SetXTitle("W (GeV)");
+  if (W_MC_hist->GetEntries()) W_MC_hist->Write();
+
+  Q2_MC_hist->SetXTitle("Q^{2} (GeV^{2})");
+  if (Q2_MC_hist->GetEntries()) Q2_MC_hist->Write();
+
+  for (short i = 0; i < num_sectors; i++) {
+    W_vs_q2_sec_MC[i]->SetYTitle("Q^{2} (GeV^{2})");
+    W_vs_q2_sec_MC[i]->SetXTitle("W (GeV)");
+    W_vs_q2_sec_MC[i]->SetOption("COLZ1");
+    W_vs_q2_sec_MC[i]->Write();
+  }
+
+  for (short i = 0; i < num_sectors; i++) {
+    W_sec_MC[i]->SetXTitle("W (GeV)");
+    W_sec_MC[i]->Write();
+  }
+}
+
 void Histogram::makeHists_sector() {
   for (short i = 0; i < 3; i++) {
     W_det[i] = std::make_shared<TH1D>(Form("W_det_%d", i + 1), Form("W detector: %d", i + 1), bins, zero, w_max);
-    if (i == 0)
+    W_det_MC[i] =
+        std::make_shared<TH1D>(Form("W_det_MC_%d", i + 1), Form("W detector (MC): %d", i + 1), bins, zero, w_max);
+    if (i == 0) {
       WQ2_det[i] = std::make_shared<TH2D>(Form("WQ2_det_%d", i + 1), Form("W vs Q^{2} detector: %d", i + 1), bins, zero,
                                           w_max, bins, zero, 0.5);
-    else
+      WQ2_det_MC[i] = std::make_shared<TH2D>(Form("WQ2_det_MC_%d", i + 1), Form("W vs Q^{2} detector: %d", i + 1), bins,
+                                             zero, w_max, bins, zero, 0.5);
+    } else {
       WQ2_det[i] = std::make_shared<TH2D>(Form("WQ2_det_%d", i + 1), Form("W vs Q^{2} detector: %d", i + 1), bins, zero,
                                           w_max, bins, zero, q2_max);
+      WQ2_det_MC[i] = std::make_shared<TH2D>(Form("WQ2_det_MC_%d", i + 1), Form("W vs Q^{2} detector: %d", i + 1), bins,
+                                             zero, w_max, bins, zero, q2_max);
+    }
   }
 
   for (short i = 0; i < num_sectors; i++) {
@@ -267,6 +336,11 @@ void Histogram::makeHists_sector() {
                                             zero, w_max, bins, zero, q2_max);
 
     W_sec[i] = std::make_shared<TH1D>(Form("w_sec_%d", i + 1), Form("W Sector: %d", i + 1), bins, zero, w_max);
+
+    W_vs_q2_sec_MC[i] = std::make_shared<TH2D>(Form("wvsq2_sec_MC_%d", i + 1), Form("W vs Q^{2} Sector: %d", i + 1),
+                                               bins, zero, w_max, bins, zero, q2_max);
+
+    W_sec_MC[i] = std::make_shared<TH1D>(Form("w_sec_MC_%d", i + 1), Form("W Sector: %d", i + 1), bins, zero, w_max);
 
     W_vs_q2_singlePip_sec[i] =
         std::make_shared<TH2D>(Form("wvsq2_sec_singlePip_%d", i + 1), Form("W vs Q^{2} W_singlePip Sector: %d", i + 1),

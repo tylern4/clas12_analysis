@@ -112,6 +112,7 @@ class MCReaction : public Reaction {
   inline float weight() { return _data->mc_weight(); }
   inline float W() { return _W_mc; }
   inline float Q2() { return _Q2_mc; }
+  std::string ReacToCsv();
 };
 
 #endif

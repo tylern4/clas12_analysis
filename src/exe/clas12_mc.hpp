@@ -60,7 +60,6 @@ size_t run(std::shared_ptr<TChain> _chain, const std::shared_ptr<Histogram>& _hi
 
     // Make a reaction class from the data given
     auto mc_event = std::make_shared<MCReaction>(data, beam_energy);
-    _hists->Fill_EC(data);
     for (int part = 1; part < data->mc_npart(); part++) {
       // Check particle ID's and fill the reaction class
       if (data->mc_pid(part) == PIP) {
@@ -76,11 +75,10 @@ size_t run(std::shared_ptr<TChain> _chain, const std::shared_ptr<Histogram>& _hi
     _hists->Fill_WvsQ2(mc_event);
 
     // Assume mc event is regular reconstructed event
-    if (data->gpart() == 0) continue;
-    bool elec = true;
-    elec &= (data->charge(0) == NEGATIVE);
-    elec &= (data->pid(0) == 11);
-    if (!elec) continue;
+    auto cuts = std::make_shared<Cuts>(data);
+    if (!cuts->ElectronCuts()) continue;
+
+    _hists->Fill_EC(data);
 
     auto event = std::make_shared<Reaction>(data, beam_energy);
     auto dt = std::make_shared<Delta_T>(data);

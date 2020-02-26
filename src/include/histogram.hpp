@@ -54,6 +54,14 @@ class Histogram {
   TH1D_ptr W_det[3];
   TH2D_ptr WQ2_det[3];
 
+  TH1D_ptr W_MC_hist;
+  TH1D_ptr Q2_MC_hist;
+  TH2D_ptr W_vs_q2_MC;
+  TH2D_ptr W_vs_q2_sec_MC[num_sectors];
+  TH1D_ptr W_sec_MC[num_sectors];
+  TH1D_ptr W_det_MC[3];
+  TH2D_ptr WQ2_det_MC[3];
+
   TH2D_ptr W_vs_q2_singlePip_sec[num_sectors];
   TH1D_ptr W_singlePip_sec[num_sectors];
 
@@ -93,6 +101,7 @@ class Histogram {
   void Fill_WvsQ2_singlePip(const std::shared_ptr<Reaction>& _e);
   void Fill_WvsQ2_Npip(const std::shared_ptr<Reaction>& _e);
   void Write_WvsQ2();
+  void Write_WvsQ2MC();
 
   // P and E
   void makeHists_MomVsBeta();

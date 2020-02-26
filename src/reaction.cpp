@@ -9,6 +9,7 @@ Reaction::Reaction(const std::shared_ptr<Branches12>& data, float beam_energy) {
   _data = data;
   _beam = std::make_unique<TLorentzVector>();
   _beam_energy = beam_energy;
+  _sector = data->dc_sec(0);
 
   _beam->SetPxPyPzE(0.0, 0.0, sqrt(_beam_energy * _beam_energy - MASS_E * MASS_E), _beam_energy);
 
@@ -105,26 +106,10 @@ float Reaction::MM2() {
   return _MM2;
 }
 
-MCReaction::MCReaction(const std::shared_ptr<Branches12>& data, float beam_enrgy) {
-  _data = data;
-  if (!_data->mc()) _data->mc_branches();
-  _beam = std::make_unique<TLorentzVector>();
-  _beam_energy = beam_enrgy;
-
-  _beam->SetPxPyPzE(0.0, 0.0, sqrt(_beam_energy * _beam_energy - MASS_E * MASS_E), _beam_energy);
-
-  _gamma = std::make_unique<TLorentzVector>();
+MCReaction::MCReaction(const std::shared_ptr<Branches12>& data, float beam_enrgy) : Reaction(data, beam_enrgy) {
   _gamma_mc = std::make_unique<TLorentzVector>();
-  _target = std::make_unique<TLorentzVector>(0.0, 0.0, 0.0, MASS_P);
-  _elec = std::make_unique<TLorentzVector>();
   _elec_mc = std::make_unique<TLorentzVector>();
-  this->SetElec();
   this->SetMCElec();
-  _prot = std::make_unique<TLorentzVector>();
-  _pip = std::make_unique<TLorentzVector>();
-  _pim = std::make_unique<TLorentzVector>();
-  _other = std::make_unique<TLorentzVector>();
-  _neutron = std::make_unique<TLorentzVector>();
 }
 
 void MCReaction::SetMCElec() {
@@ -136,4 +121,18 @@ void MCReaction::SetMCElec() {
   // Can calculate W and Q2 here
   _W_mc = physics::W_calc(*_beam, *_elec_mc);
   _Q2_mc = physics::Q2_calc(*_beam, *_elec_mc);
+}
+
+std::string MCReaction::ReacToCsv() {
+  // e_rec_p,e_rec_theta,e_rec_phi,e_sec,e_thrown_p,e_thrown_theta,e_thrown_phi
+  std::string out = "";
+  out += std::to_string(_elec->P()) + ",";
+  out += std::to_string(_elec->Theta()) + ",";
+  out += std::to_string(_elec->Phi()) + ",";
+  out += std::to_string(_sector) + ",";
+  out += std::to_string(_elec_mc->P()) + ",";
+  out += std::to_string(_elec_mc->Theta()) + ",";
+  out += std::to_string(_elec_mc->Phi()) + "\n";
+
+  return out;
 }

@@ -1,5 +1,7 @@
 #include "clas12_csv.hpp"
+#include <fstream>
 #include <future>
+#include <iostream>
 #include <thread>
 
 int main(int argc, char** argv) {
@@ -45,6 +47,12 @@ int main(int argc, char** argv) {
     // Get the information from the thread in this case how many events each thread actually computed
     events += threads[i].get();
   }
+
+  std::ofstream outfile;
+  outfile.open(outfilename, std::ios::out | std::ios::trunc);
+  outfile << "e_rec_p,e_rec_theta,e_rec_phi,e_sec,e_thrown_p,e_thrown_theta,e_thrown_phi" << std::endl;
+  outfile << events << std::endl;
+  outfile.close();
 
   // Timer and Hz calculator functions that print at the end
   std::cout.imbue(std::locale(""));  // Puts commas in
