@@ -106,6 +106,18 @@ float Reaction::MM2() {
   return _MM2;
 }
 
+std::string Reaction::CsvHeader() { return "e_rec_p,e_rec_theta,e_rec_phi,e_sec\n"; }
+std::string Reaction::ReacToCsv() {
+  // e_rec_p,e_rec_theta,e_rec_phi,e_sec
+  std::string out = "";
+  out += std::to_string(_elec->P()) + ",";
+  out += std::to_string(_elec->Theta()) + ",";
+  out += std::to_string(_elec->Phi()) + ",";
+  out += std::to_string(_sector) + "\n";
+
+  return out;
+}
+
 MCReaction::MCReaction(const std::shared_ptr<Branches12>& data, float beam_enrgy) : Reaction(data, beam_enrgy) {
   _gamma_mc = std::make_unique<TLorentzVector>();
   _elec_mc = std::make_unique<TLorentzVector>();
@@ -123,6 +135,9 @@ void MCReaction::SetMCElec() {
   _Q2_mc = physics::Q2_calc(*_beam, *_elec_mc);
 }
 
+std::string MCReaction::CsvHeader() {
+  return "e_rec_p,e_rec_theta,e_rec_phi,e_sec,e_thrown_p,e_thrown_theta,e_thrown_phi\n";
+}
 std::string MCReaction::ReacToCsv() {
   // e_rec_p,e_rec_theta,e_rec_phi,e_sec,e_thrown_p,e_thrown_theta,e_thrown_phi
   std::string out = "";

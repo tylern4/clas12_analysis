@@ -7,6 +7,7 @@
 int main(int argc, char** argv) {
   // Need this to make sure root doesn't break
   ROOT::EnableThreadSafety();
+  bool mc = false;
 
   int NUM_THREADS = 4;
   if (getenv("NUM_THREADS") != NULL) NUM_THREADS = atoi(getenv("NUM_THREADS"));
@@ -39,7 +40,7 @@ int main(int argc, char** argv) {
     // Set the thread to run a task A-Syncroisly
     // The function we run is the first argument (run_files)
     // The functions areruments are all the remaining arguments
-    threads[i] = std::async(run_files, infilenames.at(i), i);
+    threads[i] = std::async(run_files, infilenames.at(i), i, mc);
   }
 
   // For each thread
@@ -50,7 +51,10 @@ int main(int argc, char** argv) {
 
   std::ofstream outfile;
   outfile.open(outfilename, std::ios::out | std::ios::trunc);
-  outfile << "e_rec_p,e_rec_theta,e_rec_phi,e_sec,e_thrown_p,e_thrown_theta,e_thrown_phi" << std::endl;
+  if (mc == true)
+    outfile << "e_rec_p,e_rec_theta,e_rec_phi,e_sec,e_thrown_p,e_thrown_theta,e_thrown_phi" << std::endl;
+  else
+    outfile << "e_rec_p,e_rec_theta,e_rec_phi,e_sec" << std::endl;
   outfile << events << std::endl;
   outfile.close();
 

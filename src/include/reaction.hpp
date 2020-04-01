@@ -69,6 +69,8 @@ class Reaction {
   void CalcMissMass();
   float MM();
   float MM2();
+  virtual std::string CsvHeader();
+  virtual std::string ReacToCsv();
 
   inline float W() { return _W; }
   inline float Q2() { return _Q2; }
@@ -112,6 +114,7 @@ class MCReaction : public Reaction {
   inline float weight() { return _data->mc_weight(); }
   inline float W() { return _W_mc; }
   inline float Q2() { return _Q2_mc; }
+  std::string CsvHeader();
   std::string ReacToCsv();
 };
 

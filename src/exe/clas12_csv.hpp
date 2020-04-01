@@ -15,10 +15,10 @@
 #include "deltat.hpp"
 #include "reaction.hpp"
 
-std::string run(std::shared_ptr<TChain> _chain, int thread_id);
-std::string run_files(std::vector<std::string> inputs, int thread_id);
+std::string run(std::shared_ptr<TChain> _chain, int thread_id, bool mc);
+std::string run_files(std::vector<std::string> inputs, int thread_id, bool mc);
 
-std::string run_files(std::vector<std::string> inputs, int thread_id) {
+std::string run_files(std::vector<std::string> inputs, int thread_id, bool mc) {
   // Called once for each thread
   // Make a new chain to process for this thread
   auto chain = std::make_shared<TChain>("clas12");
@@ -26,10 +26,10 @@ std::string run_files(std::vector<std::string> inputs, int thread_id) {
   for (auto in : inputs) chain->Add(in.c_str());
 
   // Run the function over each thread
-  return run(chain, thread_id);
+  return run(chain, thread_id, mc);
 }
 
-std::string run(std::shared_ptr<TChain> _chain, int thread_id) {
+std::string run(std::shared_ptr<TChain> _chain, int thread_id, bool mc) {
   std::string csv_out;
   // Get the number of events in this thread
   size_t num_of_events = (int)_chain->GetEntries();
@@ -41,7 +41,7 @@ std::string run(std::shared_ptr<TChain> _chain, int thread_id) {
             << num_of_events << " Events " << DEF << "===============\n";
 
   // Make a data object which all the branches can be accessed from
-  auto data = std::make_shared<Branches12>(_chain, true);
+  auto data = std::make_shared<Branches12>(_chain, mc);
 
   // Total number of events "Processed"
   size_t total = 0;
@@ -55,9 +55,28 @@ std::string run(std::shared_ptr<TChain> _chain, int thread_id) {
       std::cout << BLUE << "\t" << (100 * current_event / num_of_events) << " %\r" << DEF << std::flush;
 
     total++;
+    auto cuts = std::make_shared<Cuts>(data);
+    if (!cuts->ElectronCuts()) continue;
+    auto event = mc ? std::make_shared<MCReaction>(data, beam_energy) : std::make_shared<Reaction>(data, beam_energy);
+    auto dt = std::make_shared<Delta_T>(data);
 
-    auto mc_event = std::make_shared<MCReaction>(data, beam_energy);
-    csv_out += mc_event->ReacToCsv();
+    // For each particle in the event
+    for (int part = 1; part < data->gpart(); part++) {
+      dt->dt_calc(part);
+      // Check particle ID's and fill the reaction class
+      if (cuts->IsPip(part)) {
+        event->SetPip(part);
+      } else if (cuts->IsProton(part)) {
+        event->SetProton(part);
+      } else if (cuts->IsPim(part)) {
+        event->SetPim(part);
+      } else {
+        event->SetOther(part);
+      }
+    }
+    // Check the reaction class what kind of even it is and fill the appropriate histograms
+
+    if (event->NeutronPip()) csv_out += event->ReacToCsv();
   }
 
   // Return the total number of events
