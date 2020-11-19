@@ -30,8 +30,8 @@ class Histogram {
   double p_max = 10.0;
   double Dt_max = 10.0;
   double Dt_min = -Dt_max;
-  double q2_max = 8.0;
-  double w_max = 4.0;
+  double q2_max = 11.0;
+  double w_max = 4.5;
 
   double zero = 0.0;
 

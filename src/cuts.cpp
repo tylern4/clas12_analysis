@@ -21,6 +21,7 @@ bool Cuts::ElectronCuts() {
   //_elec &= (_data->gpart() < 20);
   _elec &= (_data->charge(0) == NEGATIVE);
   _elec &= (_data->pid(0) == ELECTRON);
+
   // Why 1.0 for minimumm momentum cut?
   //_elec &= (_data->p(0) > 1.0);
   //_elec &= ((abs(_data->status(0)) >= 2000) && abs(_data->status(0)) < 4000);

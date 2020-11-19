@@ -30,6 +30,17 @@ int main(int argc, char** argv) {
   // Make a set of threads (Futures are special threads which return a value)
   std::future<std::string> threads[NUM_THREADS];
 
+  auto run_files = [](std::vector<std::string> inputs, int thread_id, bool mc) {
+    // Called once for each thread
+    // Make a new chain to process for this thread
+    auto chain = std::make_shared<TChain>("clas12");
+    // Add every file to the chain
+    for (auto in : inputs) chain->Add(in.c_str());
+
+    // Run the function over each thread
+    return run<Cuts>(chain, thread_id, mc);
+  };
+
   // Define events to be used to get Hz later
   std::string events;
 

@@ -16,25 +16,17 @@
 #include "histogram.hpp"
 #include "reaction.hpp"
 
-size_t run(std::shared_ptr<TChain> _chain, const std::shared_ptr<Histogram>& _hists, int thread_id);
-size_t run_files(std::vector<std::string> inputs, const std::shared_ptr<Histogram>& hists, int thread_id);
-
-size_t run_files(std::vector<std::string> inputs, const std::shared_ptr<Histogram>& hists, int thread_id) {
-  // Called once for each thread
-  // Make a new chain to process for this thread
-  auto chain = std::make_shared<TChain>("clas12");
-  // Add every file to the chain
-  for (auto in : inputs) chain->Add(in.c_str());
-
-  // Run the function over each thread
-  return run(chain, hists, thread_id);
-}
-
+template <class CutType>
 size_t run(std::shared_ptr<TChain> _chain, const std::shared_ptr<Histogram>& _hists, int thread_id) {
   // Get the number of events in this thread
   size_t num_of_events = (int)_chain->GetEntries();
-  float beam_energy = 10.6041;
-  if (getenv("BEAM_E") != NULL) beam_energy = atof(getenv("BEAM_E"));
+
+  float beam_energy = rga_E0;
+  if (std::is_same<CutType, rga_Cuts>::value) {
+    beam_energy = rga_E0;
+  } else if (std::is_same<CutType, rgf_Cuts>::value) {
+    beam_energy = rgf_E0;
+  }
 
   // Print some information for each thread
   std::cout << "=============== " << RED << "Thread " << thread_id << DEF << " =============== " << BLUE
@@ -53,7 +45,7 @@ size_t run(std::shared_ptr<TChain> _chain, const std::shared_ptr<Histogram>& _hi
     if (thread_id == 0 && current_event % 1000 == 0)
       std::cout << "\t" << (100 * current_event / num_of_events) << " %\r" << std::flush;
 
-    auto cuts = std::make_shared<Cuts>(data);
+    auto cuts = std::make_unique<CutType>(data);
     if (!cuts->ElectronCuts()) continue;
 
     _hists->Fill_EC(data);
@@ -92,18 +84,3 @@ size_t run(std::shared_ptr<TChain> _chain, const std::shared_ptr<Histogram>& _hi
   return num_of_events;
 }
 #endif
-
-/*
-ep -> e x+
-
-W for all events
-W for 2 particles
-W for 2 Part 2nd positive
-hist Phi_e - Phi_pos ~ 90
-W for cut around 90
-pos_mom vs pos_theta
-theta_p_pos_calc_from_electron - theta_pos_measured
-
-calc theta from magnitude of pos momentum
-
-*/

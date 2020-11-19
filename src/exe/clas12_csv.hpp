@@ -15,26 +15,18 @@
 #include "deltat.hpp"
 #include "reaction.hpp"
 
-std::string run(std::shared_ptr<TChain> _chain, int thread_id, bool mc);
-std::string run_files(std::vector<std::string> inputs, int thread_id, bool mc);
-
-std::string run_files(std::vector<std::string> inputs, int thread_id, bool mc) {
-  // Called once for each thread
-  // Make a new chain to process for this thread
-  auto chain = std::make_shared<TChain>("clas12");
-  // Add every file to the chain
-  for (auto in : inputs) chain->Add(in.c_str());
-
-  // Run the function over each thread
-  return run(chain, thread_id, mc);
-}
-
+template <class CutType>
 std::string run(std::shared_ptr<TChain> _chain, int thread_id, bool mc) {
   std::string csv_out;
   // Get the number of events in this thread
   size_t num_of_events = (int)_chain->GetEntries();
-  float beam_energy = NAN;
-  if (getenv("BEAM_E") != NULL) beam_energy = atof(getenv("BEAM_E"));
+
+  float beam_energy = rga_E0;
+  if (std::is_same<CutType, rga_Cuts>::value) {
+    beam_energy = rga_E0;
+  } else if (std::is_same<CutType, rgf_Cuts>::value) {
+    beam_energy = rgf_E0;
+  }
 
   // Print some information for each thread
   std::cout << "=============== " << RED << "Thread " << thread_id << DEF << " =============== " << BLUE
@@ -55,7 +47,7 @@ std::string run(std::shared_ptr<TChain> _chain, int thread_id, bool mc) {
       std::cout << BLUE << "\t" << (100 * current_event / num_of_events) << " %\r" << DEF << std::flush;
 
     total++;
-    auto cuts = std::make_shared<Cuts>(data);
+    auto cuts = std::make_shared<CutType>(data);
     if (!cuts->ElectronCuts()) continue;
     auto event = mc ? std::make_shared<MCReaction>(data, beam_energy) : std::make_shared<Reaction>(data, beam_energy);
     auto dt = std::make_shared<Delta_T>(data);

@@ -145,18 +145,18 @@ void Histogram::Fill_WvsQ2_Npip(const std::shared_ptr<Reaction>& _e) {
 
 void Histogram::Write_WvsQ2() {
   for (short i = 0; i < 3; i++) {
-    WQ2_det[i]->SetXTitle("W (GeV)");
-    WQ2_det[i]->SetYTitle("Q^{2} (GeV^2)");
+    WQ2_det[i]->SetXTitle("W [Invariant Mass] (GeV/c^{2})");
+    WQ2_det[i]->SetYTitle("Q^{2} [Momentum Transfer] (GeV^{2})");
     WQ2_det[i]->SetOption("COLZ1");
     if (WQ2_det[i]->GetEntries()) WQ2_det[i]->Write();
-    W_det[i]->SetXTitle("W (GeV)");
+    W_det[i]->SetXTitle("W [Invariant Mass] (GeV/c^{2})");
     if (W_det[i]->GetEntries()) W_det[i]->Write();
   }
   auto WvsQ2_can = std::make_unique<TCanvas>("WvsQ2_can", "W vs Q2 sectors", 1920, 1080);
   WvsQ2_can->Divide(3, 2);
   for (short i = 0; i < num_sectors; i++) {
     W_vs_q2_sec[i]->SetYTitle("Q^{2} (GeV^{2})");
-    W_vs_q2_sec[i]->SetXTitle("W (GeV)");
+    W_vs_q2_sec[i]->SetXTitle("W [Invariant Mass] (GeV/c^{2})");
     W_vs_q2_sec[i]->SetOption("COLZ1");
     WvsQ2_can->cd(i + 1);
     W_vs_q2_sec[i]->Draw("same");
@@ -166,30 +166,30 @@ void Histogram::Write_WvsQ2() {
   auto W_can = std::make_unique<TCanvas>("W_can", "W sectors", 1920, 1080);
   W_can->Divide(3, 2);
   for (short i = 0; i < num_sectors; i++) {
-    W_sec[i]->SetXTitle("W (GeV)");
+    W_sec[i]->SetXTitle("W [Invariant Mass] (GeV/c^{2})");
     W_can->cd(i + 1);
     // W_sec[i]->Fit("gaus", "QMR+", "QMR+", 0.5, 1.2);
     W_sec[i]->Draw("same");
   }
   W_can->Write();
 
-  W_vs_q2->SetXTitle("W (GeV)");
+  W_vs_q2->SetXTitle("W [Invariant Mass] (GeV/c^{2})");
   W_vs_q2->SetYTitle("Q^{2} (GeV^{2})");
   W_vs_q2->SetOption("COLZ1");
   if (W_vs_q2->GetEntries()) W_vs_q2->Write();
 
-  W_hist->SetXTitle("W (GeV)");
+  W_hist->SetXTitle("W [Invariant Mass] (GeV/c^{2})");
   if (W_hist->GetEntries()) W_hist->Write();
 
   Q2_hist->SetXTitle("Q^{2} (GeV^{2})");
   if (Q2_hist->GetEntries()) Q2_hist->Write();
 
-  W_vs_q2_singlePip->SetXTitle("W (GeV)");
+  W_vs_q2_singlePip->SetXTitle("W [Invariant Mass] (GeV/c^{2})");
   W_vs_q2_singlePip->SetYTitle("Q^{2} (GeV^{2})");
   W_vs_q2_singlePip->SetOption("COLZ1");
   if (W_vs_q2_singlePip->GetEntries()) W_vs_q2_singlePip->Write();
 
-  W_hist_singlePip->SetXTitle("W (GeV)");
+  W_hist_singlePip->SetXTitle("W [Invariant Mass] (GeV/c^{2})");
   if (W_hist_singlePip->GetEntries()) W_hist_singlePip->Write();
 
   Q2_hist_singlePip->SetXTitle("Q^{2} (GeV^{2})");
@@ -201,21 +201,21 @@ void Histogram::Write_WvsQ2() {
   wvsq2_sec->cd();
   for (short i = 0; i < num_sectors; i++) {
     W_vs_q2_sec[i]->SetYTitle("Q^{2} (GeV^{2})");
-    W_vs_q2_sec[i]->SetXTitle("W (GeV)");
+    W_vs_q2_sec[i]->SetXTitle("W [Invariant Mass] (GeV/c^{2})");
     W_vs_q2_sec[i]->SetOption("COLZ1");
     W_vs_q2_sec[i]->Write();
   }
   auto w_sec = RootOutputFile->mkdir("w_sec");
   w_sec->cd();
   for (short i = 0; i < num_sectors; i++) {
-    W_sec[i]->SetXTitle("W (GeV)");
+    W_sec[i]->SetXTitle("W [Invariant Mass] (GeV/c^{2})");
     W_sec[i]->Write();
   }
   auto singlePip_sec = RootOutputFile->mkdir("singlePip_sec");
   singlePip_sec->cd();
   for (short i = 0; i < num_sectors; i++) {
     W_vs_q2_singlePip_sec[i]->SetYTitle("Q^{2} (GeV^{2})");
-    W_vs_q2_singlePip_sec[i]->SetXTitle("W (GeV)");
+    W_vs_q2_singlePip_sec[i]->SetXTitle("W [Invariant Mass] (GeV/c^{2})");
     W_vs_q2_singlePip_sec[i]->SetOption("COLZ1");
     if (W_vs_q2_singlePip_sec[i]->GetEntries()) W_vs_q2_singlePip_sec[i]->Write();
   }
@@ -223,12 +223,12 @@ void Histogram::Write_WvsQ2() {
   for (short i = 0; i < num_sectors; i++) {
     W_vs_MM_singlePip[i]->SetOption("COLZ1");
     W_vs_MM_singlePip[i]->SetYTitle("MM (GeV)");
-    W_vs_MM_singlePip[i]->SetXTitle("W (GeV)");
+    W_vs_MM_singlePip[i]->SetXTitle("W [Invariant Mass] (GeV/c^{2})");
     if (W_vs_MM_singlePip[i]->GetEntries()) W_vs_MM_singlePip[i]->Write();
   }
 
   for (short i = 0; i < num_sectors; i++) {
-    W_singlePip_sec[i]->SetXTitle("W (GeV)");
+    W_singlePip_sec[i]->SetXTitle("W [Invariant Mass] (GeV/c^{2})");
     if (W_singlePip_sec[i]->GetEntries()) W_singlePip_sec[i]->Write();
   }
 
@@ -243,12 +243,12 @@ void Histogram::Write_WvsQ2() {
 
   for (short i = 0; i < num_sectors; i++) {
     W_vs_q2_Npip_sec[i]->SetYTitle("Q^{2} (GeV^{2})");
-    W_vs_q2_Npip_sec[i]->SetXTitle("W (GeV)");
+    W_vs_q2_Npip_sec[i]->SetXTitle("W [Invariant Mass] (GeV/c^{2})");
     W_vs_q2_Npip_sec[i]->SetOption("COLZ1");
     W_vs_q2_Npip_sec[i]->Write();
   }
   for (short i = 0; i < num_sectors; i++) {
-    W_Npip_sec[i]->SetXTitle("W (GeV)");
+    W_Npip_sec[i]->SetXTitle("W [Invariant Mass] (GeV/c^{2})");
     W_Npip_sec[i]->Write();
   }
   for (short i = 0; i < num_sectors; i++) {
@@ -261,18 +261,18 @@ void Histogram::Write_WvsQ2MC() {
   auto MC_dir = RootOutputFile->mkdir("MC");
   MC_dir->cd();
   for (short i = 0; i < 3; i++) {
-    WQ2_det_MC[i]->SetXTitle("W (GeV)");
-    WQ2_det_MC[i]->SetYTitle("Q^{2} (GeV^2)");
+    WQ2_det_MC[i]->SetXTitle("W [Invariant Mass] (GeV/c^{2})");
+    WQ2_det_MC[i]->SetYTitle("Q^{2} [Momentum Transfer] (GeV^{2})");
     WQ2_det_MC[i]->SetOption("COLZ1");
     if (WQ2_det_MC[i]->GetEntries()) WQ2_det_MC[i]->Write();
-    W_det_MC[i]->SetXTitle("W (GeV)");
+    W_det_MC[i]->SetXTitle("W [Invariant Mass] (GeV/c^{2})");
     if (W_det_MC[i]->GetEntries()) W_det_MC[i]->Write();
   }
   auto WvsQ2_can = std::make_unique<TCanvas>("WvsQ2_can_MC", "W vs Q2 sectors", 1920, 1080);
   WvsQ2_can->Divide(3, 2);
   for (short i = 0; i < num_sectors; i++) {
     W_vs_q2_sec_MC[i]->SetYTitle("Q^{2} (GeV^{2})");
-    W_vs_q2_sec_MC[i]->SetXTitle("W (GeV)");
+    W_vs_q2_sec_MC[i]->SetXTitle("W [Invariant Mass] (GeV/c^{2})");
     W_vs_q2_sec_MC[i]->SetOption("COLZ1");
     WvsQ2_can->cd(i + 1);
     W_vs_q2_sec_MC[i]->Draw("same");
@@ -282,19 +282,19 @@ void Histogram::Write_WvsQ2MC() {
   auto W_can = std::make_unique<TCanvas>("W_can_MC", "W sectors", 1920, 1080);
   W_can->Divide(3, 2);
   for (short i = 0; i < num_sectors; i++) {
-    W_sec_MC[i]->SetXTitle("W (GeV)");
+    W_sec_MC[i]->SetXTitle("W [Invariant Mass] (GeV/c^{2})");
     W_can->cd(i + 1);
     // W_sec[i]->Fit("gaus", "QMR+", "QMR+", 0.5, 1.2);
     W_sec_MC[i]->Draw("same");
   }
   W_can->Write();
 
-  W_vs_q2_MC->SetXTitle("W (GeV)");
+  W_vs_q2_MC->SetXTitle("W [Invariant Mass] (GeV/c^{2})");
   W_vs_q2_MC->SetYTitle("Q^{2} (GeV^{2})");
   W_vs_q2_MC->SetOption("COLZ1");
   if (W_vs_q2_MC->GetEntries()) W_vs_q2_MC->Write();
 
-  W_MC_hist->SetXTitle("W (GeV)");
+  W_MC_hist->SetXTitle("W [Invariant Mass] (GeV/c^{2})");
   if (W_MC_hist->GetEntries()) W_MC_hist->Write();
 
   Q2_MC_hist->SetXTitle("Q^{2} (GeV^{2})");
@@ -302,13 +302,13 @@ void Histogram::Write_WvsQ2MC() {
 
   for (short i = 0; i < num_sectors; i++) {
     W_vs_q2_sec_MC[i]->SetYTitle("Q^{2} (GeV^{2})");
-    W_vs_q2_sec_MC[i]->SetXTitle("W (GeV)");
+    W_vs_q2_sec_MC[i]->SetXTitle("W [Invariant Mass] (GeV/c^{2})");
     W_vs_q2_sec_MC[i]->SetOption("COLZ1");
     W_vs_q2_sec_MC[i]->Write();
   }
 
   for (short i = 0; i < num_sectors; i++) {
-    W_sec_MC[i]->SetXTitle("W (GeV)");
+    W_sec_MC[i]->SetXTitle("W [Invariant Mass] (GeV/c^{2})");
     W_sec_MC[i]->Write();
   }
 }

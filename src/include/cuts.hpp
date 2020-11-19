@@ -12,7 +12,7 @@
 #include "physics.hpp"
 
 class Cuts {
- private:
+ protected:
   std::shared_ptr<Branches12> _data = nullptr;
   std::shared_ptr<Delta_T> _dt = nullptr;
 
@@ -26,6 +26,16 @@ class Cuts {
   bool IsPip(int i);
   bool IsProton(int i);
   bool IsPim(int i);
+};
+
+class rga_Cuts : public Cuts {
+  rga_Cuts(const std::shared_ptr<Branches12>& data) : Cuts(data) {}
+  rga_Cuts(const std::shared_ptr<Branches12>& data, const std::shared_ptr<Delta_T>& dt) : Cuts(data, dt){};
+};
+
+class rgf_Cuts : public Cuts {
+  rgf_Cuts(const std::shared_ptr<Branches12>& data) : Cuts(data) {}
+  rgf_Cuts(const std::shared_ptr<Branches12>& data, const std::shared_ptr<Delta_T>& dt) : Cuts(data, dt){};
 };
 
 #endif
