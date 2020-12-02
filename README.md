@@ -11,7 +11,11 @@ A c++ example can be found in the cpp folder.
 To build:
 
 ```bash
-make clean && make
+git clone https://github.com/tylern4/clas12_analysis.git
+mkdir -p clas12_analysis/build
+cd clas12_analysis/build
+cmake ..
+make
 ```
 
 To run:
