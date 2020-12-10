@@ -20,7 +20,7 @@ make
 
 To run:
 ```bash
-CLAS12_E=7.5 NUM_THREADS=4 ./clas12_analysis output.root /path/to/input/*.root
+BEAM_E=7.5 NUM_THREADS=4 ./clas12_analysis output.root /path/to/input/*.root
 ```
 
 If it breaks, reduce the number of threads for the number of files. In general each thread should have 2 or more files and the number of threads should be less than or equal to the number of cores you are using.
