@@ -97,6 +97,47 @@ void Reaction::CalcMissMass() {
   }
 }
 
+void Reaction::boost() {
+  // Angles gotten from picture in KPark thesis page 11
+  // May be wrong still, need to check
+
+  auto _com_ = *_target + (*_beam - *_elec);
+
+  auto com = std::make_shared<TLorentzVector>(_com_.X(), _com_.Y(), _com_.Z(), _com_.E());
+  auto elec_boosted = std::make_shared<TLorentzVector>(_elec->X(), _elec->Y(), _elec->Z(), _elec->E());
+  auto gamma_boosted = std::make_shared<TLorentzVector>(_gamma->X(), _gamma->Y(), _gamma->Z(), _gamma->E());
+
+  auto beam_boosted = std::make_shared<TLorentzVector>(_beam->X(), _beam->Y(), _beam->Z(), _beam->E());
+  auto pip_boosted = std::make_shared<TLorentzVector>(_pip->X(), _pip->Y(), _pip->Z(), _pip->E());
+
+  //! Calculate rotation: taken from Evan's phys-ana-omega on 08-05-13
+  // Copied and modified from Arjun's code
+
+  //  auto uz = _gamma->Vect().Unit();
+  // auto ux = _beam->Vect().Cross(_elec->Vect()).Unit();
+  // ROOT::Math::VectorUtil::Rotate(ux, uz);
+
+  TVector3 uz = gamma_boosted->Vect().Unit();
+  TVector3 ux = (beam_boosted->Vect().Cross(elec_boosted->Vect())).Unit();
+  ux.Rotate(-PI / 2, uz);
+  TRotation r3;  // = new TRotation();
+  r3.SetZAxis(uz, ux).Invert();
+  //! _w and _q are in z-direction
+  TVector3 boost(-1 * com->BoostVector());
+  TLorentzRotation r4(r3);  //*_boost);
+  r4 *= boost;              //*_3rot;
+
+  gamma_boosted->Transform(r4);
+  elec_boosted->Transform(r4);
+  beam_boosted->Transform(r4);
+  pip_boosted->Transform(r4);
+
+  auto _temp = physics::fourVec(pip_boosted->X(), pip_boosted->Y(), pip_boosted->Z(), pip_boosted->M());
+  _theta_e = elec_boosted->Theta();
+  _theta_star = _temp->Theta();
+  _phi_star = physics::phi_boosted(_temp);
+}
+
 float Reaction::MM() {
   if (_MM != _MM) CalcMissMass();
   return _MM;

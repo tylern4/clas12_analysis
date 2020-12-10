@@ -1,12 +1,14 @@
-#include "clas12_mc.hpp"
+#include "clas12_yeilds.hpp"
 #include <future>
 #include <thread>
 
 int main(int argc, char** argv) {
   // Need this to make sure root doesn't break
   ROOT::EnableThreadSafety();
+  // std::ios::sync_with_stdio(false);
 
-  int NUM_THREADS = 4;
+  // Make sure we don't create more threads than files
+  int NUM_THREADS = 1;
   if (getenv("NUM_THREADS") != NULL) NUM_THREADS = atoi(getenv("NUM_THREADS"));
   if (NUM_THREADS > argc - NUM_THREADS) NUM_THREADS = 1;
 
@@ -31,16 +33,17 @@ int main(int argc, char** argv) {
   size_t events = 0;
 
   // Make your histograms object as a shared pointer that all the threads will have
-  auto hists = std::make_shared<Histogram>(outfilename);
-
-  auto run_files = [&hists](std::vector<std::string> inputs, int thread_id) {
+  auto csv_output_file = std::make_shared<SyncFile>(outfilename);
+  csv_output_file->write(csv_data::header());
+  auto run_files = [&csv_output_file](auto&& inputs, auto&& thread_id) mutable {
     // Called once for each thread
     // Make a new chain to process for this thread
     auto chain = std::make_shared<TChain>("clas12");
     // Add every file to the chain
     for (auto in : inputs) chain->Add(in.c_str());
+
     // Run the function over each thread
-    return run<Cuts>(std::move(chain), hists, thread_id);
+    return run(chain, csv_output_file, thread_id);
   };
 
   // Start timer

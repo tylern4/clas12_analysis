@@ -7,6 +7,7 @@
 #define REACTION_H_GUARD
 
 #include <iostream>
+#include "TLorentzRotation.h"
 #include "TLorentzVector.h"
 #include "branches.hpp"
 #include "constants.hpp"
@@ -52,6 +53,10 @@ class Reaction {
   float _W = NAN;
   float _Q2 = NAN;
 
+  float _theta_e = NAN;
+  float _theta_star = NAN;
+  float _phi_star = NAN;
+
   void SetElec();
 
  public:
@@ -65,6 +70,10 @@ class Reaction {
   void SetPim(int i);
   void SetOther(int i);
   void SetNeutron(int i);
+  void boost();
+  inline float Theta_star() { return _theta_star; }
+  inline float Phi_star() { return _phi_star; }
+  inline float Theta_E() { return _theta_e; }
 
   void CalcMissMass();
   float MM();
@@ -83,7 +92,7 @@ class Reaction {
   inline bool ProtonPim() {
     return ((_numProt == 1 && _numPim == 1) && (_hasE && _hasP && !_hasPip && _hasPim && !_hasNeutron && !_hasOther));
   }
-  inline bool SinglePip() { return ((_numPip == 1) && (_hasE && !_hasP && _hasPip && !_hasPim && !_hasOther)); }
+  inline bool SinglePip() { return ((_numPip == 1) && (_hasE && !_hasP && _hasPip && !_hasPim)); }
   inline bool SingleP() {
     return ((_numProt == 1) && (_hasE && _hasP && !_hasPip && !_hasPim && !_hasNeutron && !_hasOther));
   }

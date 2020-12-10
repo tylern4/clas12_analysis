@@ -25,6 +25,8 @@ double phi_calc(double cosx, double cosy);
 
 double vertex_time(double sc_time, double sc_pathlength, double relatavistic_beta);
 double deltat(double electron_vertex_time, double mass, double momentum, double sc_t, double sc_r);
+std::shared_ptr<TLorentzVector> fourVec(double px, double py, double pz, double mass);
+float phi_boosted(const std::shared_ptr<TLorentzVector> &vec);
 }  // namespace physics
 
 #endif

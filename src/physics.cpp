@@ -37,4 +37,28 @@ double deltat(double electron_vertex_time, double mass, double momentum, double 
   double relatavistic_beta = 1.0 / sqrt(1.0 + (mass / momentum) * (mass / momentum));
   return electron_vertex_time - vertex_time(sc_t, sc_r, relatavistic_beta);
 }
+
+std::shared_ptr<TLorentzVector> fourVec(double px, double py, double pz, double mass) {
+  auto x = std::make_shared<TLorentzVector>();
+  x->SetXYZM(px, py, pz, mass);
+  return x;
+}
+float invTan(const float &y, const float &x) {
+  if (x > 0 && y > 0)
+    return atan(y / x);  // 1st Quad.
+  else if (x < 0 && y > 0)
+    return atan(y / x) + PI;  // 2nd Quad
+  else if (x < 0 && y < 0)
+    return atan(y / x) + PI;  // 3rd Quad
+  else if (x > 0 && y < 0)
+    return atan(y / x) + 2 * PI;  // 4th Quad
+  else if (x == 0 && y > 0)
+    return PI / 2;
+  else if (x == 0 && y < 0)
+    return 3 * PI / 2;
+  return NAN;
+}
+
+float phi_boosted(const std::shared_ptr<TLorentzVector> &vec) { return invTan(vec->Py(), vec->Px()); }
+
 }  // namespace physics

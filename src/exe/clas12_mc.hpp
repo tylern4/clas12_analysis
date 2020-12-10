@@ -12,23 +12,11 @@
 #include "TH1.h"
 #include "branches.hpp"
 #include "colors.hpp"
+#include "cuts.hpp"
 #include "histogram.hpp"
 #include "reaction.hpp"
 
-size_t run(std::shared_ptr<TChain> _chain, const std::shared_ptr<Histogram>& _hists, int thread_id);
-size_t run_files(std::vector<std::string> inputs, const std::shared_ptr<Histogram>& hists, int thread_id);
-
-size_t run_files(std::vector<std::string> inputs, const std::shared_ptr<Histogram>& hists, int thread_id) {
-  // Called once for each thread
-  // Make a new chain to process for this thread
-  auto chain = std::make_shared<TChain>("clas12");
-  // Add every file to the chain
-  for (auto in : inputs) chain->Add(in.c_str());
-
-  // Run the function over each thread
-  return run(chain, hists, thread_id);
-}
-
+template <class CutType>
 size_t run(std::shared_ptr<TChain> _chain, const std::shared_ptr<Histogram>& _hists, int thread_id) {
   // Get the number of events in this thread
   size_t num_of_events = (int)_chain->GetEntries();
