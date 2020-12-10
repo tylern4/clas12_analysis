@@ -1,4 +1,4 @@
-#include "clas12_yeilds.hpp"
+#include "clas12_yields.hpp"
 #include <future>
 #include <thread>
 
