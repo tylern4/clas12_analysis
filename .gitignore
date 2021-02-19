@@ -56,3 +56,6 @@ cpp/clas12_analysis
 *.phd
 *.class
 *.png
+java/.project
+.dccache
+java/.project
