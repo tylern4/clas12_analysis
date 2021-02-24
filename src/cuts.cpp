@@ -134,8 +134,8 @@ bool Cuts::IsPim(int i) {
 bool uconn_Cuts::ElectronCuts() {
   bool cut = true;
   cut &= CC_nphe_cut();
-  // cut &= EC_outer_vs_EC_inner_cut();
-  // cut &= EC_sampling_fraction_cut();
+  cut &= EC_outer_vs_EC_inner_cut();
+  cut &= EC_sampling_fraction_cut();
   // cut &= EC_hit_position_fiducial_cut_homogeneous();
   // cut &= DC_fiducial_cut_XY();
   // cut &= DC_z_vertex_cut();
@@ -154,78 +154,82 @@ bool uconn_Cuts::CC_nphe_cut() {
   return _data->cc_nphe_tot(0) > nphe_min;
 }
 
-bool uconn_Cuts::EC_outer_vs_EC_inner_cut(double pcal_energy) {
-  // double edep_tight = 0.06, edep_medium = 0.07, edep_loose = 0.09;
-  // return pcal_energy > edep_medium;
+bool uconn_Cuts::EC_outer_vs_EC_inner_cut() {
+  float edep_tight = 0.06, edep_medium = 0.07, edep_loose = 0.09;
+  return _data->ec_pcal_energy(0) > edep_medium;
 }
 
-bool uconn_Cuts::EC_sampling_fraction_cut(double partp, int pcal_sector, double pcal_energy, double ecin_energy,
-                                          double ecout_energy) {
-  /*
-double[][] ecal_e_sampl_mu = {{0.2531, 0.2550, 0.2514, 0.2494, 0.2528, 0.2521},
-{-0.6502, -0.7472, -0.7674, -0.4913, -0.3988, -0.703},
-{4.939, 5.350, 5.102, 6.440, 6.149, 4.957}};
+bool uconn_Cuts::EC_sampling_fraction_cut() {
+  float partp = _data->p(0);
+  int pcal_sector = _data->ec_pcal_sec(0);
+  float pcal_energy = _data->ec_pcal_energy(0);
+  float ecin_energy = _data->ec_ecin_energy(0);
+  float ecout_energy = _data->ec_ecout_energy(0);
 
-double[][] ecal_e_sampl_sigm = {{2.726e-3, 4.157e-3, 5.222e-3, 5.398e-3, 8.453e-3, 6.533e-3},
-{1.062, 0.859, 0.5564, 0.6576, 0.3242, 0.4423},
-{-4.089, -3.318, -2.078, -2.565, -0.8223, -1.274}};
+  float ecal_e_sampl_mu[3][6] = {{0.2531, 0.2550, 0.2514, 0.2494, 0.2528, 0.2521},
+                                 {-0.6502, -0.7472, -0.7674, -0.4913, -0.3988, -0.703},
+                                 {4.939, 5.350, 5.102, 6.440, 6.149, 4.957}};
 
-double sigma_range = 3.5;
+  float ecal_e_sampl_sigm[3][6] = {{2.726e-3, 4.157e-3, 5.222e-3, 5.398e-3, 8.453e-3, 6.533e-3},
+                                   {1.062, 0.859, 0.5564, 0.6576, 0.3242, 0.4423},
+                                   {-4.089, -3.318, -2.078, -2.565, -0.8223, -1.274}};
 
-double ectotal_energy = pcal_energy + ecin_energy + ecout_energy;
-int isec = pcal_sector - 1;
-double mean =
-ecal_e_sampl_mu[0][isec] + ecal_e_sampl_mu[1][isec] / 1000 * Math.pow(partp - ecal_e_sampl_mu[2][isec], 2);
-double sigma = ecal_e_sampl_sigm[0][isec] + ecal_e_sampl_sigm[1][isec] / (10 * (partp - ecal_e_sampl_sigm[2][isec]));
-double upper_lim_total = mean + sigma_range * sigma;
-double lower_lim_total = mean - sigma_range * sigma;
+  float sigma_range = 3.5;
 
-bool pass_band = ectotal_energy / partp <= upper_lim_total && ectotal_energy / partp >= lower_lim_total;
-bool pass_triangle = false;
+  float ectotal_energy = pcal_energy + ecin_energy + ecout_energy;
+  int isec = pcal_sector - 1;
+  float mean = ecal_e_sampl_mu[0][isec] + ecal_e_sampl_mu[1][isec] / 1000 * pow(partp - ecal_e_sampl_mu[2][isec], 2);
+  float sigma = ecal_e_sampl_sigm[0][isec] + ecal_e_sampl_sigm[1][isec] / (10 * (partp - ecal_e_sampl_sigm[2][isec]));
+  float upper_lim_total = mean + sigma_range * sigma;
+  float lower_lim_total = mean - sigma_range * sigma;
 
-if (partp < 4.5) {
-pass_triangle = true;
-} else {
-pass_triangle = ecin_energy / partp > (0.2 - pcal_energy / partp);
+  bool pass_band = ectotal_energy / partp <= upper_lim_total && ectotal_energy / partp >= lower_lim_total;
+  bool pass_triangle = false;
+
+  if (partp < 4.5) {
+    pass_triangle = true;
+  } else {
+    pass_triangle = ecin_energy / partp > (0.2 - pcal_energy / partp);
+  }
+
+  return pass_band && pass_triangle;
 }
 
-return pass_band && pass_triangle;
-*/
-}
+bool uconn_Cuts::EC_hit_position_fiducial_cut_homogeneous() {
+  int pcal_sector = _data->ec_pcal_sec(0);
+  float lv = _data->ec_pcal_lv(0);
+  float lw = _data->ec_pcal_lw(0);
 
-bool uconn_Cuts::EC_hit_position_fiducial_cut_homogeneous(int pcal_sector, double lv, double lw) {
-  /*
-// Cut using the natural directions of the scintillator bars/ fibers:
+  // Cut using the natural directions of the scintillator bars/ fibers:
 
-///////////////////////////////////////////////////////////////////
-/// inbending:
-//
-double[] min_v_tight_inb = {19.0, 19.0, 19.0, 19.0, 19.0, 19.0};
-double[] min_v_med_inb = {14.0, 14.0, 14.0, 14.0, 14.0, 14.0};
-double[] min_v_loose_inb = {9.0, 9.0, 9.0, 9.0, 9.0, 9.0};
-//
-double[] max_v_tight_inb = {400, 400, 400, 400, 400, 400};
-double[] max_v_med_inb = {400, 400, 400, 400, 400, 400};
-double[] max_v_loose_inb = {400, 400, 400, 400, 400, 400};
-//
-double[] min_w_tight_inb = {19.0, 19.0, 19.0, 19.0, 19.0, 19.0};
-double[] min_w_med_inb = {14.0, 14.0, 14.0, 14.0, 14.0, 14.0};
-double[] min_w_loose_inb = {9.0, 9.0, 9.0, 9.0, 9.0, 9.0};
-//
-double[] max_w_tight_inb = {400, 400, 400, 400, 400, 400};
-double[] max_w_med_inb = {400, 400, 400, 400, 400, 400};
-double[] max_w_loose_inb = {400, 400, 400, 400, 400, 400};
+  ///////////////////////////////////////////////////////////////////
+  /// inbending:
+  //
+  float min_v_tight_inb[] = {19.0, 19.0, 19.0, 19.0, 19.0, 19.0};
+  float min_v_med_inb[] = {14.0, 14.0, 14.0, 14.0, 14.0, 14.0};
+  float min_v_loose_inb[] = {9.0, 9.0, 9.0, 9.0, 9.0, 9.0};
+  //
+  float max_v_tight_inb[] = {400, 400, 400, 400, 400, 400};
+  float max_v_med_inb[] = {400, 400, 400, 400, 400, 400};
+  float max_v_loose_inb[] = {400, 400, 400, 400, 400, 400};
+  //
+  float min_w_tight_inb[] = {19.0, 19.0, 19.0, 19.0, 19.0, 19.0};
+  float min_w_med_inb[] = {14.0, 14.0, 14.0, 14.0, 14.0, 14.0};
+  float min_w_loose_inb[] = {9.0, 9.0, 9.0, 9.0, 9.0, 9.0};
+  //
+  float max_w_tight_inb[] = {400, 400, 400, 400, 400, 400};
+  float max_w_med_inb[] = {400, 400, 400, 400, 400, 400};
+  float max_w_loose_inb[] = {400, 400, 400, 400, 400, 400};
 
-//////////////////////////////////////////////////////////////
+  //////////////////////////////////////////////////////////////
 
-int isec = pcal_sector - 1;
-double min_v = min_v_loose_inb[isec];
-double max_v = max_v_loose_inb[isec];
-double min_w = min_w_loose_inb[isec];
-double max_w = max_w_loose_inb[isec];
+  int isec = pcal_sector - 1;
+  double min_v = min_v_loose_inb[isec];
+  double max_v = max_v_loose_inb[isec];
+  double min_w = min_w_loose_inb[isec];
+  double max_w = max_w_loose_inb[isec];
 
-return lv > min_v && lv < max_v && lw > min_w && lw < max_w;
-*/
+  return lv > min_v && lv < max_v && lw > min_w && lw < max_w;
 }
 
 bool uconn_Cuts::DC_fiducial_cut_XY(int dc_sector, int region, double x, double y, int partpid, bool isinbending) {
@@ -233,6 +237,8 @@ bool uconn_Cuts::DC_fiducial_cut_XY(int dc_sector, int region, double x, double 
   // replace it in the function: bool DC_fiducial_cut_XY(int j, int region)
   // (optimized for electrons, do not use it for hadrons)
   //
+  float maxparams[6][6][3][2];
+  float minparams[6][6][3][2];
   /*
     double[][][][] maxparams_in = {{{{-14.563, 0.60032}, {-19.6768, 0.58729}, {-22.2531, 0.544896}},
                                     {{-12.7486, 0.587631}, {-18.8093, 0.571584}, {-19.077, 0.519895}},
@@ -386,59 +392,61 @@ bool uconn_Cuts::DC_fiducial_cut_XY(int dc_sector, int region, double x, double 
 
     double[][][][] minparams = isinbending ? minparams_in : minparams_out;
     double[][][][] maxparams = isinbending ? maxparams_in : maxparams_out;
+  */
 
-    double X = x;
-    double Y = y;
+  float X = x;
+  float Y = y;
 
-    double X_new =
-        X * Math.cos(Math.toRadians(-60 * (dc_sector - 1))) - Y * Math.sin(Math.toRadians(-60 * (dc_sector - 1)));
-    Y = X * Math.sin(Math.toRadians(-60 * (dc_sector - 1))) + Y * Math.cos(Math.toRadians(-60 * (dc_sector - 1)));
-    X = X_new;
+  float X_new = X * cos(DEG2RAD * (-60 * (dc_sector - 1))) - Y * sin(DEG2RAD * (-60 * (dc_sector - 1)));
+  Y = X * sin(DEG2RAD * (-60 * (dc_sector - 1))) + Y * cos(DEG2RAD * (-60 * (dc_sector - 1)));
+  X = X_new;
 
-    int pid = 0;
+  int pid = 0;
 
-    switch (partpid) {
-      case 11:
-        pid = 0;
-        break;
-      case 2212:
-        pid = 1;
-        break;
-      case 211:
-        pid = 2;
-        break;
-      case -211:
-        pid = 3;
-        break;
-      case 321:
-        pid = 4;
-        break;
-      case -321:
-        pid = 5;
-        break;
-      default:
-        return false;
-    }
+  switch (partpid) {
+    case 11:
+      pid = 0;
+      break;
+    case 2212:
+      pid = 1;
+      break;
+    case 211:
+      pid = 2;
+      break;
+    case -211:
+      pid = 3;
+      break;
+    case 321:
+      pid = 4;
+      break;
+    case -321:
+      pid = 5;
+      break;
+    default:
+      return false;
+  }
 
-    // if(inbending == true) pid = 0; // use only for electrons in inbending case
+  // if(inbending == true) pid = 0; // use only for electrons in inbending case
 
-    double calc_min = minparams[pid][dc_sector - 1][region - 1][0] + minparams[pid][dc_sector - 1][region - 1][1] * X;
-    double calc_max = maxparams[pid][dc_sector - 1][region - 1][0] + maxparams[pid][dc_sector - 1][region - 1][1] * X;
+  float calc_min = minparams[pid][dc_sector - 1][region - 1][0] + minparams[pid][dc_sector - 1][region - 1][1] * X;
+  float calc_max = maxparams[pid][dc_sector - 1][region - 1][0] + maxparams[pid][dc_sector - 1][region - 1][1] * X;
 
-    return (Y > calc_min) && (Y < calc_max);
-    */
+  return (Y > calc_min) && (Y < calc_max);
 }
 
-bool uconn_Cuts::DC_z_vertex_cut(int pcal_sector, double partvz, bool isinbending) {
-  /*
-  double vz_min_sect_inb[] = {-13, -13, -13, -13, -13, -13};
-  double vz_max_sect_inb[] = {12, 12, 12, 12, 12, 12};
+bool uconn_Cuts::DC_z_vertex_cut() {
+  int pcal_sector = _data->ec_pcal_sec(0);
+  float partvz = _data->pz(0);
+  bool isinbending = false;
 
-  double vz_min_sect_outb[] = {-18, -18, -18, -18, -18, -18};
-  double vz_max_sect_outb[] = {10, 10, 10, 10, 10, 10};
+  float vz_min_sect_inb[] = {-13, -13, -13, -13, -13, -13};
+  float vz_max_sect_inb[] = {12, 12, 12, 12, 12, 12};
 
-  double[] vz_min_sect = new double[6];
-  double[] vz_max_sect = new double[6];
+  float vz_min_sect_outb[] = {-18, -18, -18, -18, -18, -18};
+  float vz_max_sect_outb[] = {10, 10, 10, 10, 10, 10};
+
+  float vz_min_sect[6];
+  float vz_max_sect[6];
 
   for (int i = 0; i < 6; i++) {
     if (isinbending) {
@@ -451,11 +459,10 @@ bool uconn_Cuts::DC_z_vertex_cut(int pcal_sector, double partvz, bool isinbendin
   }
 
   int isec = pcal_sector - 1;
-  double vz_min = vz_min_sect[isec];
-  double vz_max = vz_max_sect[isec];
+  float vz_min = vz_min_sect[isec];
+  float vz_max = vz_max_sect[isec];
 
   return partvz > vz_min && partvz < vz_max;
-  */
 }
 
 /////////////////////// uconn_Cuts ///////////////////////
