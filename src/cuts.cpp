@@ -136,9 +136,9 @@ bool uconn_Cuts::ElectronCuts() {
   cut &= CC_nphe_cut();
   cut &= EC_outer_vs_EC_inner_cut();
   cut &= EC_sampling_fraction_cut();
-  // cut &= EC_hit_position_fiducial_cut_homogeneous();
+  cut &= EC_hit_position_fiducial_cut_homogeneous();
   // cut &= DC_fiducial_cut_XY();
-  // cut &= DC_z_vertex_cut();
+  cut &= DC_z_vertex_cut();
   return cut;
 }
 
