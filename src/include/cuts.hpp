@@ -38,4 +38,19 @@ class rgf_Cuts : public Cuts {
   rgf_Cuts(const std::shared_ptr<Branches12>& data, const std::shared_ptr<Delta_T>& dt) : Cuts(data, dt){};
 };
 
+class uconn_Cuts : public Cuts {
+  uconn_Cuts(const std::shared_ptr<Branches12>& data) : Cuts(data) {}
+  uconn_Cuts(const std::shared_ptr<Branches12>& data, const std::shared_ptr<Delta_T>& dt) : Cuts(data, dt){};
+  bool ElectronCuts();
+
+  // bool CC_nphe_cut(double nphe);
+  bool CC_nphe_cut();
+
+  bool EC_outer_vs_EC_inner_cut(double pcal_energy);
+  bool EC_sampling_fraction_cut(double partp, int pcal_sector, double pcal_energy, double ecin_energy,
+                                double ecout_energy);
+  bool EC_hit_position_fiducial_cut_homogeneous(int pcal_sector, double lv, double lw);
+  bool DC_fiducial_cut_XY(int dc_sector, int region, double x, double y, int partpid, bool isinbending);
+  bool DC_z_vertex_cut(int pcal_sector, double partvz, bool isinbending);
+};
 #endif

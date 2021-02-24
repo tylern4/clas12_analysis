@@ -24,6 +24,8 @@ size_t run(std::shared_ptr<TChain> _chain, const std::shared_ptr<Histogram>& _hi
   float beam_energy = rga_E0;
   if (std::is_same<CutType, rga_Cuts>::value) {
     beam_energy = rga_E0;
+  } else if (std::is_same<CutType, uconn_Cuts>::value) {
+    beam_energy = rga_E0;
   } else if (std::is_same<CutType, rgf_Cuts>::value) {
     beam_energy = rgf_E0;
   }
