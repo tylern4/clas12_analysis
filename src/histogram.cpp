@@ -95,8 +95,6 @@ void Histogram::Fill_WvsQ2(const std::shared_ptr<Reaction>& _e) {
   }
 }
 void Histogram::Fill_WvsQ2(const std::shared_ptr<MCReaction>& _e) {
-  std::cout << "Weight " << _e->weight() << std::endl;
-
   W_vs_q2_MC->Fill(_e->W(), _e->Q2(), _e->weight());
   W_MC_hist->Fill(_e->W(), _e->weight());
   Q2_MC_hist->Fill(_e->Q2(), _e->weight());
