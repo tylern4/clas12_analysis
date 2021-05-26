@@ -1314,45 +1314,236 @@ float Branches12::fmt_x(int i) { return _fmt_x->at(i); }
 float Branches12::fmt_y(int i) { return _fmt_y->at(i); }
 float Branches12::fmt_z(int i) { return _fmt_z->at(i); }
 
-float Branches12::cc_nphe_tot(int i) { return _cc_nphe_tot->at(i); }
-int Branches12::cc_ltcc_sec(int i) { return _cc_ltcc_sec->at(i); }
-float Branches12::cc_ltcc_nphe(int i) { return _cc_ltcc_nphe->at(i); }
-float Branches12::cc_ltcc_time(int i) { return _cc_ltcc_time->at(i); }
-float Branches12::cc_ltcc_path(int i) { return _cc_ltcc_path->at(i); }
-float Branches12::cc_ltcc_theta(int i) { return _cc_ltcc_theta->at(i); }
-float Branches12::cc_ltcc_phi(int i) { return _cc_ltcc_phi->at(i); }
-float Branches12::cc_ltcc_x(int i) { return _cc_ltcc_x->at(i); }
-float Branches12::cc_ltcc_y(int i) { return _cc_ltcc_y->at(i); }
-float Branches12::cc_ltcc_z(int i) { return _cc_ltcc_z->at(i); }
-int Branches12::cc_htcc_sec(int i) { return _cc_htcc_sec->at(i); }
-float Branches12::cc_htcc_nphe(int i) { return _cc_htcc_nphe->at(i); }
-float Branches12::cc_htcc_time(int i) { return _cc_htcc_time->at(i); }
-float Branches12::cc_htcc_path(int i) { return _cc_htcc_path->at(i); }
-float Branches12::cc_htcc_theta(int i) { return _cc_htcc_theta->at(i); }
-float Branches12::cc_htcc_phi(int i) { return _cc_htcc_phi->at(i); }
-float Branches12::cc_htcc_x(int i) { return _cc_htcc_x->at(i); }
-float Branches12::cc_htcc_y(int i) { return _cc_htcc_y->at(i); }
-float Branches12::cc_htcc_z(int i) { return _cc_htcc_z->at(i); }
-int Branches12::cc_rich_sec(int i) { return _cc_rich_sec->at(i); }
-float Branches12::cc_rich_nphe(int i) { return _cc_rich_nphe->at(i); }
-float Branches12::cc_rich_time(int i) { return _cc_rich_time->at(i); }
-float Branches12::cc_rich_path(int i) { return _cc_rich_path->at(i); }
-float Branches12::cc_rich_theta(int i) { return _cc_rich_theta->at(i); }
-float Branches12::cc_rich_phi(int i) { return _cc_rich_phi->at(i); }
-float Branches12::cc_rich_x(int i) { return _cc_rich_x->at(i); }
-float Branches12::cc_rich_y(int i) { return _cc_rich_y->at(i); }
-float Branches12::cc_rich_z(int i) { return _cc_rich_z->at(i); }
+float Branches12::cc_nphe_tot(int i) {
+  if (i >= _cc_nphe_tot->size())
+    return NAN;
+  else
+    return _cc_nphe_tot->at(i);
+}
+int Branches12::cc_ltcc_sec(int i) {
+  if (i >= _cc_nphe_tot->size())
+    return NAN;
+  else
+    return _cc_ltcc_sec->at(i);
+}
+float Branches12::cc_ltcc_nphe(int i) {
+  if (i >= _cc_nphe_tot->size())
+    return NAN;
+  else
+    return _cc_ltcc_nphe->at(i);
+}
+float Branches12::cc_ltcc_time(int i) {
+  if (i >= _cc_nphe_tot->size())
+    return NAN;
+  else
+    return _cc_ltcc_time->at(i);
+}
+float Branches12::cc_ltcc_path(int i) {
+  if (i >= _cc_nphe_tot->size())
+    return NAN;
+  else
+    return _cc_ltcc_path->at(i);
+}
+float Branches12::cc_ltcc_theta(int i) {
+  if (i >= _cc_nphe_tot->size())
+    return NAN;
+  else
+    return _cc_ltcc_theta->at(i);
+}
+float Branches12::cc_ltcc_phi(int i) {
+  if (i >= _cc_nphe_tot->size())
+    return NAN;
+  else
+    return _cc_ltcc_phi->at(i);
+}
+float Branches12::cc_ltcc_x(int i) {
+  if (i >= _cc_nphe_tot->size())
+    return NAN;
+  else
+    return _cc_ltcc_x->at(i);
+}
+float Branches12::cc_ltcc_y(int i) {
+  if (i >= _cc_nphe_tot->size())
+    return NAN;
+  else
+    return _cc_ltcc_y->at(i);
+}
+float Branches12::cc_ltcc_z(int i) {
+  if (i >= _cc_nphe_tot->size())
+    return NAN;
+  else
+    return _cc_ltcc_z->at(i);
+}
+int Branches12::cc_htcc_sec(int i) {
+  if (i >= _cc_nphe_tot->size())
+    return NAN;
+  else
+    return _cc_htcc_sec->at(i);
+}
+float Branches12::cc_htcc_nphe(int i) {
+  if (i >= _cc_nphe_tot->size())
+    return NAN;
+  else
+    return _cc_htcc_nphe->at(i);
+}
+float Branches12::cc_htcc_time(int i) {
+  if (i >= _cc_nphe_tot->size())
+    return NAN;
+  else
+    return _cc_htcc_time->at(i);
+}
+float Branches12::cc_htcc_path(int i) {
+  if (i >= _cc_nphe_tot->size())
+    return NAN;
+  else
+    return _cc_htcc_path->at(i);
+}
+float Branches12::cc_htcc_theta(int i) {
+  if (i >= _cc_nphe_tot->size())
+    return NAN;
+  else
+    return _cc_htcc_theta->at(i);
+}
+float Branches12::cc_htcc_phi(int i) {
+  if (i >= _cc_nphe_tot->size())
+    return NAN;
+  else
+    return _cc_htcc_phi->at(i);
+}
+float Branches12::cc_htcc_x(int i) {
+  if (i >= _cc_nphe_tot->size())
+    return NAN;
+  else
+    return _cc_htcc_x->at(i);
+}
+float Branches12::cc_htcc_y(int i) {
+  if (i >= _cc_nphe_tot->size())
+    return NAN;
+  else
+    return _cc_htcc_y->at(i);
+}
+float Branches12::cc_htcc_z(int i) {
+  if (i >= _cc_nphe_tot->size())
+    return NAN;
+  else
+    return _cc_htcc_z->at(i);
+}
+int Branches12::cc_rich_sec(int i) {
+  if (i >= _cc_nphe_tot->size())
+    return NAN;
+  else
+    return _cc_rich_sec->at(i);
+}
+float Branches12::cc_rich_nphe(int i) {
+  if (i >= _cc_nphe_tot->size())
+    return NAN;
+  else
+    return _cc_rich_nphe->at(i);
+}
+float Branches12::cc_rich_time(int i) {
+  if (i >= _cc_nphe_tot->size())
+    return NAN;
+  else
+    return _cc_rich_time->at(i);
+}
+float Branches12::cc_rich_path(int i) {
+  if (i >= _cc_nphe_tot->size())
+    return NAN;
+  else
+    return _cc_rich_path->at(i);
+}
+float Branches12::cc_rich_theta(int i) {
+  if (i >= _cc_nphe_tot->size())
+    return NAN;
+  else
+    return _cc_rich_theta->at(i);
+}
+float Branches12::cc_rich_phi(int i) {
+  if (i >= _cc_nphe_tot->size())
+    return NAN;
+  else
+    return _cc_rich_phi->at(i);
+}
+float Branches12::cc_rich_x(int i) {
+  if (i >= _cc_nphe_tot->size())
+    return NAN;
+  else
+    return _cc_rich_x->at(i);
+}
+float Branches12::cc_rich_y(int i) {
+  if (i >= _cc_nphe_tot->size())
+    return NAN;
+  else
+    return _cc_rich_y->at(i);
+}
+float Branches12::cc_rich_z(int i) {
+  if (i >= _cc_nphe_tot->size())
+    return NAN;
+  else
+    return _cc_rich_z->at(i);
+}
 
-float Branches12::sc_cnd_time(int i) { return _sc_cnd_time->at(i); }
-float Branches12::sc_cnd_path(int i) { return _sc_cnd_path->at(i); }
-float Branches12::sc_cnd_energy(int i) { return _sc_cnd_energy->at(i); }
-int Branches12::sc_cnd_component(int i) { return _sc_cnd_component->at(i); }
-float Branches12::sc_cnd_x(int i) { return _sc_cnd_x->at(i); }
-float Branches12::sc_cnd_y(int i) { return _sc_cnd_y->at(i); }
-float Branches12::sc_cnd_z(int i) { return _sc_cnd_z->at(i); }
-float Branches12::sc_cnd_hx(int i) { return _sc_cnd_hx->at(i); }
-float Branches12::sc_cnd_hy(int i) { return _sc_cnd_hy->at(i); }
-float Branches12::sc_cnd_hz(int i) { return _sc_cnd_hz->at(i); }
+float Branches12::sc_cnd_time(int i) {
+  if (i >= _sc_cnd_component->size())
+    return NAN;
+  else
+    return _sc_cnd_time->at(i);
+}
+float Branches12::sc_cnd_path(int i) {
+  if (i >= _sc_cnd_component->size())
+    return NAN;
+  else
+    return _sc_cnd_path->at(i);
+}
+float Branches12::sc_cnd_energy(int i) {
+  if (i >= _sc_cnd_component->size())
+    return NAN;
+  else
+    return _sc_cnd_energy->at(i);
+}
+int Branches12::sc_cnd_component(int i) {
+  if (i >= _sc_cnd_component->size())
+    return NAN;
+  else
+    return _sc_cnd_component->at(i);
+}
+float Branches12::sc_cnd_x(int i) {
+  if (i >= _sc_cnd_component->size())
+    return NAN;
+  else
+    return _sc_cnd_x->at(i);
+}
+float Branches12::sc_cnd_y(int i) {
+  if (i >= _sc_cnd_component->size())
+    return NAN;
+  else
+    return _sc_cnd_y->at(i);
+}
+float Branches12::sc_cnd_z(int i) {
+  if (i >= _sc_cnd_component->size())
+    return NAN;
+  else
+    return _sc_cnd_z->at(i);
+}
+float Branches12::sc_cnd_hx(int i) {
+  if (i >= _sc_cnd_component->size())
+    return NAN;
+  else
+    return _sc_cnd_hx->at(i);
+}
+float Branches12::sc_cnd_hy(int i) {
+  if (i >= _sc_cnd_component->size())
+    return NAN;
+  else
+    return _sc_cnd_hy->at(i);
+}
+float Branches12::sc_cnd_hz(int i) {
+  if (i >= _sc_cnd_component->size())
+    return NAN;
+  else
+    return _sc_cnd_hz->at(i);
+}
+
 float Branches12::ft_cal_energy(int i) { return _ft_cal_energy->at(i); }
 float Branches12::ft_cal_time(int i) { return _ft_cal_time->at(i); }
 float Branches12::ft_cal_path(int i) { return _ft_cal_path->at(i); }

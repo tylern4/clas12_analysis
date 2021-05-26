@@ -46,12 +46,11 @@ class uconn_Cuts : public Cuts {
   uconn_Cuts(const std::shared_ptr<Branches12>& data, const std::shared_ptr<Delta_T>& dt) : Cuts(data, dt){};
   bool ElectronCuts();
 
-  // bool CC_nphe_cut(double nphe);
   bool CC_nphe_cut();
   bool EC_outer_vs_EC_inner_cut();
   bool EC_sampling_fraction_cut();
   bool EC_hit_position_fiducial_cut_homogeneous();
-  bool DC_fiducial_cut_XY(int dc_sector, int region, double x, double y, int partpid, bool isinbending);
+  bool DC_fiducial_cut_XY(int num, int pid);
   bool DC_z_vertex_cut();
 };
 #endif
