@@ -43,7 +43,7 @@ int main(int argc, char** argv) {
     for (auto in : inputs) chain->Add(in.c_str());
 
     // Run the function over each thread
-    return run(chain, csv_output_file, thread_id);
+    return run<rgf_Cuts>(chain, csv_output_file, thread_id);
   };
 
   // Start timer

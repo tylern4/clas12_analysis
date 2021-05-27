@@ -17,10 +17,19 @@
 #include "reaction.hpp"
 #include "syncfile.hpp"
 
+template <class CutType>
 size_t run(const std::shared_ptr<TChain>& _chain, const std::shared_ptr<SyncFile>& _sync, int thread_id) {
   // Get the number of events in this thread
   size_t num_of_events = (int)_chain->GetEntries();
+
   float beam_energy = rga_E0;
+  if (std::is_same<CutType, rga_Cuts>::value) {
+    beam_energy = rga_E0;
+  } else if (std::is_same<CutType, uconn_Cuts>::value) {
+    beam_energy = rga_E0;
+  } else if (std::is_same<CutType, rgf_Cuts>::value) {
+    beam_energy = rgf_E0;
+  }
   if (getenv("BEAM_E") != NULL) beam_energy = atof(getenv("BEAM_E"));
 
   // Print some information for each thread
