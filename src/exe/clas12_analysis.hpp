@@ -23,10 +23,13 @@ size_t run(std::shared_ptr<TChain> _chain, const std::shared_ptr<Histogram>& _hi
 
   float beam_energy = rga_E0;
   if (std::is_same<CutType, rga_Cuts>::value) {
+    if (thread_id == 0) std::cout << BLUE << "Using RGA Cuts" << DEF << std::endl;
     beam_energy = rga_E0;
   } else if (std::is_same<CutType, uconn_Cuts>::value) {
+    if (thread_id == 0) std::cout << BLUE << "Using UConn RGA Cuts" << DEF << std::endl;
     beam_energy = rga_E0;
   } else if (std::is_same<CutType, rgf_Cuts>::value) {
+    if (thread_id == 0) std::cout << BLUE << "Using RGF Cuts" << DEF << std::endl;
     beam_energy = rgf_E0;
   }
   // else if (std::is_same<CutType, rgk_Cuts>::value) {

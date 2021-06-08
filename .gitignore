@@ -45,7 +45,7 @@ cpp/clas12_ana
 cpp_hipo/clas12_ana
 cpp_hipo/hipo/clas12_ana
 .DS_Store
-*.ipynb
+# *.ipynb
 *.csv
 cpp_reindex/clas12_ana
 cmake-build-debug
