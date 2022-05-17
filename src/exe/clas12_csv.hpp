@@ -27,6 +27,7 @@ std::string run(std::shared_ptr<TChain> _chain, int thread_id, bool mc) {
   } else if (std::is_same<CutType, rgf_Cuts>::value) {
     beam_energy = rgf_E0;
   }
+  if (getenv("BEAM_E") != NULL) beam_energy = atoi(getenv("BEAM_E"));
 
   // Print some information for each thread
   std::cout << "=============== " << RED << "Thread " << thread_id << DEF << " =============== " << BLUE
