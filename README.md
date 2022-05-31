@@ -3,9 +3,9 @@
 Quick test to show dst2root is working and output a few histograms to a root file.
 
 Prerequisites:
-* [cern root](https://root.cern.ch/)
+* [cern root](https://root.cern/install/)
 
-### cpp
+## cpp
 A c++ example can be found in the cpp folder.
 
 To build:
@@ -27,6 +27,28 @@ BEAM_E=7.5 NUM_THREADS=4 ./clas12_analysis output.root /path/to/input/*.root
 BEAM_E=10.6 NUM_THREADS=4 ./clas12_yields yields.csv /path/to/input/*.root
 ```
 
-If it breaks, reduce the number of threads for the number of files. In general each thread should have 2 or more files and the number of threads should be less than or equal to the number of cores you are using.
+There are three folders under `src`, `lib` has all the `cpp` files which will have most of the class definitions, logic, and functions. The `include` folder holds all the header files with the definitions in it. The executables are found in `exe` and are usually the same, get input from the command line and use a class (defined in `include`/`lib`) to start running a specific process. 
 
-So for 16 files on a 4 core computer use NUM_THREADS=4 and each thread will process 4 files. For 4 files on a 4 core computer use NUM_THREADS=1 or NUM_THREADS=2 so each thread will have 4 or 2 files respecfully.
+## python
+
+This uses a small wrapper library I wrote around [boost histogram](https://boost-histogram.readthedocs.io/en/latest/) to plot the way I wanted in python. [nicks_plot_utils](https://github.com/tylern4/nicks_plot_utils) can be installed with `pip install nicks-plot-utils.`
+
+To run:
+
+```
+BEAM_E=10.6 python main.py '/path/to/data/*.root'
+```
+
+Not a full list but some needed packages from pip/conda.
+
+```
+boost-histogram
+nicks-plot-utils
+pandas
+scipy
+matplotlib
+numpy
+lmfit
+```
+
+And then you would need root installed with the python libraries installed to use `TLorentzVectors`.

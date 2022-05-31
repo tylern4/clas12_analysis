@@ -6,6 +6,7 @@ import uproot
 import matplotlib.pyplot as plt
 import sys
 import numpy as np
+from tqdm import tqdm
 
 from reaction import *
 from physics import *
@@ -17,7 +18,7 @@ clas12 = uproot.concatenate(sys.argv[1],
                             file_handler=uproot.MultithreadedFileSource,
                             num_workers=4)
 num_events = len(clas12)
-print(num_events, num_events/2000)
+
 # Initialize empty array
 mom = np.ones(num_events)*np.nan
 W = np.ones(num_events)*np.nan
@@ -32,7 +33,7 @@ deltat_proton = []
 
 start = time.time()
 # For every event that was loaded in
-for i, event in enumerate(clas12):
+for i, event in tqdm(enumerate(clas12)):
     if(len(event['pid']) <= 0):
         continue
     for pidi, pxi, pyi, pzi, bi, qi in zip(event['pid'],

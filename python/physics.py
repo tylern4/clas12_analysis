@@ -3,8 +3,11 @@ from ROOT import TLorentzVector, TVector3
 from constants import *
 
 # A couple lambda aliases for numpy
-Square = lambda x: np.square(x)
-append = lambda _arr, _val: np.append(_arr, _val)
+
+
+def Square(x): return np.square(x)
+def append(_arr, _val): return np.append(_arr, _val)
+
 
 # Beam 4 vector for electron with energy from CLAS12
 e_mu = TLorentzVector(0.0, 0.0,
@@ -18,7 +21,7 @@ _p_target = TLorentzVector(0, 0, 0, get_mass('PROTON'))
 
 def all_mom(p, cx, cy, cz):
     """Return the momentum in the px, py, and pz direction from the momentum and cosine of angles."""
-    calc = lambda _p, _cos: _p * _cos
+    def calc(_p, _cos): return _p * _cos
     return calc(p, cx), calc(p, cy), calc(p, cz)
 
 
@@ -53,10 +56,3 @@ def xb_calc(_Q2, _E_prime):
     _g = CLAS12_E0 - _E_prime
     _xb = (_Q2 / (2 * get_mass('PROTON') * _g))
     return _xb
-
-
-def xb_calc(_e_mu, _e_mu_prime):
-    """Returns bjorken x value from four vectors."""
-    _Q2 = _Q2_calc(_e_mu, _e_mu_prime)
-    _q = _e_mu - _e_mu_prime
-    return (_Q2 / (2 * (_q.Dot(target))))
