@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 from __future__ import print_function
+from asyncio import events
 import uproot
 # Load matplotlib for plotting
 import matplotlib.pyplot as plt
@@ -9,15 +10,19 @@ import numpy as np
 from reaction import *
 from physics import *
 from delta_t import delta_t, vertex_time
+from nicks_plot_utils import Hist1D, Hist2D
+import time
 
-
-clas12 = uproot.open(sys.argv[1])['clas12']
-
+clas12 = uproot.concatenate(sys.argv[1],
+                            file_handler=uproot.MultithreadedFileSource,
+                            num_workers=4)
+num_events = len(clas12)
+print(num_events, num_events/2000)
 # Initialize empty array
-mom = np.array([])
-W = []
-Q2 = []
-beta = np.array([])
+mom = np.ones(num_events)*np.nan
+W = np.ones(num_events)*np.nan
+Q2 = np.ones(num_events)*np.nan
+beta = np.ones(num_events)*np.nan
 
 p_pos = []
 beta_pos = []
@@ -25,59 +30,43 @@ beta_pos = []
 p_dt = []
 deltat_proton = []
 
-pid, beta, px, py, pz, charge = clas12.arrays(
-    ["REC_Particle_pid", "REC_Particle_beta",
-     "REC_Particle_px", "REC_Particle_py",
-     "REC_Particle_pz", "REC_Particle_charge"], outputtype=tuple)
-
+start = time.time()
 # For every event that was loaded in
-for pid_event, beta_event, px_event, py_event, pz_event, charge_event in zip(pid, beta, px, py, pz, charge):
-    if(len(pid_event) > 0):
-        for pidi, pxi, pyi, pzi, bi, qi in zip(pid_event, px_event, py_event, pz_event, beta_event, charge_event):
-            #np.append(bi, beta)
+for i, event in enumerate(clas12):
+    if(len(event['pid']) <= 0):
+        continue
+    for pidi, pxi, pyi, pzi, bi, qi in zip(event['pid'],
+                                           event['px'],
+                                           event['py'],
+                                           event['pz'],
+                                           event['beta'],
+                                           event['charge']):
 
-            # Add the Momentum to the p array
-            p2 = pxi**2 + pyi**2 + pzi**2
-            p2 = np.abs(p2)
-            np.append(mom, np.sqrt(p2))
+        # Add the Momentum to the p array
+        p2 = pxi**2 + pyi**2 + pzi**2
+        p2 = np.abs(p2)
+        mom[i] = np.sqrt(p2)
 
-            #[(beta, mom) for b, p in zip(bi, mom) if b.any() != 0.0]
-            # if(pidi == 11):
-            #    e_mu_p = fvec(px[x], py[x], pz[x], get_mass('ELECTRON'))
-            #    Q2.append(Q2_calc(e_mu, e_mu_p))
-            #    W.append(W_calc(e_mu, e_mu_p))
-        # If the particle is positive
-        # if charge[x] > 0:
-        # p_pos.append(sqrt(p2[x]))
-        # beta_pos.append(beta[x])
+        if(pidi == 11):
+            e_mu_p = fvec(pxi, pyi, pzi, get_mass('ELECTRON'))
+            Q2[i] = Q2_calc(e_mu, e_mu_p)
+            W[i] = W_calc(e_mu, e_mu_p)
 
-# Loop over length of REC_Scintillator
-# for j in range(len(evnt.REC_Scintillator_pindex)):
-# Get Electron vertex from first particle
-#    electron_vertex = vertex_time(evnt.REC_Scintillator_time[0],
-#                                  evnt.REC_Scintillator_path[0], 1.0)
-# Get index for REC_Particle from REC_Scintillator
-#    index = evnt.REC_Scintillator_pindex[j]
 
-# Calculate momentum and fill array
-#    p2 = evnt.REC_Particle_px[index]**2 + evnt.REC_Particle_py[index]**2 + evnt.REC_Particle_pz[index]**2
-#    p2 = abs(p2)
-# This array might be different from the p array so we are calculating and refilling it
-#    p_dt.append(sqrt(p2))
+end = time.time()
 
-# Calulating delta_t assuming the mass of a proton and append to the array
-#    dt = delta_t(electron_vertex, MASS_P, sqrt(p2),
-#                 evnt.REC_Scintillator_time[j],
-#                 evnt.REC_Scintillator_path[j])
-#    deltat_proton.append(dt)
+print(f"{end-start} Seconds, {num_events/(end-start)} Hz")
 
 # Momentum
 output_file = "Momentum.pdf"
 # Make the figure for plotting
 fig = plt.figure(
     num=None, figsize=(16, 9), dpi=200, facecolor='w', edgecolor='k')
+
 # Fill the histogram
-plt.hist(mom, 500, normed=1, histtype='stepfilled', alpha=0.75, range=[0, 10])
+mom = mom[~np.isnan(mom)]
+h1 = Hist1D(mom, 500)
+_ = h1.histogram()
 # Add labels
 plt.title("Electron Momentum")
 plt.xlabel("P (GeV)")
@@ -91,7 +80,11 @@ output_file = "W.pdf"
 fig = plt.figure(
     num=None, figsize=(16, 9), dpi=200, facecolor='w', edgecolor='k')
 # Fill the histogram
-plt.hist(W, 500, normed=1, histtype='stepfilled', alpha=0.75, range=[0, 5])
+bad = np.isnan(W) | np.isnan(Q2)
+W = W[~bad]
+Q2 = Q2[~bad]
+h2 = Hist1D(W, bins=500, xrange=[0, 10])
+_ = h2.histogram()
 # Add labels
 plt.title("W")
 plt.xlabel("W (GeV)")
@@ -105,7 +98,9 @@ output_file = "Q2.pdf"
 fig = plt.figure(
     num=None, figsize=(16, 9), dpi=200, facecolor='w', edgecolor='k')
 # Fill the histogram
-plt.hist(Q2, 500, normed=1, histtype='stepfilled', alpha=0.75, range=[0, 10])
+h3 = Hist1D(Q2, bins=500, xrange=[0, 20])
+_ = h3.histogram()
+
 # Add labels
 plt.title("$Q^2$")
 plt.xlabel("$Q^2$ ($GeV^2$)")
@@ -119,7 +114,8 @@ output_file = "WvsQ2.pdf"
 fig = plt.figure(
     num=None, figsize=(16, 9), dpi=200, facecolor='w', edgecolor='k')
 # Fill the histogram
-plt.hist2d(W, Q2, bins=500, normed=True, range=[[0, 5], [0, 10]])
+w_vs_q2 = Hist2D(W, Q2, xbins=500, ybins=500, xrange=[0, 10], yrange=[0, 20])
+_ = w_vs_q2.plot()
 # Add labels
 plt.title("W vs $Q^2$")
 plt.xlabel("W (GeV)")
@@ -127,17 +123,17 @@ plt.ylabel("$Q^2$ ($Gev^2$)")
 # Save to output_file name
 plt.savefig(output_file)
 
-# MomVsBeta
-output_file = "MomVsBeta.pdf"
+# WvsQ2
+output_file = "WvsQ2_3D.pdf"
 # Make the figure for plotting
 fig = plt.figure(
     num=None, figsize=(16, 9), dpi=200, facecolor='w', edgecolor='k')
 # Fill the histogram
-plt.hist2d(mom, beta, bins=500, normed=True, range=[[0, 5], [0, 1.2]])
+w_vs_q2 = Hist2D(W, Q2, xbins=500, ybins=500, xrange=[0, 10], yrange=[0, 20])
+_ = w_vs_q2.plot(zeros=False)
 # Add labels
 plt.title("W vs $Q^2$")
 plt.xlabel("W (GeV)")
 plt.ylabel("$Q^2$ ($Gev^2$)")
-plt.colorbar()
 # Save to output_file name
 plt.savefig(output_file)

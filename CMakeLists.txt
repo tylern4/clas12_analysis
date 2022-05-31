@@ -10,7 +10,7 @@ include(${ROOT_USE_FILE})
 include_directories(src/include)
 
 file(GLOB clas12lib_SRC
-    "src/*.cpp"
+    "src/lib/*.cpp"
 )
 add_library(clas12lib STATIC ${clas12lib_SRC})
 

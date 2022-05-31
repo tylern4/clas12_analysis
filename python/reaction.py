@@ -3,9 +3,9 @@ from ROOT import TLorentzVector
 
 
 class reaction():
-    def __init__(self, *args, **kwargs):
+    def __init__(self, beam_energy: float = 10.0, *args, **kwargs):
         # Branches12 _data
-        _beam_energy = 7.5
+        _beam_energy = beam_energy
         _beam = TLorentzVector()
         _elec = TLorentzVector()
         _gamma = TLorentzVector()
