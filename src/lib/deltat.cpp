@@ -65,7 +65,7 @@ void Delta_T::dt_calc(int i) {
     _sc_t = _data->sc_ftof_1a_time(i);
     _sc_r = _data->sc_ftof_1a_path(i);
   } else if (!std::isnan(_data->sc_ctof_time(i))) {
-    _ctof = true;
+    _ctof_particle = true;
     _sc_t = _data->sc_ctof_time(i);
     _sc_r = _data->sc_ctof_path(i);
   } else if (!std::isnan(_data->sc_ftof_2_time(i))) {
@@ -127,3 +127,7 @@ float Delta_T::dt_ctof(int pid) { return _ctof_deltat(pid); }
 
 float Delta_T::momentum() { return _momentum; }
 bool Delta_T::ctof() { return _ctof; }
+bool Delta_T::ctof_particle(int pid) {
+  this->dt_calc(pid);
+  return _ctof_particle;
+}

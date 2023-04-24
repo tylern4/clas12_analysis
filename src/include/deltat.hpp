@@ -29,6 +29,7 @@ class Delta_T {
   float _beta = NAN;
   float _momentum = NAN;
   bool _ctof = false;
+  bool _ctof_particle = false;
 
   float _vertex_time(float sc_time, float sc_pathlength, float relatavistic_beta);
   float _deltat(int num);
@@ -62,6 +63,7 @@ class Delta_T {
 
   float momentum();
   bool ctof();
+  bool ctof_particle(int pid);
 };
 
 #endif
