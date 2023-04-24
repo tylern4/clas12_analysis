@@ -63,7 +63,7 @@ class Delta_T {
 
   float momentum();
   bool ctof();
-  bool ctof_particle(int pid);
+  bool ctof_particle(int i);
 };
 
 #endif

@@ -127,7 +127,7 @@ float Delta_T::dt_ctof(int pid) { return _ctof_deltat(pid); }
 
 float Delta_T::momentum() { return _momentum; }
 bool Delta_T::ctof() { return _ctof; }
-bool Delta_T::ctof_particle(int pid) {
-  this->dt_calc(pid);
+bool Delta_T::ctof_particle(int i) {
+  this->dt_calc(i);
   return _ctof_particle;
 }
